@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loans & Credit - SmartCoop Platform</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0d9488;
+            --primary-dark: #0f766e;
+            --primary-light: #14b8a6;
+            --primary-bg: #f0fdfa;
+            --accent: #f59e0b;
+            --accent-light: #fef3c7;
+            --surface: #ffffff;
+            --surface-alt: #f8fafc;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #94a3b8;
+            --border: #e2e8f0;
+            --border-light: #f1f5f9;
+            --danger: #ef4444;
+            --danger-light: #fef2f2;
+            --success: #10b981;
+            --success-light: #ecfdf5;
+            --warning: #f59e0b;
+            --warning-light: #fffbeb;
+            --info: #3b82f6;
+            --info-light: #eff6ff;
+            --purple: #8b5cf6;
+            --purple-light: #f5f3ff;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+            --shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.06);
+            --shadow-lg: 0 10px 15px rgba(0,0,0,0.1), 0 4px 6px rgba(0,0,0,0.05);
+            --shadow-xl: 0 20px 40px rgba(0,0,0,0.15);
+            --radius-sm: 8px;
+            --radius: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 20px;
+            --sidebar-width: 280px;
+            --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: var(--surface-alt);
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            color: var(--text-primary);
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+        }
+
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+
+        /* ========== SIDEBAR ========== */
+        .sidebar {
+            position: fixed; top: 0; left: 0;
+            width: var(--sidebar-width); height: 100vh;
+            background: linear-gradient(195deg, #0f172a 0%, #1e293b 100%);
+            z-index: 1050; overflow-y: auto;
+            transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: var(--shadow-xl);
+        }
+        .sidebar::before {
+            content: '';
+            position: absolute; top: 0; left: 0; right: 0; height: 250px;
+            background: radial-gradient(ellipse at 60% 0%, rgba(13,148,136,0.12) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .sidebar-brand { padding: 1.75rem 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.05); position: relative; }
+        .logo-icon {
+            width: 42px; height: 42px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            border-radius: var(--radius);
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-size: 1.3rem;
+            box-shadow: 0 4px 15px rgba(13,148,136,0.3);
+        }
+        .sidebar-brand h4 { color: #fff; font-weight: 700; font-size: 1.1rem; margin: 0; }
+        .sidebar-brand small { color: rgba(255,255,255,0.4); font-size: 0.68rem; text-transform: uppercase; letter-spacing: 1px; }
+        .sidebar-user { padding: 1.25rem 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .avatar {
+            width: 42px; height: 42px; border-radius: var(--radius);
+            background: linear-gradient(135deg, #f59e0b, #fbbf24);
+            display: flex; align-items: center; justify-content: center;
+            color: #1e293b; font-weight: 700; font-size: 1rem; position: relative;
+        }
+        .avatar::after {
+            content: ''; position: absolute; bottom: -2px; right: -2px;
+            width: 13px; height: 13px; background: #10b981;
+            border: 3px solid #1e293b; border-radius: 50%;
+        }
+        .sidebar-user .user-name { color: #f1f5f9; font-weight: 600; font-size: 0.85rem; }
+        .sidebar-user .user-role { color: rgba(255,255,255,0.4); font-size: 0.7rem; }
+        .sidebar-nav { padding: 0.5rem 0.75rem; }
+        .nav-section {
+            color: rgba(255,255,255,0.25); font-size: 0.62rem;
+            text-transform: uppercase; letter-spacing: 1.8px;
+            padding: 0.75rem 1rem 0.4rem; font-weight: 700;
+        }
+        .sidebar-nav .nav-link {
+            color: rgba(255,255,255,0.5); padding: 0.6rem 0.9rem;
+            font-size: 0.82rem; font-weight: 500;
+            display: flex; align-items: center; border-radius: var(--radius-sm);
+            margin-bottom: 1px; transition: all var(--transition);
+        }
+        .sidebar-nav .nav-link:hover { background: rgba(255,255,255,0.04); color: #e2e8f0; }
+        .sidebar-nav .nav-link.active {
+            background: rgba(13,148,136,0.15); color: #fff; font-weight: 600;
+            box-shadow: inset 0 0 0 1px rgba(13,148,136,0.25);
+        }
+        .sidebar-nav .nav-link i { width: 20px; margin-right: 0.7rem; font-size: 1rem; opacity: 0.75; }
+        .sidebar-nav .nav-link.active i { opacity: 1; color: var(--primary-light); }
+        .badge-pill {
+            background: var(--danger); color: #fff;
+            font-size: 0.62rem; padding: 0.2em 0.55em;
+            border-radius: 20px; margin-left: auto; font-weight: 700;
+        }
+        .sidebar-footer { padding: 1rem 1.5rem; border-top: 1px solid rgba(255,255,255,0.05); }
+        .sidebar-overlay {
+            display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(15,23,42,0.45); backdrop-filter: blur(3px); z-index: 1045;
+        }
+        .sidebar-overlay.show { display: block; }
+
+        /* ========== MAIN CONTENT ========== */
+        .main-content { margin-left: var(--sidebar-width); min-height: 100vh; transition: margin 0.35s ease; }
+
+        /* ========== TOP NAVBAR ========== */
+        .top-navbar {
+            background: rgba(255,255,255,0.75); backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 0.7rem 1.75rem;
+            border-bottom: 1px solid rgba(226,232,240,0.6);
+            position: sticky; top: 0; z-index: 1040;
+        }
+        .btn-icon {
+            width: 37px; height: 37px; border-radius: var(--radius-sm);
+            border: 1px solid var(--border); background: var(--surface);
+            color: var(--text-secondary);
+            display: flex; align-items: center; justify-content: center;
+            transition: all var(--transition); cursor: pointer; position: relative;
+        }
+        .btn-icon:hover { background: var(--surface-alt); border-color: #cbd5e1; color: var(--text-primary); }
+        .notification-dot {
+            position: absolute; top: 7px; right: 7px;
+            width: 9px; height: 9px; background: var(--danger);
+            border-radius: 50%; border: 2px solid #fff;
+            animation: pulse-dot 2s ease-in-out infinite;
+        }
+        @keyframes pulse-dot {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.3); opacity: 0.5; }
+        }
+
+        /* ========== CREDIT SCORE CARD ========== */
+        .credit-score-card {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 40%, #0f766e 100%);
+            border-radius: var(--radius-xl);
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        .credit-score-card::before {
+            content: '';
+            position: absolute; top: -60px; right: -60px;
+            width: 250px; height: 250px;
+            background: radial-gradient(circle, rgba(13,148,136,0.3) 0%, transparent 70%);
+            border-radius: 50%; pointer-events: none;
+        }
+        .credit-score-ring {
+            width: 120px; height: 120px; border-radius: 50%;
+            border: 8px solid rgba(255,255,255,0.15);
+            border-top-color: #10b981;
+            border-right-color: #10b981;
+            display: flex; align-items: center; justify-content: center;
+            position: relative; z-index: 1;
+        }
+        .credit-score-value {
+            font-size: 2.2rem; font-weight: 800; color: #fff;
+            letter-spacing: -1px;
+        }
+        .credit-score-label {
+            color: rgba(255,255,255,0.6); font-size: 0.7rem;
+            text-transform: uppercase; letter-spacing: 1px;
+            font-weight: 600; position: relative; z-index: 1;
+        }
+
+        /* ========== STAT CARDS ========== */
+        .stat-card {
+            background: var(--surface); border-radius: var(--radius-lg);
+            padding: 1.3rem; border: 1px solid var(--border-light);
+            transition: all var(--transition); height: 100%;
+            position: relative; overflow: hidden;
+        }
+        .stat-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-2px); }
+        .stat-icon {
+            width: 42px; height: 42px; border-radius: var(--radius);
+            display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
+        }
+        .stat-value { font-size: 1.7rem; font-weight: 800; color: var(--text-primary); letter-spacing: -0.5px; line-height: 1; }
+        .stat-label { color: var(--text-muted); font-size: 0.7rem; font-weight: 650; text-transform: uppercase; letter-spacing: 0.7px; margin-bottom: 0.2rem; }
+
+        /* ========== CARDS ========== */
+        .dashboard-card {
+            background: var(--surface); border-radius: var(--radius-lg);
+            border: 1px solid var(--border-light); overflow: hidden;
+            height: 100%; transition: all var(--transition);
+        }
+        .dashboard-card:hover { box-shadow: var(--shadow-md); }
+        .dashboard-card .card-header {
+            background: var(--surface); border-bottom: 1px solid var(--border-light);
+            padding: 1rem 1.3rem; font-weight: 650; font-size: 0.88rem;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .dashboard-card .card-body { padding: 1.3rem; }
+
+        /* ========== LOAN CARD ========== */
+        .loan-card {
+            background: var(--surface); border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg); padding: 1.3rem;
+            transition: all var(--transition); cursor: pointer;
+            position: relative; overflow: hidden;
+        }
+        .loan-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-2px); }
+        .loan-card .loan-status-strip {
+            position: absolute; top: 0; left: 0; width: 4px; height: 100%;
+            border-radius: var(--radius-lg) 0 0 var(--radius-lg);
+        }
+        .loan-card.active .loan-status-strip { background: #10b981; }
+        .loan-card.pending .loan-status-strip { background: #f59e0b; }
+        .loan-card.completed .loan-status-strip { background: #3b82f6; }
+
+        /* ========== REPAYMENT SCHEDULE ========== */
+        .repayment-bar {
+            display: flex; align-items: center; gap: 3px;
+        }
+        .repayment-segment {
+            height: 8px; flex: 1; border-radius: 3px;
+        }
+        .repayment-segment.paid { background: #10b981; }
+        .repayment-segment.upcoming { background: #e2e8f0; }
+        .repayment-segment.overdue { background: #ef4444; }
+        .repayment-segment.current { background: #f59e0b; animation: pulse-segment 1.5s ease-in-out infinite; }
+        @keyframes pulse-segment {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* ========== TABLE ========== */
+        .table-modern { font-size: 0.8rem; margin-bottom: 0; }
+        .table-modern th {
+            background: var(--surface-alt); color: var(--text-muted);
+            font-weight: 650; font-size: 0.68rem; text-transform: uppercase;
+            letter-spacing: 0.7px; border-bottom: 2px solid var(--border-light);
+            padding: 0.8rem 1rem;
+        }
+        .table-modern td {
+            vertical-align: middle; padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border-light);
+        }
+        .table-modern tbody tr { transition: background var(--transition); }
+        .table-modern tbody tr:hover { background: var(--surface-alt); }
+
+        /* ========== BUTTONS ========== */
+        .btn-teal {
+            background: var(--primary); color: #fff; border: none;
+            font-weight: 600; font-size: 0.78rem; padding: 0.5rem 1rem;
+            border-radius: var(--radius-sm); transition: all var(--transition);
+            box-shadow: 0 2px 6px rgba(13,148,136,0.2);
+        }
+        .btn-teal:hover { background: var(--primary-dark); box-shadow: 0 4px 12px rgba(13,148,136,0.3); transform: translateY(-1px); color: #fff; }
+        .btn-outline-teal {
+            border: 1.5px solid #cbd5e1; color: var(--text-secondary);
+            background: var(--surface); font-weight: 500; font-size: 0.78rem;
+            padding: 0.48rem 1rem; border-radius: var(--radius-sm); transition: all var(--transition);
+        }
+        .btn-outline-teal:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-bg); }
+        .btn-sm-pill { font-size: 0.7rem; padding: 0.3rem 0.8rem; border-radius: 20px; font-weight: 600; }
+        .btn-xs { font-size: 0.62rem; padding: 0.2rem 0.55rem; border-radius: 15px; font-weight: 600; }
+
+        /* ========== MODALS ========== */
+        .modal-content { border: none; border-radius: var(--radius-xl); box-shadow: var(--shadow-xl); overflow: hidden; }
+        .modal-header { background: var(--surface); border-bottom: 1px solid var(--border-light); padding: 1.2rem 1.5rem; }
+        .modal-header .modal-title { font-weight: 700; font-size: 1.1rem; letter-spacing: -0.3px; color: var(--text-primary); }
+        .modal-body { padding: 1.5rem; }
+        .modal-footer { border-top: 1px solid var(--border-light); padding: 1rem 1.5rem; }
+        .form-label { font-weight: 600; font-size: 0.76rem; color: var(--text-secondary); margin-bottom: 0.3rem; }
+        .form-control, .form-select {
+            border-radius: var(--radius-sm); border: 1px solid var(--border);
+            padding: 0.55rem 0.85rem; font-size: 0.84rem;
+            transition: all var(--transition); font-family: 'Inter', sans-serif;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(13,148,136,0.08);
+        }
+
+        /* ========== TOAST ========== */
+        .toast-custom {
+            position: fixed; bottom: 2rem; right: 2rem;
+            background: #0f172a; color: #fff;
+            padding: 0.9rem 1.3rem; border-radius: var(--radius);
+            box-shadow: var(--shadow-xl); z-index: 1070;
+            display: flex; align-items: center; gap: 0.6rem;
+            font-weight: 500; font-size: 0.85rem;
+            transform: translateY(120px); opacity: 0;
+            transition: all 0.35s ease;
+        }
+        .toast-custom.show { transform: translateY(0); opacity: 1; }
+        .toast-custom.success { border-left: 4px solid #10b981; }
+        .toast-custom.warning { border-left: 4px solid #f59e0b; }
+
+        /* ========== ANIMATIONS ========== */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-in { animation: fadeInUp 0.45s ease forwards; opacity: 0; }
+        .delay-1 { animation-delay: 0.05s; }
+        .delay-2 { animation-delay: 0.1s; }
+        .delay-3 { animation-delay: 0.15s; }
+        .delay-4 { animation-delay: 0.2s; }
+
+        /* ========== RESPONSIVE ========== */
+        @media (max-width: 991.98px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.show { transform: translateX(0); }
+            .main-content { margin-left: 0; }
+            .sidebar-overlay.show { display: block; }
+            .credit-score-ring { width: 90px; height: 90px; }
+            .credit-score-value { font-size: 1.6rem; }
+        }
+        @media (max-width: 767.98px) {
+            .top-navbar { padding: 0.55rem 0.9rem; }
+            .credit-score-card { padding: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Sidebar Overlay -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<!-- ==================== SIDEBAR ==================== -->
+<aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+        <div class="d-flex align-items-center gap-3">
+            <div class="logo-icon"><i class="bi bi-grid-3x3-gap-fill"></i></div>
+            <div><h4>SmartCoop</h4><small>Farmer Platform</small></div>
+        </div>
+    </div>
+    <div class="sidebar-user">
+        <div class="d-flex align-items-center gap-3">
+            <div class="avatar">AI</div>
+            <div><div class="user-name">Abubakar Ibrahim</div><div class="user-role">Farmer · FARM-2847</div></div>
+        </div>
+    </div>
+    <nav class="sidebar-nav">
+        <div class="nav-section">Main Menu</div>
+        <a class="nav-link" href="dashboard.html"><i class="bi bi-columns-gap"></i> Dashboard</a>
+        <a class="nav-link" href="myprofile.html"><i class="bi bi-person-badge"></i> My Profile</a>
+        <a class="nav-link" href="farm-mapping.html"><i class="bi bi-geo-alt"></i> Farm Mapping</a>
+        <div class="nav-section mt-2">Farm Management</div>
+        <a class="nav-link" href="crop-records.html"><i class="bi bi-flower1"></i> Crop Records</a>
+        <a class="nav-link" href="produce-tracking.html"><i class="bi bi-box-seam"></i> Produce Tracking <span class="badge-pill">3</span></a>
+        <a class="nav-link" href="inputs-chemicals.html"><i class="bi bi-droplet"></i> Inputs & Chemicals</a>
+        <div class="nav-section mt-2">Finance & Market</div>
+        <a class="nav-link" href="wallet.html"><i class="bi bi-wallet2"></i> Wallet</a>
+        <a class="nav-link active" href="loans-credit.html"><i class="bi bi-cash-stack"></i> Loans & Credit</a>
+        <a class="nav-link" href="marketplace.html"><i class="bi bi-shop"></i> Marketplace</a>
+        <div class="nav-section mt-2">Insights</div>
+        <a class="nav-link" href="climate-alerts.html"><i class="bi bi-cloud-sun"></i> Climate Alerts <span class="badge-pill">2</span></a>
+        <a class="nav-link" href="analytics.html"><i class="bi bi-graph-up"></i> Analytics</a>
+        <a class="nav-link" href="traceability-qr.html"><i class="bi bi-qr-code"></i> Traceability QR</a>
+    </nav>
+    <div class="sidebar-footer">
+        <a href="#" style="color:rgba(255,255,255,0.45);font-size:0.78rem;text-decoration:none;">
+            <i class="bi bi-box-arrow-right me-1"></i> Sign Out
+        </a>
+    </div>
+</aside>
+
+<!-- ==================== MAIN CONTENT ==================== -->
+<div class="main-content" id="mainContent">
+
+    <!-- Top Navbar -->
+    <nav class="top-navbar">
+        <div class="d-flex align-items-center justify-content-between w-100">
+            <div class="d-flex align-items-center gap-3">
+                <button class="navbar-toggler d-lg-none btn-icon border-0" id="sidebarToggle">
+                    <i class="bi bi-list"></i>
+                </button>
+                <h5 class="mb-0 fw-bold" style="color:var(--text-primary);">
+                    <i class="bi bi-cash-stack me-2" style="color:var(--primary);"></i>Loans & Credit
+                </h5>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                <span class="badge bg-success bg-opacity-10 text-success rounded-pill d-none d-md-inline-flex align-items-center gap-1" style="font-size:0.7rem;">
+                    <i class="bi bi-shield-check"></i> Credit Score: 785
+                </span>
+                <button class="btn-icon"><i class="bi bi-bell"></i><span class="notification-dot"></span></button>
+                <div style="width:32px;height:32px;background:linear-gradient(135deg,#0d9488,#14b8a6);border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:0.8rem;">AI</div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Content -->
+    <div class="p-3 p-md-4">
+
+        <!-- Credit Score + Stats Row -->
+        <div class="row g-3 mb-3">
+            <div class="col-12 col-lg-4 animate-in delay-1">
+                <div class="credit-score-card">
+                    <div class="row align-items-center">
+                        <div class="col-auto">
+                            <div class="credit-score-ring">
+                                <span class="credit-score-value">785</span>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="credit-score-label">Credit Score</div>
+                            <div style="color:#10b981;font-weight:700;font-size:0.8rem;position:relative;z-index:1;">● Excellent</div>
+                            <small style="color:rgba(255,255,255,0.5);font-size:0.7rem;position:relative;z-index:1;">Max qualifying: ₦500K</small>
+                        </div>
+                    </div>
+                    <div class="mt-3" style="position:relative;z-index:1;">
+                        <div class="d-flex justify-content-between" style="font-size:0.65rem;color:rgba(255,255,255,0.5);">
+                            <span>Payment History</span><span style="color:#10b981;">100%</span>
+                        </div>
+                        <div class="d-flex justify-content-between" style="font-size:0.65rem;color:rgba(255,255,255,0.5);">
+                            <span>Credit Utilization</span><span style="color:#f59e0b;">45%</span>
+                        </div>
+                        <div class="d-flex justify-content-between" style="font-size:0.65rem;color:rgba(255,255,255,0.5);">
+                            <span>Account Age</span><span style="color:#fff;">2.4 yrs</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-lg-2 animate-in delay-2">
+                <div class="stat-card">
+                    <div class="stat-icon mb-2" style="background:#ecfdf5;color:#059669;"><i class="bi bi-check-circle"></i></div>
+                    <div class="stat-label">Active Loans</div>
+                    <div class="stat-value">1</div>
+                    <small style="color:var(--text-muted);font-size:0.7rem;">₦150,000 remaining</small>
+                </div>
+            </div>
+            <div class="col-6 col-lg-2 animate-in delay-3">
+                <div class="stat-card">
+                    <div class="stat-icon mb-2" style="background:#eff6ff;color:#3b82f6;"><i class="bi bi-archive"></i></div>
+                    <div class="stat-label">Completed</div>
+                    <div class="stat-value">4</div>
+                    <small style="color:var(--text-muted);font-size:0.7rem;">All repaid on time</small>
+                </div>
+            </div>
+            <div class="col-6 col-lg-2 animate-in delay-4">
+                <div class="stat-card">
+                    <div class="stat-icon mb-2" style="background:#fef2f2;color:#dc2626;"><i class="bi bi-cash-coin"></i></div>
+                    <div class="stat-label">Next Payment</div>
+                    <div class="stat-value">₦25K</div>
+                    <small style="color:var(--text-muted);font-size:0.7rem;">Due: 15 Jun 2024</small>
+                </div>
+            </div>
+            <div class="col-6 col-lg-2 animate-in delay-4">
+                <div class="stat-card">
+                    <div class="stat-icon mb-2" style="background:#fffbeb;color:#d97706;"><i class="bi bi-percent"></i></div>
+                    <div class="stat-label">Avg Interest Rate</div>
+                    <div class="stat-value">12<span style="font-size:0.8rem;">%</span></div>
+                    <small style="color:var(--text-muted);font-size:0.7rem;">APR on active loans</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <ul class="nav mb-3 animate-in delay-1" id="loanTabs" role="tablist" style="border-bottom:2px solid var(--border-light);gap:0.25rem;">
+            <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#activeLoans" type="button" style="border:none;padding:0.75rem 1.25rem;font-size:0.82rem;font-weight:600;color:var(--primary);border-bottom:2px solid var(--primary);background:transparent;"><i class="bi bi-hourglass-split me-1"></i> Active Loans</button></li>
+            <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#loanHistory" type="button" style="border:none;padding:0.75rem 1.25rem;font-size:0.82rem;font-weight:600;color:var(--text-muted);background:transparent;"><i class="bi bi-clock-history me-1"></i> Loan History</button></li>
+            <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#applyLoan" type="button" style="border:none;padding:0.75rem 1.25rem;font-size:0.82rem;font-weight:600;color:var(--text-muted);background:transparent;"><i class="bi bi-plus-circle me-1"></i> Apply for Loan</button></li>
+            <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#insurance" type="button" style="border:none;padding:0.75rem 1.25rem;font-size:0.82rem;font-weight:600;color:var(--text-muted);background:transparent;"><i class="bi bi-shield-check me-1"></i> Insurance</button></li>
+        </ul>
+
+        <!-- Tab Content -->
+        <div class="tab-content">
+
+            <!-- ACTIVE LOANS TAB -->
+            <div class="tab-pane fade show active" id="activeLoans">
+                <div class="row g-3">
+                    <div class="col-12 col-lg-8 animate-in delay-1">
+                        <div class="loan-card active mb-3">
+                            <div class="loan-status-strip"></div>
+                            <div class="ps-3">
+                                <div class="d-flex justify-content-between align-items-start mb-3">
+                                    <div>
+                                        <h6 class="fw-bold mb-0">Input Financing Loan</h6>
+                                        <small class="text-muted">Loan ID: LON-2024-0042 · Approved: 15 Mar 2024</small>
+                                    </div>
+                                    <span class="badge bg-success bg-opacity-10 text-success rounded-pill">● Active</span>
+                                </div>
+                                <div class="row g-3 mb-3">
+                                    <div class="col-6 col-md-3">
+                                        <small class="text-muted">Principal</small>
+                                        <br><strong>₦150,000</strong>
+                                    </div>
+                                    <div class="col-6 col-md-3">
+                                        <small class="text-muted">Repaid</small>
+                                        <br><strong class="text-success">₦75,000</strong>
+                                    </div>
+                                    <div class="col-6 col-md-3">
+                                        <small class="text-muted">Remaining</small>
+                                        <br><strong class="text-danger">₦75,000</strong>
+                                    </div>
+                                    <div class="col-6 col-md-3">
+                                        <small class="text-muted">Next Payment</small>
+                                        <br><strong>₦25,000</strong>
+                                    </div>
+                                </div>
+                                <div class="mb-2">
+                                    <div class="d-flex justify-content-between mb-1">
+                                        <small>Repayment Progress (3 of 6 installments)</small>
+                                        <small class="fw-semibold">50%</small>
+                                    </div>
+                                    <div class="repayment-bar">
+                                        <div class="repayment-segment paid"></div>
+                                        <div class="repayment-segment paid"></div>
+                                        <div class="repayment-segment paid"></div>
+                                        <div class="repayment-segment current"></div>
+                                        <div class="repayment-segment upcoming"></div>
+                                        <div class="repayment-segment upcoming"></div>
+                                    </div>
+                                </div>
+                                <div class="d-flex gap-2">
+                                    <button class="btn-teal btn-sm-pill" onclick="showToast('Payment of ₦25,000 processed!','success')">
+                                        <i class="bi bi-credit-card me-1"></i> Make Payment
+                                    </button>
+                                    <button class="btn-outline-teal btn-sm-pill" data-bs-toggle="modal" data-bs-target="#loanDetailModal" onclick="openLoanDetail()">
+                                        <i class="bi bi-eye me-1"></i> View Details
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg-4 animate-in delay-2">
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <span><i class="bi bi-calendar-check me-2" style="color:var(--info);"></i>Payment Schedule</span>
+                            </div>
+                            <div class="card-body p-0">
+                                <div style="max-height:320px;overflow-y:auto;">
+                                    <table class="table table-modern">
+                                        <thead><tr><th>#</th><th>Due Date</th><th>Amount</th><th>Status</th></tr></thead>
+                                        <tbody>
+                                            <tr><td>1</td><td>15 Apr</td><td>₦25,000</td><td><span class="badge bg-success bg-opacity-10 text-success rounded-pill">Paid</span></td></tr>
+                                            <tr><td>2</td><td>15 May</td><td>₦25,000</td><td><span class="badge bg-success bg-opacity-10 text-success rounded-pill">Paid</span></td></tr>
+                                            <tr style="background:#fffbeb;"><td>3</td><td>15 Jun</td><td>₦25,000</td><td><span class="badge bg-warning bg-opacity-10 text-warning rounded-pill">Due Soon</span></td></tr>
+                                            <tr><td>4</td><td>15 Jul</td><td>₦25,000</td><td><span class="badge bg-secondary bg-opacity-10 text-secondary rounded-pill">Upcoming</span></td></tr>
+                                            <tr><td>5</td><td>15 Aug</td><td>₦25,000</td><td><span class="badge bg-secondary bg-opacity-10 text-secondary rounded-pill">Upcoming</span></td></tr>
+                                            <tr><td>6</td><td>15 Sep</td><td>₦25,000</td><td><span class="badge bg-secondary bg-opacity-10 text-secondary rounded-pill">Upcoming</span></td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- LOAN HISTORY TAB -->
+            <div class="tab-pane fade" id="loanHistory">
+                <div class="row g-3">
+                    <div class="col-12 animate-in delay-1">
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <span><span class="header-icon" style="background:#eff6ff;color:#3b82f6;"><i class="bi bi-clock-history"></i></span>Completed Loans</span>
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="table-responsive">
+                                    <table class="table table-modern">
+                                        <thead><tr><th>Loan ID</th><th>Purpose</th><th>Amount</th><th>Duration</th><th>APR</th><th>Repaid</th><th>Status</th></tr></thead>
+                                        <tbody>
+                                            <tr>
+                                                <td><strong>LON-2023-0028</strong></td>
+                                                <td>Fertilizer Purchase</td>
+                                                <td>₦80,000</td>
+                                                <td>6 months</td>
+                                                <td>12%</td>
+                                                <td>₦85,760</td>
+                                                <td><span class="badge bg-success bg-opacity-10 text-success rounded-pill">Completed</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>LON-2023-0015</strong></td>
+                                                <td>Seeds & Seedlings</td>
+                                                <td>₦45,000</td>
+                                                <td>3 months</td>
+                                                <td>10%</td>
+                                                <td>₦46,350</td>
+                                                <td><span class="badge bg-success bg-opacity-10 text-success rounded-pill">Completed</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>LON-2022-0009</strong></td>
+                                                <td>Equipment Repair</td>
+                                                <td>₦120,000</td>
+                                                <td>12 months</td>
+                                                <td>15%</td>
+                                                <td>₦138,000</td>
+                                                <td><span class="badge bg-success bg-opacity-10 text-success rounded-pill">Completed</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>LON-2022-0003</strong></td>
+                                                <td>Land Preparation</td>
+                                                <td>₦60,000</td>
+                                                <td>6 months</td>
+                                                <td>12%</td>
+                                                <td>₦64,320</td>
+                                                <td><span class="badge bg-success bg-opacity-10 text-success rounded-pill">Completed</span></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- APPLY FOR LOAN TAB -->
+            <div class="tab-pane fade" id="applyLoan">
+                <div class="row g-3">
+                    <div class="col-12 col-lg-7 animate-in delay-1">
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <span><span class="header-icon" style="background:#ecfdf5;color:#0d9488;"><i class="bi bi-plus-circle"></i></span>New Loan Application</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="alert border-0 rounded-3 mb-3" style="background:#ecfdf5;font-size:0.8rem;">
+                                    <i class="bi bi-info-circle-fill me-2 text-success"></i>
+                                    Based on your credit score (785), you qualify for up to <strong>₦500,000</strong> at <strong>12% APR</strong>.
+                                </div>
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Loan Purpose</label>
+                                        <select class="form-select" id="loanPurpose" onchange="updateLoanTerms()">
+                                            <option>Select purpose...</option>
+                                            <option>Fertilizer Purchase</option>
+                                            <option>Seeds & Seedlings</option>
+                                            <option>Pesticides & Herbicides</option>
+                                            <option>Equipment Purchase</option>
+                                            <option>Equipment Repair</option>
+                                            <option>Labor Costs</option>
+                                            <option>Land Preparation</option>
+                                            <option>Storage & Transport</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Loan Product</label>
+                                        <select class="form-select" onchange="updateLoanTerms()">
+                                            <option>Input Financing (6 months · 12% APR)</option>
+                                            <option>Equipment Loan (12 months · 15% APR)</option>
+                                            <option>Emergency Loan (3 months · 10% APR)</option>
+                                            <option>Harvest Advance (4 months · 14% APR)</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Amount (₦)</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text">₦</span>
+                                            <input type="number" class="form-control" placeholder="0" id="loanAmount" oninput="updateLoanTerms()" value="150000">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Duration</label>
+                                        <select class="form-select" id="loanDuration" onchange="updateLoanTerms()">
+                                            <option value="3">3 months</option>
+                                            <option value="6" selected>6 months</option>
+                                            <option value="9">9 months</option>
+                                            <option value="12">12 months</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="p-4 rounded-3" style="background:var(--surface-alt);">
+                                            <h6 class="fw-bold mb-3">Loan Summary</h6>
+                                            <div class="row g-2">
+                                                <div class="col-6"><small class="text-muted">Principal:</small><br><strong id="summaryPrincipal">₦150,000</strong></div>
+                                                <div class="col-6"><small class="text-muted">Interest (12% APR):</small><br><strong id="summaryInterest">₦9,000</strong></div>
+                                                <div class="col-6"><small class="text-muted">Monthly Payment:</small><br><strong style="color:var(--primary);" id="summaryMonthly">₦26,500</strong></div>
+                                                <div class="col-6"><small class="text-muted">Total Repayment:</small><br><strong id="summaryTotal">₦159,000</strong></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <label class="form-label">Purpose Description</label>
+                                        <textarea class="form-control" rows="2" placeholder="Describe how you'll use this loan..."></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer bg-white text-end" style="border-top:1px solid var(--border-light);">
+                                <button class="btn-outline-teal me-2">Save Draft</button>
+                                <button class="btn-teal" onclick="submitLoanApplication()">Submit Application</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg-5 animate-in delay-2">
+                        <div class="dashboard-card mb-3">
+                            <div class="card-header">
+                                <span><i class="bi bi-graph-up me-2" style="color:var(--purple);"></i>Credit Factors</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between mb-1"><small>Payment History</small><small class="text-success fw-semibold">Excellent</small></div>
+                                    <div class="progress" style="height:6px;"><div class="progress-bar bg-success" style="width:100%;"></div></div>
+                                </div>
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between mb-1"><small>Farm Productivity</small><small class="text-success fw-semibold">Good</small></div>
+                                    <div class="progress" style="height:6px;"><div class="progress-bar bg-success" style="width:78%;"></div></div>
+                                </div>
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between mb-1"><small>Income Stability</small><small class="text-warning fw-semibold">Fair</small></div>
+                                    <div class="progress" style="height:6px;"><div class="progress-bar bg-warning" style="width:62%;"></div></div>
+                                </div>
+                                <div>
+                                    <div class="d-flex justify-content-between mb-1"><small>Cooperative Standing</small><small class="text-success fw-semibold">Excellent</small></div>
+                                    <div class="progress" style="height:6px;"><div class="progress-bar bg-success" style="width:92%;"></div></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <span><i class="bi bi-lightbulb me-2" style="color:var(--accent);"></i>Loan Tips</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="d-flex gap-2 mb-2">
+                                    <i class="bi bi-info-circle-fill" style="color:var(--info);"></i>
+                                    <small style="font-size:0.75rem;">Borrow only what you need. Higher amounts mean higher monthly payments.</small>
+                                </div>
+                                <div class="d-flex gap-2">
+                                    <i class="bi bi-info-circle-fill" style="color:var(--warning);"></i>
+                                    <small style="font-size:0.75rem;">On-time payments improve your credit score and unlock better rates.</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- INSURANCE TAB -->
+            <div class="tab-pane fade" id="insurance">
+                <div class="row g-3">
+                    <div class="col-md-6 col-lg-4 animate-in delay-1">
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <span><i class="bi bi-cloud-sun me-2" style="color:var(--accent);"></i>Crop Insurance</span>
+                                <span class="badge bg-success bg-opacity-10 text-success rounded-pill" style="font-size:0.62rem;">Active</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3"><small class="text-muted">Coverage</small><br><strong>Drought · Flood · Pest</strong></div>
+                                <div class="mb-3"><small class="text-muted">Premium</small><br><strong>₦8,500/year</strong></div>
+                                <div class="mb-3"><small class="text-muted">Coverage Amount</small><br><strong>₦250,000</strong></div>
+                                <button class="btn-outline-teal btn-sm w-100" onclick="showToast('Policy details viewed','success')">View Policy</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-4 animate-in delay-2">
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <span><i class="bi bi-heart-pulse me-2" style="color:var(--danger);"></i>Health Insurance</span>
+                                <span class="badge bg-success bg-opacity-10 text-success rounded-pill" style="font-size:0.62rem;">Active</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3"><small class="text-muted">Coverage</small><br><strong>Basic + Accident</strong></div>
+                                <div class="mb-3"><small class="text-muted">Premium</small><br><strong>₦12,000/year</strong></div>
+                                <div class="mb-3"><small class="text-muted">Coverage Amount</small><br><strong>₦500,000</strong></div>
+                                <button class="btn-outline-teal btn-sm w-100" onclick="showToast('Policy details viewed','success')">View Policy</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-4 animate-in delay-3">
+                        <div class="dashboard-card" style="border-style:dashed;">
+                            <div class="card-body text-center py-4">
+                                <i class="bi bi-plus-circle" style="font-size:2rem;color:var(--text-muted);"></i>
+                                <p class="mt-2 mb-3 fw-semibold">Add New Insurance</p>
+                                <button class="btn-teal btn-sm-pill" onclick="showToast('Browse available insurance plans','success')">Browse Plans</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== TOAST ==================== -->
+<div class="toast-custom success" id="toast">
+    <i class="bi bi-check-circle-fill"></i>
+    <span id="toastMessage">Action completed!</span>
+</div>
+
+<!-- ==================== MODALS ==================== -->
+
+<!-- Loan Detail Modal -->
+<div class="modal fade" id="loanDetailModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="bi bi-file-earmark-text me-2" style="color:var(--primary);"></i>Loan Details: LON-2024-0042</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <table class="table table-sm" style="font-size:0.8rem;">
+                            <tr><td class="text-muted">Loan Type</td><td><strong>Input Financing</strong></td></tr>
+                            <tr><td class="text-muted">Principal</td><td><strong>₦150,000</strong></td></tr>
+                            <tr><td class="text-muted">APR</td><td><strong>12%</strong></td></tr>
+                            <tr><td class="text-muted">Duration</td><td><strong>6 months</strong></td></tr>
+                        </table>
+                    </div>
+                    <div class="col-md-6">
+                        <table class="table table-sm" style="font-size:0.8rem;">
+                            <tr><td class="text-muted">Approved</td><td><strong>15 Mar 2024</strong></td></tr>
+                            <tr><td class="text-muted">Maturity</td><td><strong>15 Sep 2024</strong></td></tr>
+                            <tr><td class="text-muted">Total Repayment</td><td><strong>₦159,000</strong></td></tr>
+                            <tr><td class="text-muted">Status</td><td><span class="badge bg-success bg-opacity-10 text-success rounded-pill">Active</span></td></tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-outline-teal" data-bs-dismiss="modal">Close</button>
+                <button class="btn-teal" onclick="showToast('Payment processed!','success')">Make Payment</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== SCRIPTS ==================== -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Sidebar
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    const sidebar = document.getElementById('sidebar');
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
+    function openSidebar() { sidebar.classList.add('show'); sidebarOverlay.classList.add('show'); document.body.style.overflow = 'hidden'; }
+    function closeSidebar() { sidebar.classList.remove('show'); sidebarOverlay.classList.remove('show'); document.body.style.overflow = ''; }
+    sidebarToggle.addEventListener('click', openSidebar);
+    sidebarOverlay.addEventListener('click', closeSidebar);
+
+    // Toast
+    function showToast(message, type = 'success') {
+        const toast = document.getElementById('toast');
+        document.getElementById('toastMessage').textContent = message;
+        toast.className = 'toast-custom ' + type;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+
+    // Tab styling
+    document.querySelectorAll('#loanTabs button').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('#loanTabs button').forEach(b => {
+                b.classList.remove('active'); b.style.color = 'var(--text-muted)'; b.style.borderBottom = 'none';
+            });
+            this.classList.add('active'); this.style.color = 'var(--primary)'; this.style.borderBottom = '2px solid var(--primary)';
+        });
+    });
+
+    // Loan Calculator
+    function updateLoanTerms() {
+        const amount = parseFloat(document.getElementById('loanAmount').value) || 0;
+        const duration = parseInt(document.getElementById('loanDuration').value) || 6;
+        const apr = 0.12;
+        const totalInterest = amount * apr * (duration / 12);
+        const total = amount + totalInterest;
+        const monthly = duration > 0 ? total / duration : 0;
+
+        document.getElementById('summaryPrincipal').textContent = '₦' + amount.toLocaleString('en-NG');
+        document.getElementById('summaryInterest').textContent = '₦' + Math.round(totalInterest).toLocaleString('en-NG');
+        document.getElementById('summaryMonthly').textContent = '₦' + Math.round(monthly).toLocaleString('en-NG');
+        document.getElementById('summaryTotal').textContent = '₦' + Math.round(total).toLocaleString('en-NG');
+    }
+
+    function submitLoanApplication() {
+        showToast('📋 Loan application submitted! Expected approval within 24 hours.', 'success');
+    }
+
+    function openLoanDetail() {
+        // Modal opens via Bootstrap data-bs-target
+    }
+
+    // Initialize calculator
+    updateLoanTerms();
+</script>
+
+</body>
+</html>

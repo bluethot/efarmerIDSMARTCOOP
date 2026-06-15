@@ -1,0 +1,1175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Produce Tracking - SmartCoop Platform</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0d9488;
+            --primary-dark: #0f766e;
+            --primary-light: #14b8a6;
+            --primary-bg: #f0fdfa;
+            --accent: #f59e0b;
+            --accent-light: #fef3c7;
+            --surface: #ffffff;
+            --surface-alt: #f8fafc;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #94a3b8;
+            --border: #e2e8f0;
+            --border-light: #f1f5f9;
+            --danger: #ef4444;
+            --danger-light: #fef2f2;
+            --success: #10b981;
+            --success-light: #ecfdf5;
+            --warning: #f59e0b;
+            --warning-light: #fffbeb;
+            --info: #3b82f6;
+            --info-light: #eff6ff;
+            --purple: #8b5cf6;
+            --purple-light: #f5f3ff;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+            --shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.06);
+            --shadow-lg: 0 10px 15px rgba(0,0,0,0.1), 0 4px 6px rgba(0,0,0,0.05);
+            --shadow-xl: 0 20px 40px rgba(0,0,0,0.15);
+            --radius-sm: 8px;
+            --radius: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 20px;
+            --sidebar-width: 280px;
+            --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: var(--surface-alt);
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            color: var(--text-primary);
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+        }
+
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+
+        /* ========== SIDEBAR ========== */
+        .sidebar {
+            position: fixed; top: 0; left: 0;
+            width: var(--sidebar-width); height: 100vh;
+            background: linear-gradient(195deg, #0f172a 0%, #1e293b 100%);
+            z-index: 1050; overflow-y: auto;
+            transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: var(--shadow-xl);
+        }
+        .sidebar::before {
+            content: '';
+            position: absolute; top: 0; left: 0; right: 0; height: 250px;
+            background: radial-gradient(ellipse at 60% 0%, rgba(13,148,136,0.12) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .sidebar-brand { padding: 1.75rem 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.05); position: relative; }
+        .logo-icon {
+            width: 42px; height: 42px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            border-radius: var(--radius);
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-size: 1.3rem;
+            box-shadow: 0 4px 15px rgba(13,148,136,0.3);
+        }
+        .sidebar-brand h4 { color: #fff; font-weight: 700; font-size: 1.1rem; margin: 0; }
+        .sidebar-brand small { color: rgba(255,255,255,0.4); font-size: 0.68rem; text-transform: uppercase; letter-spacing: 1px; }
+        .sidebar-user { padding: 1.25rem 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .avatar {
+            width: 42px; height: 42px; border-radius: var(--radius);
+            background: linear-gradient(135deg, #f59e0b, #fbbf24);
+            display: flex; align-items: center; justify-content: center;
+            color: #1e293b; font-weight: 700; font-size: 1rem; position: relative;
+        }
+        .avatar::after {
+            content: ''; position: absolute; bottom: -2px; right: -2px;
+            width: 13px; height: 13px; background: #10b981;
+            border: 3px solid #1e293b; border-radius: 50%;
+        }
+        .sidebar-user .user-name { color: #f1f5f9; font-weight: 600; font-size: 0.85rem; }
+        .sidebar-user .user-role { color: rgba(255,255,255,0.4); font-size: 0.7rem; }
+        .sidebar-nav { padding: 0.5rem 0.75rem; }
+        .nav-section {
+            color: rgba(255,255,255,0.25); font-size: 0.62rem;
+            text-transform: uppercase; letter-spacing: 1.8px;
+            padding: 0.75rem 1rem 0.4rem; font-weight: 700;
+        }
+        .sidebar-nav .nav-link {
+            color: rgba(255,255,255,0.5); padding: 0.6rem 0.9rem;
+            font-size: 0.82rem; font-weight: 500;
+            display: flex; align-items: center; border-radius: var(--radius-sm);
+            margin-bottom: 1px; transition: all var(--transition);
+        }
+        .sidebar-nav .nav-link:hover { background: rgba(255,255,255,0.04); color: #e2e8f0; }
+        .sidebar-nav .nav-link.active {
+            background: rgba(13,148,136,0.15); color: #fff; font-weight: 600;
+            box-shadow: inset 0 0 0 1px rgba(13,148,136,0.25);
+        }
+        .sidebar-nav .nav-link i { width: 20px; margin-right: 0.7rem; font-size: 1rem; opacity: 0.75; }
+        .sidebar-nav .nav-link.active i { opacity: 1; color: var(--primary-light); }
+        .badge-pill {
+            background: var(--danger); color: #fff;
+            font-size: 0.62rem; padding: 0.2em 0.55em;
+            border-radius: 20px; margin-left: auto; font-weight: 700;
+        }
+        .sidebar-footer { padding: 1rem 1.5rem; border-top: 1px solid rgba(255,255,255,0.05); }
+        .sidebar-overlay {
+            display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(15,23,42,0.45); backdrop-filter: blur(3px); z-index: 1045;
+        }
+        .sidebar-overlay.show { display: block; }
+
+        /* ========== MAIN CONTENT ========== */
+        .main-content { margin-left: var(--sidebar-width); min-height: 100vh; transition: margin 0.35s ease; }
+
+        /* ========== TOP NAVBAR ========== */
+        .top-navbar {
+            background: rgba(255,255,255,0.75); backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 0.7rem 1.75rem;
+            border-bottom: 1px solid rgba(226,232,240,0.6);
+            position: sticky; top: 0; z-index: 1040;
+        }
+        .btn-icon {
+            width: 37px; height: 37px; border-radius: var(--radius-sm);
+            border: 1px solid var(--border); background: var(--surface);
+            color: var(--text-secondary);
+            display: flex; align-items: center; justify-content: center;
+            transition: all var(--transition); cursor: pointer; position: relative;
+        }
+        .btn-icon:hover { background: var(--surface-alt); border-color: #cbd5e1; color: var(--text-primary); }
+        .notification-dot {
+            position: absolute; top: 7px; right: 7px;
+            width: 9px; height: 9px; background: var(--danger);
+            border-radius: 50%; border: 2px solid #fff;
+            animation: pulse-dot 2s ease-in-out infinite;
+        }
+        @keyframes pulse-dot {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.3); opacity: 0.5; }
+        }
+
+        /* ========== STAT CARDS ========== */
+        .stat-card {
+            background: var(--surface); border-radius: var(--radius-lg);
+            padding: 1.3rem; border: 1px solid var(--border-light);
+            transition: all var(--transition); height: 100%;
+            position: relative; overflow: hidden;
+        }
+        .stat-card::before {
+            content: ''; position: absolute; top: 0; left: 0;
+            width: 100%; height: 3px;
+            border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+            opacity: 0; transition: opacity var(--transition);
+        }
+        .stat-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-2px); }
+        .stat-card:hover::before { opacity: 1; }
+        .stat-card.batches::before { background: linear-gradient(90deg, #0d9488, #14b8a6); }
+        .stat-card.instock::before { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+        .stat-card.quality::before { background: linear-gradient(90deg, #8b5cf6, #a78bfa); }
+        .stat-card.shipped::before { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+        .stat-icon {
+            width: 42px; height: 42px; border-radius: var(--radius);
+            display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
+        }
+        .icon-batch { background: linear-gradient(135deg, #ecfdf5, #d1fae5); color: #0d9488; }
+        .icon-stock { background: linear-gradient(135deg, #eff6ff, #dbeafe); color: #3b82f6; }
+        .icon-quality { background: linear-gradient(135deg, #f5f3ff, #ede9fe); color: #8b5cf6; }
+        .icon-ship { background: linear-gradient(135deg, #fffbeb, #fef3c7); color: #f59e0b; }
+        .stat-value { font-size: 1.7rem; font-weight: 800; color: var(--text-primary); letter-spacing: -0.5px; line-height: 1; }
+        .stat-label { color: var(--text-muted); font-size: 0.7rem; font-weight: 650; text-transform: uppercase; letter-spacing: 0.7px; margin-bottom: 0.2rem; }
+        .stat-change {
+            font-size: 0.72rem; font-weight: 600;
+            display: inline-flex; align-items: center; gap: 0.15rem;
+            padding: 0.12rem 0.45rem; border-radius: 20px;
+        }
+        .stat-change.positive { background: var(--success-light); color: #059669; }
+
+        /* ========== CARDS ========== */
+        .dashboard-card {
+            background: var(--surface); border-radius: var(--radius-lg);
+            border: 1px solid var(--border-light); overflow: hidden;
+            height: 100%; transition: all var(--transition);
+        }
+        .dashboard-card:hover { box-shadow: var(--shadow-md); }
+        .dashboard-card .card-header {
+            background: var(--surface); border-bottom: 1px solid var(--border-light);
+            padding: 1rem 1.3rem; font-weight: 650; font-size: 0.88rem;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .dashboard-card .card-body { padding: 1.3rem; }
+        .header-icon {
+            width: 28px; height: 28px; border-radius: var(--radius-sm);
+            display: inline-flex; align-items: center; justify-content: center;
+            margin-right: 0.45rem;
+        }
+        .icon-h-green { background: #ecfdf5; color: #0d9488; }
+        .icon-h-blue { background: #eff6ff; color: #3b82f6; }
+        .icon-h-purple { background: #f5f3ff; color: #8b5cf6; }
+        .icon-h-amber { background: #fffbeb; color: #f59e0b; }
+
+        /* ========== BUTTONS ========== */
+        .btn-teal {
+            background: var(--primary); color: #fff; border: none;
+            font-weight: 600; font-size: 0.78rem; padding: 0.5rem 1rem;
+            border-radius: var(--radius-sm); transition: all var(--transition);
+            box-shadow: 0 2px 6px rgba(13,148,136,0.2);
+        }
+        .btn-teal:hover { background: var(--primary-dark); box-shadow: 0 4px 12px rgba(13,148,136,0.3); transform: translateY(-1px); color: #fff; }
+        .btn-outline-teal {
+            border: 1.5px solid #cbd5e1; color: var(--text-secondary);
+            background: var(--surface); font-weight: 500; font-size: 0.78rem;
+            padding: 0.48rem 1rem; border-radius: var(--radius-sm); transition: all var(--transition);
+        }
+        .btn-outline-teal:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-bg); }
+        .btn-sm-pill { font-size: 0.7rem; padding: 0.3rem 0.8rem; border-radius: 20px; font-weight: 600; }
+        .btn-xs { font-size: 0.62rem; padding: 0.2rem 0.55rem; border-radius: 15px; font-weight: 600; }
+
+        /* ========== TABLE ========== */
+        .table-modern { font-size: 0.8rem; margin-bottom: 0; }
+        .table-modern th {
+            background: var(--surface-alt); color: var(--text-muted);
+            font-weight: 650; font-size: 0.68rem; text-transform: uppercase;
+            letter-spacing: 0.7px; border-bottom: 2px solid var(--border-light);
+            padding: 0.8rem 1rem;
+        }
+        .table-modern td {
+            vertical-align: middle; padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border-light);
+        }
+        .table-modern tbody tr { transition: background var(--transition); cursor: pointer; }
+        .table-modern tbody tr:hover { background: var(--surface-alt); }
+        .badge-status {
+            padding: 0.25em 0.6em; border-radius: 20px;
+            font-weight: 600; font-size: 0.66rem;
+        }
+        .badge-instore { background: #ecfdf5; color: #059669; }
+        .badge-transit { background: #eff6ff; color: #3b82f6; }
+        .badge-delivered { background: #f5f3ff; color: #8b5cf6; }
+        .badge-quality { background: #fffbeb; color: #d97706; }
+        .badge-sold { background: #fef2f2; color: #dc2626; }
+
+        /* ========== BATCH CARD ========== */
+        .batch-card {
+            background: var(--surface); border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg); padding: 1.2rem;
+            transition: all var(--transition); cursor: pointer;
+            position: relative; overflow: hidden;
+        }
+        .batch-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-2px); border-color: #cbd5e1; }
+        .batch-card .batch-color-strip {
+            position: absolute; top: 0; left: 0; width: 4px; height: 100%;
+            border-radius: var(--radius-lg) 0 0 var(--radius-lg);
+        }
+        .qr-mini {
+            width: 60px; height: 60px;
+            background: repeating-linear-gradient(45deg, #1b4332 0px, #1b4332 5px, #2d6a4f 5px, #2d6a4f 10px);
+            border-radius: var(--radius-sm);
+        }
+
+        /* ========== TRACEABILITY CHAIN ========== */
+        .trace-chain {
+            display: flex; align-items: center; gap: 0;
+            overflow-x: auto; padding: 1rem 0;
+        }
+        .trace-node {
+            text-align: center; min-width: 110px; position: relative;
+        }
+        .trace-node-icon {
+            width: 50px; height: 50px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 0.5rem; font-size: 1.3rem;
+            border: 3px solid var(--border);
+            background: var(--surface); transition: all var(--transition);
+        }
+        .trace-node-icon.completed {
+            border-color: var(--success); background: var(--success-light);
+        }
+        .trace-node-icon.active {
+            border-color: var(--primary); background: var(--primary-bg);
+            box-shadow: 0 0 0 6px rgba(13,148,136,0.1);
+            animation: pulse-trace 2s ease-in-out infinite;
+        }
+        @keyframes pulse-trace {
+            0%, 100% { box-shadow: 0 0 0 6px rgba(13,148,136,0.1); }
+            50% { box-shadow: 0 0 0 14px rgba(13,148,136,0.03); }
+        }
+        .trace-arrow {
+            font-size: 1.2rem; color: var(--text-muted);
+            margin: 0 0.5rem; margin-bottom: 2rem;
+        }
+        .trace-label { font-size: 0.68rem; font-weight: 600; color: var(--text-muted); }
+        .trace-label.completed { color: var(--success); }
+        .trace-label.active { color: var(--primary); }
+
+        /* ========== WAREHOUSE MAP ========== */
+        .warehouse-grid {
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;
+        }
+        .warehouse-zone {
+            aspect-ratio: 1; border-radius: var(--radius-sm);
+            border: 2px solid var(--border); display: flex;
+            align-items: center; justify-content: center;
+            font-weight: 700; font-size: 0.8rem; cursor: pointer;
+            transition: all var(--transition); position: relative;
+        }
+        .warehouse-zone:hover { border-color: var(--primary); background: var(--primary-bg); }
+        .warehouse-zone.occupied {
+            background: #ecfdf5; border-color: #10b981; color: #059669;
+        }
+        .warehouse-zone.reserved {
+            background: #fffbeb; border-color: #f59e0b; color: #d97706;
+        }
+        .warehouse-zone.available {
+            background: var(--surface-alt); border-style: dashed; color: var(--text-muted);
+        }
+        .warehouse-zone .zone-tooltip {
+            position: absolute; bottom: -30px; left: 50%; transform: translateX(-50%);
+            background: #0f172a; color: #fff; padding: 0.2rem 0.5rem;
+            border-radius: 4px; font-size: 0.6rem; white-space: nowrap;
+            opacity: 0; transition: opacity 0.2s; pointer-events: none;
+        }
+        .warehouse-zone:hover .zone-tooltip { opacity: 1; }
+
+        /* ========== QR SCANNER ========== */
+        .qr-scanner-area {
+            background: var(--surface-alt); border: 2px dashed var(--border);
+            border-radius: var(--radius-lg); padding: 3rem; text-align: center;
+            transition: all var(--transition); cursor: pointer;
+        }
+        .qr-scanner-area:hover { border-color: var(--primary); background: var(--primary-bg); }
+        .qr-scanner-area i { font-size: 3rem; color: var(--text-muted); }
+
+        /* ========== MODALS ========== */
+        .modal-content { border: none; border-radius: var(--radius-xl); box-shadow: var(--shadow-xl); overflow: hidden; }
+        .modal-header { background: var(--surface); border-bottom: 1px solid var(--border-light); padding: 1.2rem 1.5rem; }
+        .modal-header .modal-title { font-weight: 700; font-size: 1.1rem; letter-spacing: -0.3px; color: var(--text-primary); }
+        .modal-body { padding: 1.5rem; }
+        .modal-footer { border-top: 1px solid var(--border-light); padding: 1rem 1.5rem; }
+        .form-label { font-weight: 600; font-size: 0.76rem; color: var(--text-secondary); margin-bottom: 0.3rem; }
+        .form-control, .form-select {
+            border-radius: var(--radius-sm); border: 1px solid var(--border);
+            padding: 0.55rem 0.85rem; font-size: 0.84rem;
+            transition: all var(--transition); font-family: 'Inter', sans-serif;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(13,148,136,0.08);
+        }
+
+        /* ========== TOAST ========== */
+        .toast-custom {
+            position: fixed; bottom: 2rem; right: 2rem;
+            background: #0f172a; color: #fff;
+            padding: 0.9rem 1.3rem; border-radius: var(--radius);
+            box-shadow: var(--shadow-xl); z-index: 1070;
+            display: flex; align-items: center; gap: 0.6rem;
+            font-weight: 500; font-size: 0.85rem;
+            transform: translateY(120px); opacity: 0;
+            transition: all 0.35s ease;
+        }
+        .toast-custom.show { transform: translateY(0); opacity: 1; }
+        .toast-custom.success { border-left: 4px solid #10b981; }
+        .toast-custom.warning { border-left: 4px solid #f59e0b; }
+
+        /* ========== ANIMATIONS ========== */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-in { animation: fadeInUp 0.45s ease forwards; opacity: 0; }
+        .delay-1 { animation-delay: 0.05s; }
+        .delay-2 { animation-delay: 0.1s; }
+        .delay-3 { animation-delay: 0.15s; }
+        .delay-4 { animation-delay: 0.2s; }
+
+        /* ========== RESPONSIVE ========== */
+        @media (max-width: 991.98px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.show { transform: translateX(0); }
+            .main-content { margin-left: 0; }
+            .sidebar-overlay.show { display: block; }
+        }
+        @media (max-width: 767.98px) {
+            .top-navbar { padding: 0.55rem 0.9rem; }
+            .stat-card { padding: 1rem; }
+            .stat-value { font-size: 1.3rem; }
+            .warehouse-grid { grid-template-columns: repeat(2, 1fr); }
+            .trace-node { min-width: 80px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Sidebar Overlay -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<!-- ==================== SIDEBAR ==================== -->
+<aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+        <div class="d-flex align-items-center gap-3">
+            <div class="logo-icon"><i class="bi bi-grid-3x3-gap-fill"></i></div>
+            <div><h4>SmartCoop</h4><small>Farmer Platform</small></div>
+        </div>
+    </div>
+    <div class="sidebar-user">
+        <div class="d-flex align-items-center gap-3">
+            <div class="avatar">AI</div>
+            <div><div class="user-name">Abubakar Ibrahim</div><div class="user-role">Farmer · FARM-2847</div></div>
+        </div>
+    </div>
+    <nav class="sidebar-nav">
+        <div class="nav-section">Main Menu</div>
+        <a class="nav-link" href="dashboard.html"><i class="bi bi-columns-gap"></i> Dashboard</a>
+        <a class="nav-link" href="myprofile.html"><i class="bi bi-person-badge"></i> My Profile</a>
+        <a class="nav-link" href="farm-mapping.html"><i class="bi bi-geo-alt"></i> Farm Mapping</a>
+        <div class="nav-section mt-2">Farm Management</div>
+        <a class="nav-link" href="crop-records.html"><i class="bi bi-flower1"></i> Crop Records</a>
+        <a class="nav-link active" href="produce-tracking.html"><i class="bi bi-box-seam"></i> Produce Tracking <span class="badge-pill">3</span></a>
+        <a class="nav-link" href="inputs-chemicals.html"><i class="bi bi-droplet"></i> Inputs & Chemicals</a>
+        <div class="nav-section mt-2">Finance & Market</div>
+        <a class="nav-link" href="wallet.html"><i class="bi bi-wallet2"></i> Wallet</a>
+        <a class="nav-link" href="loans-credit.html"><i class="bi bi-cash-stack"></i> Loans & Credit</a>
+        <a class="nav-link" href="marketplace.html"><i class="bi bi-shop"></i> Marketplace</a>
+        <div class="nav-section mt-2">Insights</div>
+        <a class="nav-link" href="climate-alerts.html"><i class="bi bi-cloud-sun"></i> Climate Alerts <span class="badge-pill">2</span></a>
+        <a class="nav-link" href="analytics.html"><i class="bi bi-graph-up"></i> Analytics</a>
+        <a class="nav-link" href="traceability-qr.html"><i class="bi bi-qr-code"></i> Traceability QR</a>
+    </nav>
+    <div class="sidebar-footer">
+        <a href="#" style="color:rgba(255,255,255,0.45);font-size:0.78rem;text-decoration:none;">
+            <i class="bi bi-box-arrow-right me-1"></i> Sign Out
+        </a>
+    </div>
+</aside>
+
+<!-- ==================== MAIN CONTENT ==================== -->
+<div class="main-content" id="mainContent">
+
+    <!-- Top Navbar -->
+    <nav class="top-navbar">
+        <div class="d-flex align-items-center justify-content-between w-100">
+            <div class="d-flex align-items-center gap-3">
+                <button class="navbar-toggler d-lg-none btn-icon border-0" id="sidebarToggle">
+                    <i class="bi bi-list"></i>
+                </button>
+                <h5 class="mb-0 fw-bold" style="color:var(--text-primary);">
+                    <i class="bi bi-box-seam me-2" style="color:var(--primary);"></i>Produce Tracking & Traceability
+                </h5>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                <span class="badge bg-success bg-opacity-10 text-success rounded-pill d-none d-md-inline-flex align-items-center gap-1" style="font-size:0.7rem;">
+                    <i class="bi bi-broadcast"></i> Live Tracking
+                </span>
+                <button class="btn-icon"><i class="bi bi-bell"></i><span class="notification-dot"></span></button>
+                <button class="btn-icon" data-bs-toggle="modal" data-bs-target="#scanQRModal">
+                    <i class="bi bi-qr-code-scan"></i>
+                </button>
+                <div style="width:32px;height:32px;background:linear-gradient(135deg,#0d9488,#14b8a6);border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:0.8rem;">AI</div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Content -->
+    <div class="p-3 p-md-4">
+
+        <!-- Stat Cards -->
+        <div class="row g-3 mb-3">
+            <div class="col-6 col-xl-3 animate-in delay-1">
+                <div class="stat-card batches">
+                    <div class="d-flex align-items-start justify-content-between mb-2">
+                        <div class="stat-icon icon-batch"><i class="bi bi-collection"></i></div>
+                        <span class="stat-change positive"><i class="bi bi-arrow-up-short"></i> +3</span>
+                    </div>
+                    <div class="stat-label">Total Batches</div>
+                    <div class="stat-value">12</div>
+                    <small style="color:var(--text-muted);font-size:0.7rem;">Active & completed</small>
+                </div>
+            </div>
+            <div class="col-6 col-xl-3 animate-in delay-2">
+                <div class="stat-card instock">
+                    <div class="d-flex align-items-start justify-content-between mb-2">
+                        <div class="stat-icon icon-stock"><i class="bi bi-building"></i></div>
+                        <span class="badge bg-info bg-opacity-10 text-info rounded-pill" style="font-size:0.65rem;">3 batches</span>
+                    </div>
+                    <div class="stat-label">In Storage</div>
+                    <div class="stat-value">1.2<span style="font-size:0.8rem;font-weight:500;"> Tons</span></div>
+                    <small style="color:var(--text-muted);font-size:0.7rem;">Kano Central Warehouse</small>
+                </div>
+            </div>
+            <div class="col-6 col-xl-3 animate-in delay-3">
+                <div class="stat-card quality">
+                    <div class="d-flex align-items-start justify-content-between mb-2">
+                        <div class="stat-icon icon-quality"><i class="bi bi-patch-check"></i></div>
+                        <span class="stat-change positive">100%</span>
+                    </div>
+                    <div class="stat-label">Quality Pass Rate</div>
+                    <div class="stat-value">100<span style="font-size:0.8rem;">%</span></div>
+                    <small style="color:var(--text-muted);font-size:0.7rem;">All batches certified</small>
+                </div>
+            </div>
+            <div class="col-6 col-xl-3 animate-in delay-4">
+                <div class="stat-card shipped">
+                    <div class="d-flex align-items-start justify-content-between mb-2">
+                        <div class="stat-icon icon-ship"><i class="bi bi-truck"></i></div>
+                        <span class="stat-change positive"><i class="bi bi-arrow-up-short"></i> +2</span>
+                    </div>
+                    <div class="stat-label">Shipped/Delivered</div>
+                    <div class="stat-value">7</div>
+                    <small style="color:var(--text-muted);font-size:0.7rem;">Completed deliveries</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <ul class="nav mb-3 animate-in delay-1" id="trackingTabs" role="tablist" style="border-bottom:2px solid var(--border-light);gap:0.25rem;">
+            <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#batches" type="button" style="border:none;padding:0.75rem 1.25rem;font-size:0.82rem;font-weight:600;color:var(--primary);border-bottom:2px solid var(--primary);background:transparent;"><i class="bi bi-collection me-1"></i> All Batches</button></li>
+            <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#warehouse" type="button" style="border:none;padding:0.75rem 1.25rem;font-size:0.82rem;font-weight:600;color:var(--text-muted);background:transparent;"><i class="bi bi-building me-1"></i> Warehouse</button></li>
+            <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#traceability" type="button" style="border:none;padding:0.75rem 1.25rem;font-size:0.82rem;font-weight:600;color:var(--text-muted);background:transparent;"><i class="bi bi-arrow-repeat me-1"></i> Traceability</button></li>
+            <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#quality" type="button" style="border:none;padding:0.75rem 1.25rem;font-size:0.82rem;font-weight:600;color:var(--text-muted);background:transparent;"><i class="bi bi-clipboard-check me-1"></i> Quality Control</button></li>
+        </ul>
+
+        <!-- Tab Content -->
+        <div class="tab-content">
+
+            <!-- ALL BATCHES TAB -->
+            <div class="tab-pane fade show active" id="batches">
+                <div class="row g-3 mb-3">
+                    <div class="col-12 animate-in delay-1">
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <span><span class="header-icon icon-h-green"><i class="bi bi-collection"></i></span>Batch Inventory</span>
+                                <div class="d-flex gap-2">
+                                    <select class="form-select form-select-sm" style="width:auto;font-size:0.72rem;">
+                                        <option>All Status</option><option>In Storage</option><option>In Transit</option><option>Delivered</option><option>Sold</option>
+                                    </select>
+                                    <button class="btn-teal btn-sm-pill" data-bs-toggle="modal" data-bs-target="#addBatchModal">
+                                        <i class="bi bi-plus-lg me-1"></i> New Batch
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="table-responsive">
+                                    <table class="table table-modern">
+                                        <thead><tr><th>Batch ID</th><th>Product</th><th>Qty</th><th>Grade</th><th>Location</th><th>Status</th><th>QR</th><th>Actions</th></tr></thead>
+                                        <tbody>
+                                            <tr>
+                                                <td><strong style="color:var(--primary);">SES-2024-001</strong></td>
+                                                <td>🌾 Sesame</td><td>450 kg</td>
+                                                <td><span class="badge bg-success bg-opacity-10 text-success rounded-pill">Premium</span></td>
+                                                <td>Kano Central</td>
+                                                <td><span class="badge-status badge-instore">● In Storage</span></td>
+                                                <td><i class="bi bi-qr-code" style="color:var(--primary);cursor:pointer;" onclick="showToast('QR Code: SES-2024-001','success')"></i></td>
+                                                <td>
+                                                    <button class="btn-outline-teal btn-xs me-1" data-bs-toggle="modal" data-bs-target="#batchDetailModal" onclick="openBatchDetail('SES-2024-001')"><i class="bi bi-eye"></i></button>
+                                                    <button class="btn-outline-teal btn-xs" onclick="showToast('Batch shipped!','success')"><i class="bi bi-truck"></i></button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong style="color:var(--primary);">GIN-2024-003</strong></td>
+                                                <td>🫚 Ginger</td><td>200 kg</td>
+                                                <td><span class="badge bg-purple bg-opacity-10 rounded-pill" style="color:#8b5cf6;">Export A</span></td>
+                                                <td>Kano Central</td>
+                                                <td><span class="badge-status badge-instore">● In Storage</span></td>
+                                                <td><i class="bi bi-qr-code" style="color:var(--primary);cursor:pointer;" onclick="showToast('QR Code: GIN-2024-003','success')"></i></td>
+                                                <td>
+                                                    <button class="btn-outline-teal btn-xs me-1" data-bs-toggle="modal" data-bs-target="#batchDetailModal" onclick="openBatchDetail('GIN-2024-003')"><i class="bi bi-eye"></i></button>
+                                                    <button class="btn-outline-teal btn-xs" onclick="showToast('Batch shipped!','success')"><i class="bi bi-truck"></i></button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong style="color:var(--primary);">MAI-2024-002</strong></td>
+                                                <td>🌽 Maize</td><td>800 kg</td>
+                                                <td><span class="badge bg-warning bg-opacity-10 text-warning rounded-pill">Standard</span></td>
+                                                <td>Kaduna North</td>
+                                                <td><span class="badge-status badge-transit">● In Transit</span></td>
+                                                <td><i class="bi bi-qr-code" style="color:var(--primary);cursor:pointer;" onclick="showToast('QR Code: MAI-2024-002','success')"></i></td>
+                                                <td>
+                                                    <button class="btn-outline-teal btn-xs me-1" data-bs-toggle="modal" data-bs-target="#batchDetailModal" onclick="openBatchDetail('MAI-2024-002')"><i class="bi bi-eye"></i></button>
+                                                    <button class="btn-outline-teal btn-xs" onclick="showToast('Status updated!','success')"><i class="bi bi-check-lg"></i></button>
+                                                </td>
+                                            </tr>
+                                            <tr style="background:var(--surface-alt);">
+                                                <td><strong style="color:var(--text-muted);">SES-2024-000</strong></td>
+                                                <td>🌾 Sesame</td><td>450 kg</td>
+                                                <td><span class="badge bg-success bg-opacity-10 text-success rounded-pill">Premium</span></td>
+                                                <td>Lagos Port</td>
+                                                <td><span class="badge-status badge-delivered">● Delivered</span></td>
+                                                <td><i class="bi bi-qr-code text-muted" style="cursor:pointer;" onclick="showToast('QR Code: SES-2024-000','success')"></i></td>
+                                                <td>
+                                                    <button class="btn-outline-teal btn-xs" data-bs-toggle="modal" data-bs-target="#batchDetailModal" onclick="openBatchDetail('SES-2024-000')"><i class="bi bi-eye"></i></button>
+                                                </td>
+                                            </tr>
+                                            <tr style="background:var(--surface-alt);">
+                                                <td><strong style="color:var(--text-muted);">GIN-2024-001</strong></td>
+                                                <td>🫚 Ginger</td><td>180 kg</td>
+                                                <td><span class="badge bg-purple bg-opacity-10 rounded-pill" style="color:#8b5cf6;">Export A</span></td>
+                                                <td>Buyer: OLAM</td>
+                                                <td><span class="badge-status badge-sold">● Sold</span></td>
+                                                <td><i class="bi bi-qr-code text-muted" style="cursor:pointer;" onclick="showToast('QR Code: GIN-2024-001','success')"></i></td>
+                                                <td>
+                                                    <button class="btn-outline-teal btn-xs" data-bs-toggle="modal" data-bs-target="#batchDetailModal" onclick="openBatchDetail('GIN-2024-001')"><i class="bi bi-eye"></i></button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Batch Cards Row -->
+                <div class="row g-3 animate-in delay-2">
+                    <div class="col-md-6 col-lg-4">
+                        <div class="batch-card" onclick="showToast('Batch SES-2024-001 selected','success')">
+                            <div class="batch-color-strip" style="background:#10b981;"></div>
+                            <div class="ps-3">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <div>
+                                        <h6 class="fw-bold mb-0">SES-2024-001</h6>
+                                        <small class="text-muted">Sesame · Premium Grade</small>
+                                    </div>
+                                    <div class="qr-mini"></div>
+                                </div>
+                                <div class="row g-1" style="font-size:0.7rem;">
+                                    <div class="col-6"><span class="text-muted">Quantity:</span><br><strong>450 kg</strong></div>
+                                    <div class="col-6"><span class="text-muted">Moisture:</span><br><strong>6.2%</strong></div>
+                                    <div class="col-6"><span class="text-muted">Harvested:</span><br><strong>15 May 2024</strong></div>
+                                    <div class="col-6"><span class="text-muted">Location:</span><br><strong>Kano Central</strong></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-4">
+                        <div class="batch-card" onclick="showToast('Batch GIN-2024-003 selected','success')">
+                            <div class="batch-color-strip" style="background:#8b5cf6;"></div>
+                            <div class="ps-3">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <div>
+                                        <h6 class="fw-bold mb-0">GIN-2024-003</h6>
+                                        <small class="text-muted">Ginger · Export Grade A</small>
+                                    </div>
+                                    <div class="qr-mini"></div>
+                                </div>
+                                <div class="row g-1" style="font-size:0.7rem;">
+                                    <div class="col-6"><span class="text-muted">Quantity:</span><br><strong>200 kg</strong></div>
+                                    <div class="col-6"><span class="text-muted">Moisture:</span><br><strong>8.1%</strong></div>
+                                    <div class="col-6"><span class="text-muted">Harvested:</span><br><strong>10 May 2024</strong></div>
+                                    <div class="col-6"><span class="text-muted">Location:</span><br><strong>Kano Central</strong></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-4">
+                        <div class="batch-card" onclick="showToast('Batch MAI-2024-002 selected','success')">
+                            <div class="batch-color-strip" style="background:#f59e0b;"></div>
+                            <div class="ps-3">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <div>
+                                        <h6 class="fw-bold mb-0">MAI-2024-002</h6>
+                                        <small class="text-muted">Maize · Standard Grade</small>
+                                    </div>
+                                    <div class="qr-mini"></div>
+                                </div>
+                                <div class="row g-1" style="font-size:0.7rem;">
+                                    <div class="col-6"><span class="text-muted">Quantity:</span><br><strong>800 kg</strong></div>
+                                    <div class="col-6"><span class="text-muted">Moisture:</span><br><strong>12.4%</strong></div>
+                                    <div class="col-6"><span class="text-muted">Harvested:</span><br><strong>01 May 2024</strong></div>
+                                    <div class="col-6"><span class="text-muted">Location:</span><br><strong>Kaduna North</strong></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- WAREHOUSE TAB -->
+            <div class="tab-pane fade" id="warehouse">
+                <div class="row g-3">
+                    <div class="col-12 col-lg-8 animate-in delay-1">
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <span><span class="header-icon icon-h-blue"><i class="bi bi-building"></i></span>Kano Central Warehouse Layout</span>
+                                <span class="badge bg-success bg-opacity-10 text-success rounded-pill" style="font-size:0.65rem;">Active</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="warehouse-grid">
+                                    <div class="warehouse-zone occupied" onclick="showToast('Zone A1: Sesame - 450kg','success')">
+                                        A1
+                                        <span class="zone-tooltip">🌾 Sesame · 450kg</span>
+                                    </div>
+                                    <div class="warehouse-zone occupied" onclick="showToast('Zone A2: Sesame - 200kg','success')">
+                                        A2
+                                        <span class="zone-tooltip">🌾 Sesame · 200kg</span>
+                                    </div>
+                                    <div class="warehouse-zone reserved" onclick="showToast('Zone B1: Reserved for Maize','warning')">
+                                        B1
+                                        <span class="zone-tooltip">🔒 Reserved</span>
+                                    </div>
+                                    <div class="warehouse-zone available" onclick="showToast('Zone B2: Available','success')">
+                                        B2
+                                        <span class="zone-tooltip">✅ Available</span>
+                                    </div>
+                                    <div class="warehouse-zone occupied" onclick="showToast('Zone C1: Ginger - 200kg','success')">
+                                        C1
+                                        <span class="zone-tooltip">🫚 Ginger · 200kg</span>
+                                    </div>
+                                    <div class="warehouse-zone available" onclick="showToast('Zone C2: Available','success')">
+                                        C2
+                                        <span class="zone-tooltip">✅ Available</span>
+                                    </div>
+                                    <div class="warehouse-zone available" onclick="showToast('Zone D1: Available','success')">
+                                        D1
+                                        <span class="zone-tooltip">✅ Available</span>
+                                    </div>
+                                    <div class="warehouse-zone available" onclick="showToast('Zone D2: Available','success')">
+                                        D2
+                                        <span class="zone-tooltip">✅ Available</span>
+                                    </div>
+                                </div>
+                                <div class="d-flex gap-3 mt-3 pt-3 border-top">
+                                    <div class="d-flex align-items-center gap-1"><div style="width:14px;height:14px;background:#ecfdf5;border:2px solid #10b981;border-radius:3px;"></div><small style="font-size:0.65rem;">Occupied</small></div>
+                                    <div class="d-flex align-items-center gap-1"><div style="width:14px;height:14px;background:#fffbeb;border:2px solid #f59e0b;border-radius:3px;"></div><small style="font-size:0.65rem;">Reserved</small></div>
+                                    <div class="d-flex align-items-center gap-1"><div style="width:14px;height:14px;background:var(--surface-alt);border:2px dashed var(--border);border-radius:3px;"></div><small style="font-size:0.65rem;">Available</small></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg-4 animate-in delay-2">
+                        <div class="dashboard-card mb-3">
+                            <div class="card-header">
+                                <span><i class="bi bi-thermometer-half me-2" style="color:var(--warning);"></i>Storage Conditions</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="row g-2">
+                                    <div class="col-6">
+                                        <div class="p-2 rounded-2 text-center" style="background:var(--info-light);">
+                                            <i class="bi bi-thermometer" style="font-size:1.3rem;color:#3b82f6;"></i>
+                                            <div class="fw-bold" style="font-size:0.8rem;">24°C</div>
+                                            <small class="text-muted">Temperature</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="p-2 rounded-2 text-center" style="background:var(--success-light);">
+                                            <i class="bi bi-droplet" style="font-size:1.3rem;color:#059669;"></i>
+                                            <div class="fw-bold" style="font-size:0.8rem;">55%</div>
+                                            <small class="text-muted">Humidity</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="alert border-0 rounded-3 mt-3 mb-0" style="background:var(--success-light);font-size:0.72rem;">
+                                    <i class="bi bi-check-circle-fill text-success me-1"></i> All conditions within safe range.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <span><i class="bi bi-truck me-2" style="color:var(--info);"></i>Recent Movements</span>
+                            </div>
+                            <div class="card-body" style="font-size:0.75rem;">
+                                <div class="d-flex gap-2 mb-3 p-2 rounded-2" style="background:var(--surface-alt);">
+                                    <div style="width:8px;height:8px;background:#3b82f6;border-radius:50%;margin-top:5px;"></div>
+                                    <div><strong>MAI-2024-002</strong> - Moved to Kaduna North<br><small class="text-muted">18 May · 800kg Maize</small></div>
+                                </div>
+                                <div class="d-flex gap-2 mb-3 p-2 rounded-2" style="background:var(--surface-alt);">
+                                    <div style="width:8px;height:8px;background:#10b981;border-radius:50%;margin-top:5px;"></div>
+                                    <div><strong>GIN-2024-003</strong> - Intake completed<br><small class="text-muted">15 May · 200kg Ginger</small></div>
+                                </div>
+                                <div class="d-flex gap-2 p-2 rounded-2" style="background:var(--surface-alt);">
+                                    <div style="width:8px;height:8px;background:#8b5cf6;border-radius:50%;margin-top:5px;"></div>
+                                    <div><strong>SES-2024-001</strong> - Quality check passed<br><small class="text-muted">10 May · 450kg Sesame</small></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TRACEABILITY TAB -->
+            <div class="tab-pane fade" id="traceability">
+                <div class="row g-3">
+                    <div class="col-12 animate-in delay-1">
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <span><span class="header-icon icon-h-purple"><i class="bi bi-arrow-repeat"></i></span>Traceability Chain: SES-2024-001</span>
+                                <select class="form-select form-select-sm" style="width:auto;font-size:0.72rem;">
+                                    <option>SES-2024-001 (Sesame)</option>
+                                    <option>GIN-2024-003 (Ginger)</option>
+                                    <option>MAI-2024-002 (Maize)</option>
+                                </select>
+                            </div>
+                            <div class="card-body">
+                                <div class="trace-chain">
+                                    <div class="trace-node">
+                                        <div class="trace-node-icon completed">🌱</div>
+                                        <div class="trace-label completed">Farm</div>
+                                        <small style="font-size:0.6rem;display:block;">Field A</small>
+                                    </div>
+                                    <div class="trace-arrow">→</div>
+                                    <div class="trace-node">
+                                        <div class="trace-node-icon completed">🚜</div>
+                                        <div class="trace-label completed">Harvest</div>
+                                        <small style="font-size:0.6rem;display:block;">15 May</small>
+                                    </div>
+                                    <div class="trace-arrow">→</div>
+                                    <div class="trace-node">
+                                        <div class="trace-node-icon completed">🔬</div>
+                                        <div class="trace-label completed">Quality</div>
+                                        <small style="font-size:0.6rem;display:block;">Passed</small>
+                                    </div>
+                                    <div class="trace-arrow">→</div>
+                                    <div class="trace-node">
+                                        <div class="trace-node-icon active">🏭</div>
+                                        <div class="trace-label active">Warehouse</div>
+                                        <small style="font-size:0.6rem;display:block;color:var(--primary);">In Storage</small>
+                                    </div>
+                                    <div class="trace-arrow">→</div>
+                                    <div class="trace-node">
+                                        <div class="trace-node-icon">🚚</div>
+                                        <div class="trace-label">Transport</div>
+                                        <small style="font-size:0.6rem;display:block;">Pending</small>
+                                    </div>
+                                    <div class="trace-arrow">→</div>
+                                    <div class="trace-node">
+                                        <div class="trace-node-icon">✅</div>
+                                        <div class="trace-label">Delivered</div>
+                                        <small style="font-size:0.6rem;display:block;">Pending</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg-6 animate-in delay-2">
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <span><i class="bi bi-info-circle me-2" style="color:var(--info);"></i>Batch Provenance</span>
+                            </div>
+                            <div class="card-body">
+                                <table class="table table-sm" style="font-size:0.78rem;">
+                                    <tr><td class="text-muted">Batch ID</td><td><strong>SES-2024-001</strong></td></tr>
+                                    <tr><td class="text-muted">Farmer</td><td>Abubakar Ibrahim (FARM-2847)</td></tr>
+                                    <tr><td class="text-muted">Farm Location</td><td>Kaduna State, Nigeria · 10.5234°N, 7.4388°E</td></tr>
+                                    <tr><td class="text-muted">Crop Variety</td><td>Sesame - Premium</td></tr>
+                                    <tr><td class="text-muted">Harvest Date</td><td>15 May 2024</td></tr>
+                                    <tr><td class="text-muted">Chemicals Used</td><td>Organic Biopesticide (2L) · No synthetic fertilizers</td></tr>
+                                    <tr><td class="text-muted">Certifications</td><td>Organic · EU Compliant</td></tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg-6 animate-in delay-3">
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <span><i class="bi bi-qr-code me-2" style="color:var(--primary);"></i>QR Traceability Label</span>
+                            </div>
+                            <div class="card-body text-center">
+                                <div style="width:150px;height:150px;background:repeating-linear-gradient(45deg,#1b4332 0px,#1b4332 6px,#2d6a4f 6px,#2d6a4f 12px);margin:0 auto;border-radius:var(--radius);box-shadow:var(--shadow-lg);"></div>
+                                <p class="mt-3 mb-2 fw-bold" style="font-size:0.85rem;">SES-2024-001</p>
+                                <div class="d-flex justify-content-center gap-2">
+                                    <button class="btn-teal btn-sm-pill" onclick="showToast('QR downloaded!','success')"><i class="bi bi-download me-1"></i> Download</button>
+                                    <button class="btn-outline-teal btn-sm-pill" onclick="showToast('Link copied!','success')"><i class="bi bi-share me-1"></i> Share</button>
+                                    <button class="btn-outline-teal btn-sm-pill" onclick="window.print()"><i class="bi bi-printer me-1"></i> Print</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- QUALITY CONTROL TAB -->
+            <div class="tab-pane fade" id="quality">
+                <div class="row g-3">
+                    <div class="col-12 animate-in delay-1">
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <span><span class="header-icon icon-h-amber"><i class="bi bi-clipboard-check"></i></span>Quality Control Records</span>
+                                <button class="btn-teal btn-sm-pill" data-bs-toggle="modal" data-bs-target="#qualityCheckModal">
+                                    <i class="bi bi-plus-lg me-1"></i> New QC Check
+                                </button>
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="table-responsive">
+                                    <table class="table table-modern">
+                                        <thead><tr><th>Date</th><th>Batch</th><th>Moisture</th><th>Purity</th><th>Aflatoxin</th><th>Grade</th><th>Inspector</th><th>Status</th></tr></thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>18 May 2024</td><td>GIN-2024-003</td><td>8.1%</td><td>98.5%</td><td><span class="text-success">< 4ppb</span></td>
+                                                <td><span class="badge bg-purple bg-opacity-10 rounded-pill" style="color:#8b5cf6;">Export A</span></td>
+                                                <td>A. Musa</td>
+                                                <td><span class="badge-status badge-instore">Passed</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td>15 May 2024</td><td>SES-2024-001</td><td>6.2%</td><td>99.1%</td><td><span class="text-success">< 4ppb</span></td>
+                                                <td><span class="badge bg-success bg-opacity-10 text-success rounded-pill">Premium</span></td>
+                                                <td>A. Musa</td>
+                                                <td><span class="badge-status badge-instore">Passed</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td>10 May 2024</td><td>MAI-2024-002</td><td>12.4%</td><td>96.8%</td><td><span class="text-warning">4-10ppb</span></td>
+                                                <td><span class="badge bg-warning bg-opacity-10 text-warning rounded-pill">Standard</span></td>
+                                                <td>S. Bello</td>
+                                                <td><span class="badge-status badge-quality">Conditional</span></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 animate-in delay-2">
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <span><i class="bi bi-graph-up me-2" style="color:var(--success);"></i>Quality Metrics Overview</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3"><span style="font-size:0.78rem;">Avg Moisture Content</span><div class="progress mt-1" style="height:8px;"><div class="progress-bar bg-success" style="width:62%;"></div></div><small class="text-muted">6.2% (Premium range: 5-8%)</small></div>
+                                <div class="mb-3"><span style="font-size:0.78rem;">Purity Level</span><div class="progress mt-1" style="height:8px;"><div class="progress-bar bg-success" style="width:99%;"></div></div><small class="text-muted">99.1% (Target: >98%)</small></div>
+                                <div><span style="font-size:0.78rem;">Aflatoxin Compliance</span><div class="progress mt-1" style="height:8px;"><div class="progress-bar bg-success" style="width:95%;"></div></div><small class="text-muted">95% batches < 4ppb</small></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 animate-in delay-3">
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <span><i class="bi bi-shield-check me-2" style="color:var(--purple);"></i>Compliance Status</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="d-flex align-items-center gap-2 mb-3 p-2 rounded-2" style="background:var(--success-light);">
+                                    <i class="bi bi-check-circle-fill text-success" style="font-size:1.2rem;"></i>
+                                    <div><strong style="font-size:0.8rem;">EU Export Ready</strong><br><small class="text-muted">All batches compliant</small></div>
+                                </div>
+                                <div class="d-flex align-items-center gap-2 mb-3 p-2 rounded-2" style="background:var(--success-light);">
+                                    <i class="bi bi-check-circle-fill text-success" style="font-size:1.2rem;"></i>
+                                    <div><strong style="font-size:0.8rem;">Organic Certified</strong><br><small class="text-muted">Valid until Dec 2025</small></div>
+                                </div>
+                                <div class="d-flex align-items-center gap-2 p-2 rounded-2" style="background:var(--warning-light);">
+                                    <i class="bi bi-exclamation-circle-fill text-warning" style="font-size:1.2rem;"></i>
+                                    <div><strong style="font-size:0.8rem;">Fair Trade Pending</strong><br><small class="text-muted">Under review</small></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== TOAST ==================== -->
+<div class="toast-custom success" id="toast">
+    <i class="bi bi-check-circle-fill"></i>
+    <span id="toastMessage">Action completed!</span>
+</div>
+
+<!-- ==================== MODALS ==================== -->
+
+<!-- Add Batch Modal -->
+<div class="modal fade" id="addBatchModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="bi bi-plus-circle me-2" style="color:var(--success);"></i>Create New Batch</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Product</label>
+                        <select class="form-select"><option>Select product...</option><option>Sesame</option><option>Maize</option><option>Ginger</option><option>Cassava</option></select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Quantity (kg)</label>
+                        <input type="number" class="form-control" placeholder="0">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Harvest Date</label>
+                        <input type="date" class="form-control">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Storage Location</label>
+                        <select class="form-select"><option>Select warehouse...</option><option>Kano Central</option><option>Kaduna North</option><option>On-farm Storage</option></select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Moisture Content (%)</label>
+                        <input type="number" step="0.1" class="form-control" placeholder="0.0">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Quality Grade</label>
+                        <select class="form-select"><option>Select grade...</option><option>Premium (A)</option><option>Standard (B)</option><option>Fair (C)</option></select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Batch ID</label>
+                        <input type="text" class="form-control" value="SES-2024-004" readonly>
+                    </div>
+                    <div class="col-12">
+                        <div class="qr-scanner-area" onclick="showToast('QR code generated!','success')">
+                            <i class="bi bi-qr-code"></i>
+                            <p class="mb-0 mt-2 fw-semibold">Generate QR Code for Batch</p>
+                            <small class="text-muted">Click to auto-generate</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-outline-teal" data-bs-dismiss="modal">Cancel</button>
+                <button class="btn-teal" onclick="addBatch()">Create Batch</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Scan QR Modal -->
+<div class="modal fade" id="scanQRModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content text-center">
+            <div class="modal-header border-0 pb-0"><button type="button" class="btn-close ms-auto" data-bs-dismiss="modal"></button></div>
+            <div class="modal-body pt-0">
+                <div class="qr-scanner-area mb-3" onclick="showToast('QR Code scanned! Batch: SES-2024-001','success')">
+                    <i class="bi bi-qr-code-scan" style="font-size:3rem;"></i>
+                    <p class="mb-0 mt-2 fw-semibold">Scan QR Code</p>
+                    <small class="text-muted">Point camera at batch QR label</small>
+                </div>
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Or enter Batch ID manually">
+                    <button class="btn-teal" onclick="showToast('Batch found!','success')">Search</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quality Check Modal -->
+<div class="modal fade" id="qualityCheckModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="bi bi-clipboard-check me-2" style="color:var(--warning);"></i>New Quality Check</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row g-3">
+                    <div class="col-12"><label class="form-label">Batch</label><select class="form-select"><option>Select batch...</option><option>SES-2024-001</option><option>GIN-2024-003</option><option>MAI-2024-002</option></select></div>
+                    <div class="col-md-6"><label class="form-label">Moisture (%)</label><input type="number" step="0.1" class="form-control" placeholder="0.0"></div>
+                    <div class="col-md-6"><label class="form-label">Purity (%)</label><input type="number" step="0.1" class="form-control" placeholder="0.0"></div>
+                    <div class="col-md-6"><label class="form-label">Aflatoxin</label><select class="form-select"><option>Select result...</option><option>Passed (< 4ppb)</option><option>Borderline (4-10ppb)</option><option>Failed (> 10ppb)</option></select></div>
+                    <div class="col-md-6"><label class="form-label">Final Grade</label><select class="form-select"><option>Select grade...</option><option>Premium (A)</option><option>Standard (B)</option><option>Fair (C)</option></select></div>
+                    <div class="col-12"><label class="form-label">Inspector Notes</label><textarea class="form-control" rows="2" placeholder="Observations..."></textarea></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-outline-teal" data-bs-dismiss="modal">Cancel</button>
+                <button class="btn-teal" onclick="addQualityCheck()">Save QC Report</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Batch Detail Modal -->
+<div class="modal fade" id="batchDetailModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="batchDetailTitle"><i class="bi bi-box-seam me-2" style="color:var(--primary);"></i>Batch Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="batchDetailBody"></div>
+            <div class="modal-footer">
+                <button class="btn-outline-teal" data-bs-dismiss="modal">Close</button>
+                <button class="btn-teal" onclick="showToast('Report generated!','success')"><i class="bi bi-download me-1"></i> Download Report</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== SCRIPTS ==================== -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Sidebar
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    const sidebar = document.getElementById('sidebar');
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
+    function openSidebar() { sidebar.classList.add('show'); sidebarOverlay.classList.add('show'); document.body.style.overflow = 'hidden'; }
+    function closeSidebar() { sidebar.classList.remove('show'); sidebarOverlay.classList.remove('show'); document.body.style.overflow = ''; }
+    sidebarToggle.addEventListener('click', openSidebar);
+    sidebarOverlay.addEventListener('click', closeSidebar);
+
+    // Toast
+    function showToast(message, type = 'success') {
+        const toast = document.getElementById('toast');
+        document.getElementById('toastMessage').textContent = message;
+        toast.className = 'toast-custom ' + type;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+
+    // Tab styling
+    document.querySelectorAll('#trackingTabs button').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('#trackingTabs button').forEach(b => {
+                b.classList.remove('active'); b.style.color = 'var(--text-muted)'; b.style.borderBottom = 'none';
+            });
+            this.classList.add('active'); this.style.color = 'var(--primary)'; this.style.borderBottom = '2px solid var(--primary)';
+        });
+    });
+
+    // Batch Detail
+    function openBatchDetail(batchId) {
+        const data = {
+            'SES-2024-001': { title:'🌾 Sesame - Premium Grade', qty:'450 kg', moisture:'6.2%', purity:'99.1%', aflatoxin:'< 4ppb', grade:'Premium (A)', location:'Kano Central', harvested:'15 May 2024', farmer:'Abubakar Ibrahim', field:'Field A', certs:'Organic · EU Compliant', status:'In Storage' },
+            'GIN-2024-003': { title:'🫚 Ginger - Export Grade A', qty:'200 kg', moisture:'8.1%', purity:'98.5%', aflatoxin:'< 4ppb', grade:'Export A', location:'Kano Central', harvested:'10 May 2024', farmer:'Abubakar Ibrahim', field:'Field C', certs:'Organic · EU Compliant', status:'In Storage' },
+            'MAI-2024-002': { title:'🌽 Maize - Standard Grade', qty:'800 kg', moisture:'12.4%', purity:'96.8%', aflatoxin:'4-10ppb', grade:'Standard (B)', location:'Kaduna North', harvested:'01 May 2024', farmer:'Abubakar Ibrahim', field:'Field B', certs:'Standard', status:'In Transit' },
+            'SES-2024-000': { title:'🌾 Sesame - Premium (Delivered)', qty:'450 kg', moisture:'6.0%', purity:'99.3%', aflatoxin:'< 4ppb', grade:'Premium (A)', location:'Lagos Port', harvested:'10 Apr 2024', farmer:'Abubakar Ibrahim', field:'Field A', certs:'Organic · EU Compliant', status:'Delivered' },
+            'GIN-2024-001': { title:'🫚 Ginger - Export (Sold)', qty:'180 kg', moisture:'7.8%', purity:'98.9%', aflatoxin:'< 4ppb', grade:'Export A', location:'Buyer: OLAM', harvested:'05 Apr 2024', farmer:'Abubakar Ibrahim', field:'Field C', certs:'Organic · EU Compliant', status:'Sold' }
+        };
+        const d = data[batchId] || data['SES-2024-001'];
+        document.getElementById('batchDetailTitle').innerHTML = `<i class="bi bi-box-seam me-2" style="color:var(--primary);"></i>${d.title}`;
+        document.getElementById('batchDetailBody').innerHTML = `
+            <div class="row g-3">
+                <div class="col-md-6"><table class="table table-sm" style="font-size:0.78rem;">
+                    <tr><td class="text-muted">Batch ID</td><td><strong>${batchId}</strong></td></tr>
+                    <tr><td class="text-muted">Quantity</td><td><strong>${d.qty}</strong></td></tr>
+                    <tr><td class="text-muted">Moisture</td><td><strong>${d.moisture}</strong></td></tr>
+                    <tr><td class="text-muted">Purity</td><td><strong>${d.purity}</strong></td></tr>
+                </table></div>
+                <div class="col-md-6"><table class="table table-sm" style="font-size:0.78rem;">
+                    <tr><td class="text-muted">Aflatoxin</td><td><strong>${d.aflatoxin}</strong></td></tr>
+                    <tr><td class="text-muted">Grade</td><td><strong>${d.grade}</strong></td></tr>
+                    <tr><td class="text-muted">Location</td><td><strong>${d.location}</strong></td></tr>
+                    <tr><td class="text-muted">Status</td><td><strong>${d.status}</strong></td></tr>
+                </table></div>
+                <div class="col-12"><div class="p-3 rounded-3" style="background:var(--surface-alt);">
+                    <strong>Provenance:</strong> ${d.farmer} · ${d.field} · Harvested ${d.harvested}<br>
+                    <strong>Certifications:</strong> ${d.certs}
+                </div></div>
+            </div>`;
+    }
+
+    // Add Batch
+    function addBatch() {
+        const modal = bootstrap.Modal.getInstance(document.getElementById('addBatchModal'));
+        modal.hide();
+        showToast('✅ New batch created successfully! QR code generated.', 'success');
+    }
+
+    // Add Quality Check
+    function addQualityCheck() {
+        const modal = bootstrap.Modal.getInstance(document.getElementById('qualityCheckModal'));
+        modal.hide();
+        showToast('✅ Quality check report saved!', 'success');
+    }
+</script>
+
+</body>
+</html>

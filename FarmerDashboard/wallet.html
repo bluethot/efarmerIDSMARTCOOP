@@ -1,0 +1,935 @@
+v<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wallet & Payments - SmartCoop Platform</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0d9488;
+            --primary-dark: #0f766e;
+            --primary-light: #14b8a6;
+            --primary-bg: #f0fdfa;
+            --accent: #f59e0b;
+            --accent-light: #fef3c7;
+            --surface: #ffffff;
+            --surface-alt: #f8fafc;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #94a3b8;
+            --border: #e2e8f0;
+            --border-light: #f1f5f9;
+            --danger: #ef4444;
+            --danger-light: #fef2f2;
+            --success: #10b981;
+            --success-light: #ecfdf5;
+            --warning: #f59e0b;
+            --warning-light: #fffbeb;
+            --info: #3b82f6;
+            --info-light: #eff6ff;
+            --purple: #8b5cf6;
+            --purple-light: #f5f3ff;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+            --shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.06);
+            --shadow-lg: 0 10px 15px rgba(0,0,0,0.1), 0 4px 6px rgba(0,0,0,0.05);
+            --shadow-xl: 0 20px 40px rgba(0,0,0,0.15);
+            --radius-sm: 8px;
+            --radius: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 20px;
+            --sidebar-width: 280px;
+            --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: var(--surface-alt);
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            color: var(--text-primary);
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+        }
+
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+
+        /* ========== SIDEBAR ========== */
+        .sidebar {
+            position: fixed; top: 0; left: 0;
+            width: var(--sidebar-width); height: 100vh;
+            background: linear-gradient(195deg, #0f172a 0%, #1e293b 100%);
+            z-index: 1050; overflow-y: auto;
+            transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: var(--shadow-xl);
+        }
+        .sidebar::before {
+            content: '';
+            position: absolute; top: 0; left: 0; right: 0; height: 250px;
+            background: radial-gradient(ellipse at 60% 0%, rgba(13,148,136,0.12) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .sidebar-brand { padding: 1.75rem 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.05); position: relative; }
+        .logo-icon {
+            width: 42px; height: 42px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            border-radius: var(--radius);
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-size: 1.3rem;
+            box-shadow: 0 4px 15px rgba(13,148,136,0.3);
+        }
+        .sidebar-brand h4 { color: #fff; font-weight: 700; font-size: 1.1rem; margin: 0; }
+        .sidebar-brand small { color: rgba(255,255,255,0.4); font-size: 0.68rem; text-transform: uppercase; letter-spacing: 1px; }
+        .sidebar-user { padding: 1.25rem 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .avatar {
+            width: 42px; height: 42px; border-radius: var(--radius);
+            background: linear-gradient(135deg, #f59e0b, #fbbf24);
+            display: flex; align-items: center; justify-content: center;
+            color: #1e293b; font-weight: 700; font-size: 1rem; position: relative;
+        }
+        .avatar::after {
+            content: ''; position: absolute; bottom: -2px; right: -2px;
+            width: 13px; height: 13px; background: #10b981;
+            border: 3px solid #1e293b; border-radius: 50%;
+        }
+        .sidebar-user .user-name { color: #f1f5f9; font-weight: 600; font-size: 0.85rem; }
+        .sidebar-user .user-role { color: rgba(255,255,255,0.4); font-size: 0.7rem; }
+        .sidebar-nav { padding: 0.5rem 0.75rem; }
+        .nav-section {
+            color: rgba(255,255,255,0.25); font-size: 0.62rem;
+            text-transform: uppercase; letter-spacing: 1.8px;
+            padding: 0.75rem 1rem 0.4rem; font-weight: 700;
+        }
+        .sidebar-nav .nav-link {
+            color: rgba(255,255,255,0.5); padding: 0.6rem 0.9rem;
+            font-size: 0.82rem; font-weight: 500;
+            display: flex; align-items: center; border-radius: var(--radius-sm);
+            margin-bottom: 1px; transition: all var(--transition);
+        }
+        .sidebar-nav .nav-link:hover { background: rgba(255,255,255,0.04); color: #e2e8f0; }
+        .sidebar-nav .nav-link.active {
+            background: rgba(13,148,136,0.15); color: #fff; font-weight: 600;
+            box-shadow: inset 0 0 0 1px rgba(13,148,136,0.25);
+        }
+        .sidebar-nav .nav-link i { width: 20px; margin-right: 0.7rem; font-size: 1rem; opacity: 0.75; }
+        .sidebar-nav .nav-link.active i { opacity: 1; color: var(--primary-light); }
+        .badge-pill {
+            background: var(--danger); color: #fff;
+            font-size: 0.62rem; padding: 0.2em 0.55em;
+            border-radius: 20px; margin-left: auto; font-weight: 700;
+        }
+        .sidebar-footer { padding: 1rem 1.5rem; border-top: 1px solid rgba(255,255,255,0.05); }
+        .sidebar-overlay {
+            display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(15,23,42,0.45); backdrop-filter: blur(3px); z-index: 1045;
+        }
+        .sidebar-overlay.show { display: block; }
+
+        /* ========== MAIN CONTENT ========== */
+        .main-content { margin-left: var(--sidebar-width); min-height: 100vh; transition: margin 0.35s ease; }
+
+        /* ========== TOP NAVBAR ========== */
+        .top-navbar {
+            background: rgba(255,255,255,0.75); backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 0.7rem 1.75rem;
+            border-bottom: 1px solid rgba(226,232,240,0.6);
+            position: sticky; top: 0; z-index: 1040;
+        }
+        .btn-icon {
+            width: 37px; height: 37px; border-radius: var(--radius-sm);
+            border: 1px solid var(--border); background: var(--surface);
+            color: var(--text-secondary);
+            display: flex; align-items: center; justify-content: center;
+            transition: all var(--transition); cursor: pointer; position: relative;
+        }
+        .btn-icon:hover { background: var(--surface-alt); border-color: #cbd5e1; color: var(--text-primary); }
+        .notification-dot {
+            position: absolute; top: 7px; right: 7px;
+            width: 9px; height: 9px; background: var(--danger);
+            border-radius: 50%; border: 2px solid #fff;
+        }
+
+        /* ========== WALLET BALANCE CARD ========== */
+        .wallet-balance-card {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 40%, #0f766e 100%);
+            border-radius: var(--radius-xl);
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        .wallet-balance-card::before {
+            content: '';
+            position: absolute; top: -80px; right: -80px;
+            width: 300px; height: 300px;
+            background: radial-gradient(circle, rgba(13,148,136,0.25) 0%, transparent 70%);
+            border-radius: 50%; pointer-events: none;
+        }
+        .wallet-balance-card::after {
+            content: '';
+            position: absolute; bottom: -60px; left: -60px;
+            width: 200px; height: 200px;
+            background: radial-gradient(circle, rgba(245,158,11,0.2) 0%, transparent 70%);
+            border-radius: 50%; pointer-events: none;
+        }
+        .balance-amount {
+            font-size: 3rem; font-weight: 800; color: #ffffff;
+            letter-spacing: -1px; position: relative; z-index: 1;
+        }
+        .balance-label {
+            color: rgba(255,255,255,0.6); font-size: 0.75rem;
+            text-transform: uppercase; letter-spacing: 1px;
+            font-weight: 600; position: relative; z-index: 1;
+        }
+        .balance-sub {
+            color: rgba(255,255,255,0.5); font-size: 0.75rem;
+            position: relative; z-index: 1;
+        }
+
+        /* ========== STAT CARDS ========== */
+        .stat-card {
+            background: var(--surface); border-radius: var(--radius-lg);
+            padding: 1.3rem; border: 1px solid var(--border-light);
+            transition: all var(--transition); height: 100%;
+            position: relative; overflow: hidden;
+        }
+        .stat-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-2px); }
+        .stat-icon {
+            width: 42px; height: 42px; border-radius: var(--radius);
+            display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
+        }
+        .stat-value { font-size: 1.7rem; font-weight: 800; color: var(--text-primary); letter-spacing: -0.5px; line-height: 1; }
+        .stat-label { color: var(--text-muted); font-size: 0.7rem; font-weight: 650; text-transform: uppercase; letter-spacing: 0.7px; margin-bottom: 0.2rem; }
+
+        /* ========== CARDS ========== */
+        .dashboard-card {
+            background: var(--surface); border-radius: var(--radius-lg);
+            border: 1px solid var(--border-light); overflow: hidden;
+            height: 100%; transition: all var(--transition);
+        }
+        .dashboard-card:hover { box-shadow: var(--shadow-md); }
+        .dashboard-card .card-header {
+            background: var(--surface); border-bottom: 1px solid var(--border-light);
+            padding: 1rem 1.3rem; font-weight: 650; font-size: 0.88rem;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .dashboard-card .card-body { padding: 1.3rem; }
+
+        /* ========== BUTTONS ========== */
+        .btn-teal {
+            background: var(--primary); color: #fff; border: none;
+            font-weight: 600; font-size: 0.78rem; padding: 0.5rem 1rem;
+            border-radius: var(--radius-sm); transition: all var(--transition);
+            box-shadow: 0 2px 6px rgba(13,148,136,0.2);
+        }
+        .btn-teal:hover { background: var(--primary-dark); box-shadow: 0 4px 12px rgba(13,148,136,0.3); transform: translateY(-1px); color: #fff; }
+        .btn-outline-teal {
+            border: 1.5px solid #cbd5e1; color: var(--text-secondary);
+            background: var(--surface); font-weight: 500; font-size: 0.78rem;
+            padding: 0.48rem 1rem; border-radius: var(--radius-sm); transition: all var(--transition);
+        }
+        .btn-outline-teal:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-bg); }
+        .btn-sm-pill { font-size: 0.7rem; padding: 0.3rem 0.8rem; border-radius: 20px; font-weight: 600; }
+        .btn-xs { font-size: 0.62rem; padding: 0.2rem 0.55rem; border-radius: 15px; font-weight: 600; }
+        .btn-white { background: #fff; color: #0f172a; border: none; font-weight: 600; padding: 0.6rem 1.2rem; border-radius: var(--radius-sm); transition: all var(--transition); }
+        .btn-white:hover { background: #f1f5f9; transform: translateY(-1px); }
+
+        /* ========== TABLE ========== */
+        .table-modern { font-size: 0.8rem; margin-bottom: 0; }
+        .table-modern th {
+            background: var(--surface-alt); color: var(--text-muted);
+            font-weight: 650; font-size: 0.68rem; text-transform: uppercase;
+            letter-spacing: 0.7px; border-bottom: 2px solid var(--border-light);
+            padding: 0.8rem 1rem;
+        }
+        .table-modern td {
+            vertical-align: middle; padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border-light);
+        }
+        .table-modern tbody tr { transition: background var(--transition); }
+        .table-modern tbody tr:hover { background: var(--surface-alt); }
+
+        /* ========== TRANSACTION ITEM ========== */
+        .txn-item {
+            display: flex; align-items: center; gap: 0.75rem;
+            padding: 0.8rem 0; border-bottom: 1px solid var(--border-light);
+        }
+        .txn-item:last-child { border-bottom: none; }
+        .txn-icon {
+            width: 38px; height: 38px; border-radius: var(--radius-sm);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.9rem; flex-shrink: 0;
+        }
+        .txn-icon.credit { background: #ecfdf5; color: #059669; }
+        .txn-icon.debit { background: #fef2f2; color: #dc2626; }
+        .txn-icon.pending { background: #fffbeb; color: #d97706; }
+        .txn-icon.savings { background: #eff6ff; color: #3b82f6; }
+
+        /* ========== SAVINGS GOAL ========== */
+        .savings-goal-card {
+            background: var(--surface); border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg); padding: 1.2rem;
+            transition: all var(--transition); cursor: pointer;
+        }
+        .savings-goal-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-2px); }
+        .goal-progress-ring {
+            width: 70px; height: 70px; border-radius: 50%;
+            border: 6px solid var(--border-light);
+            position: relative; display: flex; align-items: center; justify-content: center;
+        }
+        .goal-progress-ring .goal-inner {
+            font-weight: 700; font-size: 0.85rem; color: var(--text-primary);
+        }
+
+        /* ========== MODALS ========== */
+        .modal-content { border: none; border-radius: var(--radius-xl); box-shadow: var(--shadow-xl); overflow: hidden; }
+        .modal-header { background: var(--surface); border-bottom: 1px solid var(--border-light); padding: 1.2rem 1.5rem; }
+        .modal-header .modal-title { font-weight: 700; font-size: 1.1rem; letter-spacing: -0.3px; color: var(--text-primary); }
+        .modal-body { padding: 1.5rem; }
+        .modal-footer { border-top: 1px solid var(--border-light); padding: 1rem 1.5rem; }
+        .form-label { font-weight: 600; font-size: 0.76rem; color: var(--text-secondary); margin-bottom: 0.3rem; }
+        .form-control, .form-select {
+            border-radius: var(--radius-sm); border: 1px solid var(--border);
+            padding: 0.55rem 0.85rem; font-size: 0.84rem;
+            transition: all var(--transition); font-family: 'Inter', sans-serif;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(13,148,136,0.08);
+        }
+
+        /* ========== TOAST ========== */
+        .toast-custom {
+            position: fixed; bottom: 2rem; right: 2rem;
+            background: #0f172a; color: #fff;
+            padding: 0.9rem 1.3rem; border-radius: var(--radius);
+            box-shadow: var(--shadow-xl); z-index: 1070;
+            display: flex; align-items: center; gap: 0.6rem;
+            font-weight: 500; font-size: 0.85rem;
+            transform: translateY(120px); opacity: 0;
+            transition: all 0.35s ease;
+        }
+        .toast-custom.show { transform: translateY(0); opacity: 1; }
+        .toast-custom.success { border-left: 4px solid #10b981; }
+        .toast-custom.warning { border-left: 4px solid #f59e0b; }
+
+        /* ========== ANIMATIONS ========== */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-in { animation: fadeInUp 0.45s ease forwards; opacity: 0; }
+        .delay-1 { animation-delay: 0.05s; }
+        .delay-2 { animation-delay: 0.1s; }
+        .delay-3 { animation-delay: 0.15s; }
+        .delay-4 { animation-delay: 0.2s; }
+
+        /* ========== RESPONSIVE ========== */
+        @media (max-width: 991.98px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.show { transform: translateX(0); }
+            .main-content { margin-left: 0; }
+            .sidebar-overlay.show { display: block; }
+            .balance-amount { font-size: 2rem; }
+        }
+        @media (max-width: 767.98px) {
+            .top-navbar { padding: 0.55rem 0.9rem; }
+            .wallet-balance-card { padding: 1.5rem; }
+            .balance-amount { font-size: 1.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Sidebar Overlay -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<!-- ==================== SIDEBAR ==================== -->
+<aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+        <div class="d-flex align-items-center gap-3">
+            <div class="logo-icon"><i class="bi bi-grid-3x3-gap-fill"></i></div>
+            <div><h4>SmartCoop</h4><small>Farmer Platform</small></div>
+        </div>
+    </div>
+    <div class="sidebar-user">
+        <div class="d-flex align-items-center gap-3">
+            <div class="avatar">AI</div>
+            <div><div class="user-name">Abubakar Ibrahim</div><div class="user-role">Farmer · FARM-2847</div></div>
+        </div>
+    </div>
+    <nav class="sidebar-nav">
+        <div class="nav-section">Main Menu</div>
+        <a class="nav-link" href="dashboard.html"><i class="bi bi-columns-gap"></i> Dashboard</a>
+        <a class="nav-link" href="myprofile.html"><i class="bi bi-person-badge"></i> My Profile</a>
+        <a class="nav-link" href="farm-mapping.html"><i class="bi bi-geo-alt"></i> Farm Mapping</a>
+        <div class="nav-section mt-2">Farm Management</div>
+        <a class="nav-link" href="crop-records.html"><i class="bi bi-flower1"></i> Crop Records</a>
+        <a class="nav-link" href="produce-tracking.html"><i class="bi bi-box-seam"></i> Produce Tracking <span class="badge-pill">3</span></a>
+        <a class="nav-link" href="inputs-chemicals.html"><i class="bi bi-droplet"></i> Inputs & Chemicals</a>
+        <div class="nav-section mt-2">Finance & Market</div>
+        <a class="nav-link active" href="wallet.html"><i class="bi bi-wallet2"></i> Wallet</a>
+        <a class="nav-link" href="loans-credit.html"><i class="bi bi-cash-stack"></i> Loans & Credit</a>
+        <a class="nav-link" href="marketplace.html"><i class="bi bi-shop"></i> Marketplace</a>
+        <div class="nav-section mt-2">Insights</div>
+        <a class="nav-link" href="climate-alerts.html"><i class="bi bi-cloud-sun"></i> Climate Alerts <span class="badge-pill">2</span></a>
+        <a class="nav-link" href="analytics.html"><i class="bi bi-graph-up"></i> Analytics</a>
+        <a class="nav-link" href="traceability-qr.html"><i class="bi bi-qr-code"></i> Traceability QR</a>
+    </nav>
+    <div class="sidebar-footer">
+        <a href="#" style="color:rgba(255,255,255,0.45);font-size:0.78rem;text-decoration:none;">
+            <i class="bi bi-box-arrow-right me-1"></i> Sign Out
+        </a>
+    </div>
+</aside>
+
+<!-- ==================== MAIN CONTENT ==================== -->
+<div class="main-content" id="mainContent">
+
+    <!-- Top Navbar -->
+    <nav class="top-navbar">
+        <div class="d-flex align-items-center justify-content-between w-100">
+            <div class="d-flex align-items-center gap-3">
+                <button class="navbar-toggler d-lg-none btn-icon border-0" id="sidebarToggle">
+                    <i class="bi bi-list"></i>
+                </button>
+                <h5 class="mb-0 fw-bold" style="color:var(--text-primary);">
+                    <i class="bi bi-wallet2 me-2" style="color:var(--primary);"></i>Wallet & Payments
+                </h5>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                <span class="badge bg-success bg-opacity-10 text-success rounded-pill d-none d-md-inline-flex align-items-center gap-1" style="font-size:0.7rem;">
+                    <i class="bi bi-shield-check"></i> Secured
+                </span>
+                <button class="btn-icon"><i class="bi bi-bell"></i><span class="notification-dot"></span></button>
+                <div style="width:32px;height:32px;background:linear-gradient(135deg,#0d9488,#14b8a6);border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:0.8rem;">AI</div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Content -->
+    <div class="p-3 p-md-4">
+
+        <!-- Wallet Balance Card -->
+        <div class="wallet-balance-card mb-3 animate-in delay-1">
+            <div class="row align-items-center g-3">
+                <div class="col-12 col-md-6">
+                    <div class="balance-label mb-1">Available Balance</div>
+                    <div class="balance-amount">₦245,000<span style="font-size:1.2rem;color:rgba(255,255,255,0.5);">.00</span></div>
+                    <div class="balance-sub mt-1">
+                        <i class="bi bi-wallet2 me-1"></i> Wallet ID: WAL-2847-XK9M · 
+                        <span style="color:#10b981;">● Active</span>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 text-md-end">
+                    <div class="d-flex flex-wrap gap-2 justify-content-md-end" style="position:relative;z-index:1;">
+                        <button class="btn-white" data-bs-toggle="modal" data-bs-target="#depositModal">
+                            <i class="bi bi-arrow-down-circle me-1"></i> Deposit
+                        </button>
+                        <button class="btn-white" data-bs-toggle="modal" data-bs-target="#withdrawModal">
+                            <i class="bi bi-arrow-up-circle me-1"></i> Withdraw
+                        </button>
+                        <button class="btn-white" data-bs-toggle="modal" data-bs-target="#sendModal">
+                            <i class="bi bi-send me-1"></i> Send
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="row g-3 mb-3">
+            <div class="col-6 col-xl-3 animate-in delay-2">
+                <div class="stat-card">
+                    <div class="d-flex align-items-start justify-content-between mb-2">
+                        <div class="stat-icon" style="background:#ecfdf5;color:#059669;"><i class="bi bi-graph-up"></i></div>
+                    </div>
+                    <div class="stat-label">Total Received (2024)</div>
+                    <div class="stat-value">₦1.2M</div>
+                    <small style="color:var(--text-muted);font-size:0.7rem;">+22% vs last year</small>
+                </div>
+            </div>
+            <div class="col-6 col-xl-3 animate-in delay-3">
+                <div class="stat-card">
+                    <div class="d-flex align-items-start justify-content-between mb-2">
+                        <div class="stat-icon" style="background:#fef2f2;color:#dc2626;"><i class="bi bi-graph-down"></i></div>
+                    </div>
+                    <div class="stat-label">Total Spent (2024)</div>
+                    <div class="stat-value">₦845K</div>
+                    <small style="color:var(--text-muted);font-size:0.7rem;">Inputs, labor, transport</small>
+                </div>
+            </div>
+            <div class="col-6 col-xl-3 animate-in delay-4">
+                <div class="stat-card">
+                    <div class="d-flex align-items-start justify-content-between mb-2">
+                        <div class="stat-icon" style="background:#eff6ff;color:#3b82f6;"><i class="bi bi-piggy-bank"></i></div>
+                    </div>
+                    <div class="stat-label">Savings Balance</div>
+                    <div class="stat-value">₦85K</div>
+                    <small style="color:var(--text-muted);font-size:0.7rem;">3 active goals</small>
+                </div>
+            </div>
+            <div class="col-6 col-xl-3 animate-in delay-4">
+                <div class="stat-card">
+                    <div class="d-flex align-items-start justify-content-between mb-2">
+                        <div class="stat-icon" style="background:#fffbeb;color:#d97706;"><i class="bi bi-hourglass-split"></i></div>
+                    </div>
+                    <div class="stat-label">Pending</div>
+                    <div class="stat-value">₦15K</div>
+                    <small style="color:var(--text-muted);font-size:0.7rem;">2 transactions</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <ul class="nav mb-3 animate-in delay-1" id="walletTabs" role="tablist" style="border-bottom:2px solid var(--border-light);gap:0.25rem;">
+            <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#transactions" type="button" style="border:none;padding:0.75rem 1.25rem;font-size:0.82rem;font-weight:600;color:var(--primary);border-bottom:2px solid var(--primary);background:transparent;"><i class="bi bi-list-ul me-1"></i> Transactions</button></li>
+            <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#savings" type="button" style="border:none;padding:0.75rem 1.25rem;font-size:0.82rem;font-weight:600;color:var(--text-muted);background:transparent;"><i class="bi bi-piggy-bank me-1"></i> Savings</button></li>
+            <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#cards" type="button" style="border:none;padding:0.75rem 1.25rem;font-size:0.82rem;font-weight:600;color:var(--text-muted);background:transparent;"><i class="bi bi-credit-card me-1"></i> Payment Methods</button></li>
+            <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#reports" type="button" style="border:none;padding:0.75rem 1.25rem;font-size:0.82rem;font-weight:600;color:var(--text-muted);background:transparent;"><i class="bi bi-file-earmark-bar-graph me-1"></i> Reports</button></li>
+        </ul>
+
+        <!-- Tab Content -->
+        <div class="tab-content">
+
+            <!-- TRANSACTIONS TAB -->
+            <div class="tab-pane fade show active" id="transactions">
+                <div class="row g-3">
+                    <div class="col-12 col-lg-8 animate-in delay-1">
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <span><span class="header-icon" style="background:#ecfdf5;color:#0d9488;"><i class="bi bi-list-ul"></i></span>Transaction History</span>
+                                <div class="d-flex gap-2">
+                                    <select class="form-select form-select-sm" style="width:auto;font-size:0.72rem;">
+                                        <option>All Types</option><option>Credits</option><option>Debits</option><option>Pending</option>
+                                    </select>
+                                    <select class="form-select form-select-sm" style="width:auto;font-size:0.72rem;">
+                                        <option>This Month</option><option>Last 3 Months</option><option>2024</option><option>2023</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="table-responsive">
+                                    <table class="table table-modern">
+                                        <thead><tr><th>Date</th><th>Description</th><th>Type</th><th>Amount</th><th>Balance</th><th>Status</th></tr></thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>18 May 2024</td>
+                                                <td><strong>Produce Sale - OLAM</strong><br><small class="text-muted">Sesame · 450kg</small></td>
+                                                <td><span class="badge bg-success bg-opacity-10 text-success rounded-pill">Credit</span></td>
+                                                <td class="text-success fw-bold">+₦189,000</td>
+                                                <td>₦245,000</td>
+                                                <td><span class="badge bg-success bg-opacity-10 text-success rounded-pill">Completed</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td>15 May 2024</td>
+                                                <td><strong>Loan Repayment</strong><br><small class="text-muted">Input Loan · Installment 3/6</small></td>
+                                                <td><span class="badge bg-danger bg-opacity-10 text-danger rounded-pill">Debit</span></td>
+                                                <td class="text-danger fw-bold">-₦25,000</td>
+                                                <td>₦56,000</td>
+                                                <td><span class="badge bg-success bg-opacity-10 text-success rounded-pill">Completed</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td>10 May 2024</td>
+                                                <td><strong>Input Purchase - NPK 50kg</strong><br><small class="text-muted">AgroServe Nigeria</small></td>
+                                                <td><span class="badge bg-danger bg-opacity-10 text-danger rounded-pill">Debit</span></td>
+                                                <td class="text-danger fw-bold">-₦12,500</td>
+                                                <td>₦81,000</td>
+                                                <td><span class="badge bg-success bg-opacity-10 text-success rounded-pill">Completed</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td>05 May 2024</td>
+                                                <td><strong>Cooperative Dues</strong><br><small class="text-muted">Monthly membership</small></td>
+                                                <td><span class="badge bg-danger bg-opacity-10 text-danger rounded-pill">Debit</span></td>
+                                                <td class="text-danger fw-bold">-₦2,000</td>
+                                                <td>₦93,500</td>
+                                                <td><span class="badge bg-success bg-opacity-10 text-success rounded-pill">Completed</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td>01 May 2024</td>
+                                                <td><strong>Marketplace Sale - Ginger</strong><br><small class="text-muted">Nestlé Nigeria · 200kg</small></td>
+                                                <td><span class="badge bg-warning bg-opacity-10 text-warning rounded-pill">Pending</span></td>
+                                                <td class="text-warning fw-bold">+₦95,000</td>
+                                                <td>--</td>
+                                                <td><span class="badge bg-warning bg-opacity-10 text-warning rounded-pill">Pending</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td>28 Apr 2024</td>
+                                                <td><strong>Savings Deposit</strong><br><small class="text-muted">Farm Expansion Goal</small></td>
+                                                <td><span class="badge bg-info bg-opacity-10 text-info rounded-pill">Savings</span></td>
+                                                <td class="text-info fw-bold">+₦20,000</td>
+                                                <td>₦95,500</td>
+                                                <td><span class="badge bg-success bg-opacity-10 text-success rounded-pill">Completed</span></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions + Recent -->
+                    <div class="col-12 col-lg-4 animate-in delay-2">
+                        <div class="dashboard-card mb-3">
+                            <div class="card-header">
+                                <span><i class="bi bi-lightning-charge me-2" style="color:var(--accent);"></i>Quick Actions</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="d-grid gap-2">
+                                    <button class="btn-teal w-100 text-start d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#depositModal">
+                                        <i class="bi bi-arrow-down-circle"></i> Deposit Funds
+                                    </button>
+                                    <button class="btn-outline-teal w-100 text-start d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#withdrawModal">
+                                        <i class="bi bi-arrow-up-circle"></i> Withdraw to Bank
+                                    </button>
+                                    <button class="btn-outline-teal w-100 text-start d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#sendModal">
+                                        <i class="bi bi-send"></i> Send Money
+                                    </button>
+                                    <button class="btn-outline-teal w-100 text-start d-flex align-items-center gap-2" onclick="showToast('Payment link generated!','success')">
+                                        <i class="bi bi-link-45deg"></i> Request Payment
+                                    </button>
+                                    <button class="btn-outline-teal w-100 text-start d-flex align-items-center gap-2" onclick="showToast('Statement downloaded!','success')">
+                                        <i class="bi bi-download"></i> Download Statement
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <span><i class="bi bi-clock me-2" style="color:var(--info);"></i>Recent Activity</span>
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="p-3">
+                                    <div class="txn-item">
+                                        <div class="txn-icon credit"><i class="bi bi-cart-check"></i></div>
+                                        <div class="flex-grow-1"><strong style="font-size:0.78rem;">Produce Sale</strong><br><small class="text-muted">OLAM · Sesame</small></div>
+                                        <div class="text-success fw-bold" style="font-size:0.8rem;">+₦189K</div>
+                                    </div>
+                                    <div class="txn-item">
+                                        <div class="txn-icon debit"><i class="bi bi-credit-card"></i></div>
+                                        <div class="flex-grow-1"><strong style="font-size:0.78rem;">Loan Repayment</strong><br><small class="text-muted">Installment 3/6</small></div>
+                                        <div class="text-danger fw-bold" style="font-size:0.8rem;">-₦25K</div>
+                                    </div>
+                                    <div class="txn-item">
+                                        <div class="txn-icon debit"><i class="bi bi-box-seam"></i></div>
+                                        <div class="flex-grow-1"><strong style="font-size:0.78rem;">Input Purchase</strong><br><small class="text-muted">NPK 50kg</small></div>
+                                        <div class="text-danger fw-bold" style="font-size:0.8rem;">-₦12.5K</div>
+                                    </div>
+                                    <div class="txn-item">
+                                        <div class="txn-icon savings"><i class="bi bi-piggy-bank"></i></div>
+                                        <div class="flex-grow-1"><strong style="font-size:0.78rem;">Savings</strong><br><small class="text-muted">Farm Expansion</small></div>
+                                        <div class="text-info fw-bold" style="font-size:0.8rem;">+₦20K</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SAVINGS TAB -->
+            <div class="tab-pane fade" id="savings">
+                <div class="row g-3">
+                    <div class="col-12 animate-in delay-1">
+                        <div class="dashboard-card mb-3">
+                            <div class="card-header">
+                                <span><span class="header-icon" style="background:#eff6ff;color:#3b82f6;"><i class="bi bi-piggy-bank"></i></span>Savings Goals</span>
+                                <button class="btn-teal btn-sm-pill" data-bs-toggle="modal" data-bs-target="#addGoalModal">
+                                    <i class="bi bi-plus-lg me-1"></i> New Goal
+                                </button>
+                            </div>
+                            <div class="card-body">
+                                <div class="row g-3">
+                                    <div class="col-md-6 col-lg-4">
+                                        <div class="savings-goal-card">
+                                            <div class="d-flex align-items-start justify-content-between mb-3">
+                                                <div>
+                                                    <h6 class="fw-bold mb-0">Farm Expansion</h6>
+                                                    <small class="text-muted">Purchase additional 1 Ha</small>
+                                                </div>
+                                                <div class="goal-progress-ring" style="border-top-color:#10b981;border-right-color:#10b981;border-bottom-color:#e2e8f0;border-left-color:#10b981;">
+                                                    <span class="goal-inner">65%</span>
+                                                </div>
+                                            </div>
+                                            <div class="d-flex justify-content-between mb-2"><small>Progress</small><small class="fw-semibold">₦65,000 / ₦100,000</small></div>
+                                            <div class="progress" style="height:6px;"><div class="progress-bar bg-success" style="width:65%;"></div></div>
+                                            <small class="text-muted">Target: Dec 2024</small>
+                                            <button class="btn-outline-teal btn-xs w-100 mt-2" onclick="showToast('₦5,000 added to goal!','success')">Add Funds</button>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-lg-4">
+                                        <div class="savings-goal-card">
+                                            <div class="d-flex align-items-start justify-content-between mb-3">
+                                                <div>
+                                                    <h6 class="fw-bold mb-0">Equipment Fund</h6>
+                                                    <small class="text-muted">Irrigation pump</small>
+                                                </div>
+                                                <div class="goal-progress-ring" style="border-top-color:#f59e0b;border-right-color:#e2e8f0;border-bottom-color:#e2e8f0;border-left-color:#f59e0b;">
+                                                    <span class="goal-inner">40%</span>
+                                                </div>
+                                            </div>
+                                            <div class="d-flex justify-content-between mb-2"><small>Progress</small><small class="fw-semibold">₦20,000 / ₦50,000</small></div>
+                                            <div class="progress" style="height:6px;"><div class="progress-bar bg-warning" style="width:40%;"></div></div>
+                                            <small class="text-muted">Target: Mar 2025</small>
+                                            <button class="btn-outline-teal btn-xs w-100 mt-2" onclick="showToast('₦5,000 added to goal!','success')">Add Funds</button>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-lg-4">
+                                        <div class="savings-goal-card" style="border-style:dashed;display:flex;align-items:center;justify-content:center;min-height:200px;cursor:pointer;" data-bs-toggle="modal" data-bs-target="#addGoalModal">
+                                            <div class="text-center" style="color:var(--text-muted);">
+                                                <i class="bi bi-plus-circle" style="font-size:2rem;"></i>
+                                                <p class="mb-0 mt-2 fw-semibold">Create New Goal</p>
+                                                <small>Save for something big</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PAYMENT METHODS TAB -->
+            <div class="tab-pane fade" id="cards">
+                <div class="row g-3">
+                    <div class="col-12 col-md-6 col-lg-4 animate-in delay-1">
+                        <div class="p-4 rounded-4 text-white" style="background:linear-gradient(135deg,#0f172a,#1e293b);position:relative;overflow:hidden;min-height:200px;">
+                            <div style="position:absolute;top:20px;right:20px;font-size:2rem;opacity:0.15;"><i class="bi bi-bank"></i></div>
+                            <div class="mb-3"><small style="opacity:0.6;">PRIMARY</small></div>
+                            <div style="font-size:0.7rem;opacity:0.6;letter-spacing:1px;">BANK ACCOUNT</div>
+                            <div style="font-size:1.1rem;font-weight:600;letter-spacing:2px;margin-bottom:1.5rem;">**** **** 2847</div>
+                            <div class="d-flex justify-content-between"><small>First Bank</small><small>Exp: N/A</small></div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6 col-lg-4 animate-in delay-2">
+                        <div class="p-4 rounded-4 text-white" style="background:linear-gradient(135deg,#0d9488,#14b8a6);position:relative;overflow:hidden;min-height:200px;">
+                            <div style="position:absolute;top:20px;right:20px;font-size:2rem;opacity:0.15;"><i class="bi bi-phone"></i></div>
+                            <div class="mb-3"><small style="opacity:0.7;">MOBILE MONEY</small></div>
+                            <div style="font-size:0.7rem;opacity:0.7;letter-spacing:1px;">PHONE NUMBER</div>
+                            <div style="font-size:1.1rem;font-weight:600;letter-spacing:2px;margin-bottom:1.5rem;">+234 801 **** 78</div>
+                            <div class="d-flex justify-content-between"><small>M-Pesa</small><small>Active</small></div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6 col-lg-4 animate-in delay-3">
+                        <div class="p-4 rounded-4 d-flex align-items-center justify-content-center" style="border:2px dashed var(--border);min-height:200px;cursor:pointer;" data-bs-toggle="modal" data-bs-target="#addPaymentMethodModal">
+                            <div class="text-center" style="color:var(--text-muted);">
+                                <i class="bi bi-plus-circle" style="font-size:2rem;"></i>
+                                <p class="mb-0 mt-2 fw-semibold">Add Payment Method</p>
+                                <small>Bank account or mobile money</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- REPORTS TAB -->
+            <div class="tab-pane fade" id="reports">
+                <div class="row g-3">
+                    <div class="col-12 animate-in delay-1">
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <span><i class="bi bi-file-earmark-bar-graph me-2" style="color:var(--purple);"></i>Financial Reports</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="row g-3">
+                                    <div class="col-md-6 col-lg-4">
+                                        <div class="p-3 rounded-3" style="background:var(--surface-alt);cursor:pointer;" onclick="showToast('Report downloading...','success')">
+                                            <i class="bi bi-file-pdf text-danger" style="font-size:1.5rem;"></i>
+                                            <h6 class="fw-bold mt-2 mb-0">Monthly Statement</h6>
+                                            <small class="text-muted">May 2024</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-lg-4">
+                                        <div class="p-3 rounded-3" style="background:var(--surface-alt);cursor:pointer;" onclick="showToast('Report downloading...','success')">
+                                            <i class="bi bi-file-pdf text-danger" style="font-size:1.5rem;"></i>
+                                            <h6 class="fw-bold mt-2 mb-0">Annual Summary</h6>
+                                            <small class="text-muted">2024</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-lg-4">
+                                        <div class="p-3 rounded-3" style="background:var(--surface-alt);cursor:pointer;" onclick="showToast('Report downloading...','success')">
+                                            <i class="bi bi-file-pdf text-danger" style="font-size:1.5rem;"></i>
+                                            <h6 class="fw-bold mt-2 mb-0">Tax Report</h6>
+                                            <small class="text-muted">2023-2024</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== TOAST ==================== -->
+<div class="toast-custom success" id="toast">
+    <i class="bi bi-check-circle-fill"></i>
+    <span id="toastMessage">Action completed!</span>
+</div>
+
+<!-- ==================== MODALS ==================== -->
+
+<!-- Deposit Modal -->
+<div class="modal fade" id="depositModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="bi bi-arrow-down-circle me-2" style="color:var(--success);"></i>Deposit Funds</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row g-3">
+                    <div class="col-12"><label class="form-label">Source</label><select class="form-select"><option>Bank Account (First Bank)</option><option>Mobile Money (M-Pesa)</option><option>Cash at Cooperative</option></select></div>
+                    <div class="col-12"><label class="form-label">Amount (₦)</label><div class="input-group"><span class="input-group-text">₦</span><input type="number" class="form-control" placeholder="0" id="depositAmount"></div></div>
+                    <div class="col-12"><label class="form-label">Note</label><input type="text" class="form-control" placeholder="What's this for?"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-outline-teal" data-bs-dismiss="modal">Cancel</button>
+                <button class="btn-teal" onclick="processDeposit()">Deposit</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Withdraw Modal -->
+<div class="modal fade" id="withdrawModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="bi bi-arrow-up-circle me-2" style="color:var(--danger);"></i>Withdraw to Bank</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row g-3">
+                    <div class="col-12"><label class="form-label">Destination</label><select class="form-select"><option>First Bank · ****2847</option><option>M-Pesa · +234 801 **** 78</option></select></div>
+                    <div class="col-12"><label class="form-label">Amount (₦)</label><input type="number" class="form-control" placeholder="0"></div>
+                    <div class="col-12"><small class="text-muted">Available: ₦245,000 · Fee: ₦50</small></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-outline-teal" data-bs-dismiss="modal">Cancel</button>
+                <button class="btn-teal" onclick="showToast('Withdrawal initiated!','success')">Withdraw</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Send Money Modal -->
+<div class="modal fade" id="sendModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="bi bi-send me-2" style="color:var(--info);"></i>Send Money</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row g-3">
+                    <div class="col-12"><label class="form-label">Recipient</label><input type="text" class="form-control" placeholder="Phone number or Wallet ID"></div>
+                    <div class="col-12"><label class="form-label">Amount (₦)</label><input type="number" class="form-control" placeholder="0"></div>
+                    <div class="col-12"><label class="form-label">Note</label><input type="text" class="form-control" placeholder="What's this for?"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-outline-teal" data-bs-dismiss="modal">Cancel</button>
+                <button class="btn-teal" onclick="showToast('Money sent!','success')">Send</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Goal Modal -->
+<div class="modal fade" id="addGoalModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="bi bi-piggy-bank me-2" style="color:var(--info);"></i>Create Savings Goal</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row g-3">
+                    <div class="col-12"><label class="form-label">Goal Name</label><input type="text" class="form-control" placeholder="e.g., New Tractor"></div>
+                    <div class="col-md-6"><label class="form-label">Target Amount (₦)</label><input type="number" class="form-control" placeholder="0"></div>
+                    <div class="col-md-6"><label class="form-label">Target Date</label><input type="date" class="form-control"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-outline-teal" data-bs-dismiss="modal">Cancel</button>
+                <button class="btn-teal" onclick="showToast('Savings goal created!','success')">Create Goal</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Payment Method Modal -->
+<div class="modal fade" id="addPaymentMethodModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="bi bi-credit-card me-2" style="color:var(--purple);"></i>Add Payment Method</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row g-3">
+                    <div class="col-12"><label class="form-label">Type</label><select class="form-select"><option>Bank Account</option><option>Mobile Money</option></select></div>
+                    <div class="col-12"><label class="form-label">Account Number / Phone</label><input type="text" class="form-control" placeholder="Enter details..."></div>
+                    <div class="col-12"><label class="form-label">Bank / Provider</label><input type="text" class="form-control" placeholder="e.g., First Bank, M-Pesa"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-outline-teal" data-bs-dismiss="modal">Cancel</button>
+                <button class="btn-teal" onclick="showToast('Payment method added!','success')">Add Method</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== SCRIPTS ==================== -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Sidebar
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    const sidebar = document.getElementById('sidebar');
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
+    function openSidebar() { sidebar.classList.add('show'); sidebarOverlay.classList.add('show'); document.body.style.overflow = 'hidden'; }
+    function closeSidebar() { sidebar.classList.remove('show'); sidebarOverlay.classList.remove('show'); document.body.style.overflow = ''; }
+    sidebarToggle.addEventListener('click', openSidebar);
+    sidebarOverlay.addEventListener('click', closeSidebar);
+
+    // Toast
+    function showToast(message, type = 'success') {
+        const toast = document.getElementById('toast');
+        document.getElementById('toastMessage').textContent = message;
+        toast.className = 'toast-custom ' + type;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+
+    // Tab styling
+    document.querySelectorAll('#walletTabs button').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('#walletTabs button').forEach(b => {
+                b.classList.remove('active'); b.style.color = 'var(--text-muted)'; b.style.borderBottom = 'none';
+            });
+            this.classList.add('active'); this.style.color = 'var(--primary)'; this.style.borderBottom = '2px solid var(--primary)';
+        });
+    });
+
+    function processDeposit() {
+        const amount = document.getElementById('depositAmount').value || '0';
+        const modal = bootstrap.Modal.getInstance(document.getElementById('depositModal'));
+        modal.hide();
+        showToast(`✅ ₦${parseInt(amount).toLocaleString()} deposited successfully!`, 'success');
+    }
+</script>
+
+</body>
+</html>

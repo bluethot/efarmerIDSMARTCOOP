@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Traceability QR - SmartCoop Platform</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0d9488;
+            --primary-dark: #0f766e;
+            --primary-light: #14b8a6;
+            --primary-bg: #f0fdfa;
+            --accent: #f59e0b;
+            --accent-light: #fef3c7;
+            --surface: #ffffff;
+            --surface-alt: #f8fafc;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #94a3b8;
+            --border: #e2e8f0;
+            --border-light: #f1f5f9;
+            --danger: #ef4444;
+            --danger-light: #fef2f2;
+            --success: #10b981;
+            --success-light: #ecfdf5;
+            --warning: #f59e0b;
+            --warning-light: #fffbeb;
+            --info: #3b82f6;
+            --info-light: #eff6ff;
+            --purple: #8b5cf6;
+            --purple-light: #f5f3ff;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+            --shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.06);
+            --shadow-lg: 0 10px 15px rgba(0,0,0,0.1), 0 4px 6px rgba(0,0,0,0.05);
+            --shadow-xl: 0 20px 40px rgba(0,0,0,0.15);
+            --radius-sm: 8px;
+            --radius: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 20px;
+            --sidebar-width: 280px;
+            --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: var(--surface-alt);
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            color: var(--text-primary);
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+        }
+
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+
+        /* ========== SIDEBAR ========== */
+        .sidebar {
+            position: fixed; top: 0; left: 0;
+            width: var(--sidebar-width); height: 100vh;
+            background: linear-gradient(195deg, #0f172a 0%, #1e293b 100%);
+            z-index: 1050; overflow-y: auto;
+            transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: var(--shadow-xl);
+        }
+        .sidebar::before {
+            content: '';
+            position: absolute; top: 0; left: 0; right: 0; height: 250px;
+            background: radial-gradient(ellipse at 60% 0%, rgba(13,148,136,0.12) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .sidebar-brand { padding: 1.75rem 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.05); position: relative; }
+        .logo-icon {
+            width: 42px; height: 42px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            border-radius: var(--radius);
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-size: 1.3rem;
+            box-shadow: 0 4px 15px rgba(13,148,136,0.3);
+        }
+        .sidebar-brand h4 { color: #fff; font-weight: 700; font-size: 1.1rem; margin: 0; }
+        .sidebar-brand small { color: rgba(255,255,255,0.4); font-size: 0.68rem; text-transform: uppercase; letter-spacing: 1px; }
+        .sidebar-user { padding: 1.25rem 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .avatar {
+            width: 42px; height: 42px; border-radius: var(--radius);
+            background: linear-gradient(135deg, #f59e0b, #fbbf24);
+            display: flex; align-items: center; justify-content: center;
+            color: #1e293b; font-weight: 700; font-size: 1rem; position: relative;
+        }
+        .avatar::after {
+            content: ''; position: absolute; bottom: -2px; right: -2px;
+            width: 13px; height: 13px; background: #10b981;
+            border: 3px solid #1e293b; border-radius: 50%;
+        }
+        .sidebar-user .user-name { color: #f1f5f9; font-weight: 600; font-size: 0.85rem; }
+        .sidebar-user .user-role { color: rgba(255,255,255,0.4); font-size: 0.7rem; }
+        .sidebar-nav { padding: 0.5rem 0.75rem; }
+        .nav-section {
+            color: rgba(255,255,255,0.25); font-size: 0.62rem;
+            text-transform: uppercase; letter-spacing: 1.8px;
+            padding: 0.75rem 1rem 0.4rem; font-weight: 700;
+        }
+        .sidebar-nav .nav-link {
+            color: rgba(255,255,255,0.5); padding: 0.6rem 0.9rem;
+            font-size: 0.82rem; font-weight: 500;
+            display: flex; align-items: center; border-radius: var(--radius-sm);
+            margin-bottom: 1px; transition: all var(--transition);
+        }
+        .sidebar-nav .nav-link:hover { background: rgba(255,255,255,0.04); color: #e2e8f0; }
+        .sidebar-nav .nav-link.active {
+            background: rgba(13,148,136,0.15); color: #fff; font-weight: 600;
+            box-shadow: inset 0 0 0 1px rgba(13,148,136,0.25);
+        }
+        .sidebar-nav .nav-link i { width: 20px; margin-right: 0.7rem; font-size: 1rem; opacity: 0.75; }
+        .sidebar-nav .nav-link.active i { opacity: 1; color: var(--primary-light); }
+        .badge-pill {
+            background: var(--danger); color: #fff;
+            font-size: 0.62rem; padding: 0.2em 0.55em;
+            border-radius: 20px; margin-left: auto; font-weight: 700;
+        }
+        .sidebar-footer { padding: 1rem 1.5rem; border-top: 1px solid rgba(255,255,255,0.05); }
+        .sidebar-overlay {
+            display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(15,23,42,0.45); backdrop-filter: blur(3px); z-index: 1045;
+        }
+        .sidebar-overlay.show { display: block; }
+
+        /* ========== MAIN CONTENT ========== */
+        .main-content { margin-left: var(--sidebar-width); min-height: 100vh; transition: margin 0.35s ease; }
+
+        /* ========== TOP NAVBAR ========== */
+        .top-navbar {
+            background: rgba(255,255,255,0.75); backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 0.7rem 1.75rem;
+            border-bottom: 1px solid rgba(226,232,240,0.6);
+            position: sticky; top: 0; z-index: 1040;
+        }
+        .btn-icon {
+            width: 37px; height: 37px; border-radius: var(--radius-sm);
+            border: 1px solid var(--border); background: var(--surface);
+            color: var(--text-secondary);
+            display: flex; align-items: center; justify-content: center;
+            transition: all var(--transition); cursor: pointer; position: relative;
+        }
+        .btn-icon:hover { background: var(--surface-alt); border-color: #cbd5e1; color: var(--text-primary); }
+        .notification-dot {
+            position: absolute; top: 7px; right: 7px;
+            width: 9px; height: 9px; background: var(--danger);
+            border-radius: 50%; border: 2px solid #fff;
+        }
+
+        /* ========== QR DISPLAY CARD ========== */
+        .qr-display-card {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 40%, #0f766e 100%);
+            border-radius: var(--radius-xl); padding: 2.5rem;
+            text-align: center; position: relative; overflow: hidden;
+        }
+        .qr-display-card::before {
+            content: '';
+            position: absolute; top: -80px; right: -80px;
+            width: 300px; height: 300px;
+            background: radial-gradient(circle, rgba(13,148,136,0.2) 0%, transparent 70%);
+            border-radius: 50%; pointer-events: none;
+        }
+        .qr-code-large {
+            width: 200px; height: 200px;
+            background: repeating-linear-gradient(45deg, #ffffff 0px, #ffffff 7px, #0f172a 7px, #0f172a 14px);
+            margin: 0 auto; border-radius: var(--radius-lg);
+            box-shadow: 0 0 40px rgba(13,148,136,0.3);
+            position: relative; z-index: 1;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .qr-code-large .qr-inner-logo {
+            width: 50px; height: 50px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            border-radius: var(--radius-sm);
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-size: 1.5rem;
+        }
+        .qr-label {
+            color: #fff; font-weight: 700; font-size: 1.1rem;
+            position: relative; z-index: 1; letter-spacing: -0.3px;
+        }
+        .qr-subtitle {
+            color: rgba(255,255,255,0.5); font-size: 0.75rem;
+            position: relative; z-index: 1;
+        }
+
+        /* ========== STAT CARDS ========== */
+        .stat-card {
+            background: var(--surface); border-radius: var(--radius-lg);
+            padding: 1.3rem; border: 1px solid var(--border-light);
+            transition: all var(--transition); height: 100%;
+            position: relative; overflow: hidden;
+        }
+        .stat-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-2px); }
+        .stat-icon {
+            width: 42px; height: 42px; border-radius: var(--radius);
+            display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
+        }
+        .stat-value { font-size: 1.7rem; font-weight: 800; color: var(--text-primary); letter-spacing: -0.5px; line-height: 1; }
+        .stat-label { color: var(--text-muted); font-size: 0.7rem; font-weight: 650; text-transform: uppercase; letter-spacing: 0.7px; margin-bottom: 0.2rem; }
+
+        /* ========== TRACEABILITY CHAIN ========== */
+        .trace-chain-horizontal {
+            display: flex; align-items: center; gap: 0; overflow-x: auto;
+            padding: 1.5rem 0; position: relative;
+        }
+        .trace-node {
+            text-align: center; min-width: 120px; position: relative; z-index: 1;
+        }
+        .trace-node-icon {
+            width: 56px; height: 56px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 0.5rem; font-size: 1.4rem;
+            border: 3px solid var(--border); background: var(--surface);
+            transition: all var(--transition);
+        }
+        .trace-node-icon.completed {
+            border-color: var(--success); background: var(--success-light);
+        }
+        .trace-node-icon.active {
+            border-color: var(--primary); background: var(--primary-bg);
+            box-shadow: 0 0 0 8px rgba(13,148,136,0.1);
+        }
+        .trace-connector {
+            flex-shrink: 0; width: 40px; height: 3px;
+            background: var(--border); margin-bottom: 2.5rem; position: relative;
+        }
+        .trace-connector.completed { background: var(--success); }
+        .trace-connector.active { background: linear-gradient(90deg, var(--success), var(--border)); }
+
+        /* ========== CARDS ========== */
+        .dashboard-card {
+            background: var(--surface); border-radius: var(--radius-lg);
+            border: 1px solid var(--border-light); overflow: hidden;
+            height: 100%; transition: all var(--transition);
+        }
+        .dashboard-card:hover { box-shadow: var(--shadow-md); }
+        .dashboard-card .card-header {
+            background: var(--surface); border-bottom: 1px solid var(--border-light);
+            padding: 1rem 1.3rem; font-weight: 650; font-size: 0.88rem;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .dashboard-card .card-body { padding: 1.3rem; }
+
+        /* ========== CERTIFICATION BADGE ========== */
+        .cert-badge {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            padding: 0.6rem 1rem; border-radius: var(--radius);
+            font-weight: 600; font-size: 0.78rem;
+            transition: all var(--transition);
+        }
+
+        /* ========== TABLE ========== */
+        .table-modern { font-size: 0.8rem; margin-bottom: 0; }
+        .table-modern th {
+            background: var(--surface-alt); color: var(--text-muted);
+            font-weight: 650; font-size: 0.68rem; text-transform: uppercase;
+            letter-spacing: 0.7px; border-bottom: 2px solid var(--border-light);
+            padding: 0.8rem 1rem;
+        }
+        .table-modern td {
+            vertical-align: middle; padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border-light);
+        }
+        .table-modern tbody tr { transition: background var(--transition); }
+        .table-modern tbody tr:hover { background: var(--surface-alt); }
+
+        /* ========== BUTTONS ========== */
+        .btn-teal {
+            background: var(--primary); color: #fff; border: none;
+            font-weight: 600; font-size: 0.78rem; padding: 0.5rem 1rem;
+            border-radius: var(--radius-sm); transition: all var(--transition);
+            box-shadow: 0 2px 6px rgba(13,148,136,0.2);
+        }
+        .btn-teal:hover { background: var(--primary-dark); box-shadow: 0 4px 12px rgba(13,148,136,0.3); transform: translateY(-1px); color: #fff; }
+        .btn-outline-teal {
+            border: 1.5px solid #cbd5e1; color: var(--text-secondary);
+            background: var(--surface); font-weight: 500; font-size: 0.78rem;
+            padding: 0.48rem 1rem; border-radius: var(--radius-sm); transition: all var(--transition);
+        }
+        .btn-outline-teal:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-bg); }
+        .btn-sm-pill { font-size: 0.7rem; padding: 0.3rem 0.8rem; border-radius: 20px; font-weight: 600; }
+        .btn-xs { font-size: 0.62rem; padding: 0.2rem 0.55rem; border-radius: 15px; font-weight: 600; }
+
+        /* ========== COMPLIANCE CHECKLIST ========== */
+        .compliance-item {
+            display: flex; align-items: center; gap: 0.75rem;
+            padding: 0.7rem 0; border-bottom: 1px solid var(--border-light);
+        }
+        .compliance-item:last-child { border-bottom: none; }
+        .compliance-check {
+            width: 24px; height: 24px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.7rem; flex-shrink: 0;
+        }
+        .compliance-check.passed { background: #ecfdf5; color: #059669; }
+        .compliance-check.pending { background: #fffbeb; color: #d97706; }
+        .compliance-check.failed { background: #fef2f2; color: #dc2626; }
+
+        /* ========== MODALS ========== */
+        .modal-content { border: none; border-radius: var(--radius-xl); box-shadow: var(--shadow-xl); overflow: hidden; }
+        .modal-header { background: var(--surface); border-bottom: 1px solid var(--border-light); padding: 1.2rem 1.5rem; }
+        .modal-header .modal-title { font-weight: 700; font-size: 1.1rem; letter-spacing: -0.3px; color: var(--text-primary); }
+        .modal-body { padding: 1.5rem; }
+        .modal-footer { border-top: 1px solid var(--border-light); padding: 1rem 1.5rem; }
+        .form-label { font-weight: 600; font-size: 0.76rem; color: var(--text-secondary); margin-bottom: 0.3rem; }
+        .form-control, .form-select {
+            border-radius: var(--radius-sm); border: 1px solid var(--border);
+            padding: 0.55rem 0.85rem; font-size: 0.84rem;
+            transition: all var(--transition); font-family: 'Inter', sans-serif;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(13,148,136,0.08);
+        }
+
+        /* ========== TOAST ========== */
+        .toast-custom {
+            position: fixed; bottom: 2rem; right: 2rem;
+            background: #0f172a; color: #fff;
+            padding: 0.9rem 1.3rem; border-radius: var(--radius);
+            box-shadow: var(--shadow-xl); z-index: 1070;
+            display: flex; align-items: center; gap: 0.6rem;
+            font-weight: 500; font-size: 0.85rem;
+            transform: translateY(120px); opacity: 0;
+            transition: all 0.35s ease;
+        }
+        .toast-custom.show { transform: translateY(0); opacity: 1; }
+        .toast-custom.success { border-left: 4px solid #10b981; }
+        .toast-custom.warning { border-left: 4px solid #f59e0b; }
+
+        /* ========== ANIMATIONS ========== */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-in { animation: fadeInUp 0.45s ease forwards; opacity: 0; }
+        .delay-1 { animation-delay: 0.05s; }
+        .delay-2 { animation-delay: 0.1s; }
+        .delay-3 { animation-delay: 0.15s; }
+        .delay-4 { animation-delay: 0.2s; }
+
+        /* ========== RESPONSIVE ========== */
+        @media (max-width: 991.98px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.show { transform: translateX(0); }
+            .main-content { margin-left: 0; }
+            .sidebar-overlay.show { display: block; }
+            .qr-code-large { width: 150px; height: 150px; }
+        }
+        @media (max-width: 767.98px) {
+            .top-navbar { padding: 0.55rem 0.9rem; }
+            .trace-node { min-width: 80px; }
+            .trace-node-icon { width: 40px; height: 40px; font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Sidebar Overlay -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<!-- ==================== SIDEBAR ==================== -->
+<aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+        <div class="d-flex align-items-center gap-3">
+            <div class="logo-icon"><i class="bi bi-grid-3x3-gap-fill"></i></div>
+            <div><h4>SmartCoop</h4><small>Farmer Platform</small></div>
+        </div>
+    </div>
+    <div class="sidebar-user">
+        <div class="d-flex align-items-center gap-3">
+            <div class="avatar">AI</div>
+            <div><div class="user-name">Abubakar Ibrahim</div><div class="user-role">Farmer · FARM-2847</div></div>
+        </div>
+    </div>
+    <nav class="sidebar-nav">
+        <div class="nav-section">Main Menu</div>
+        <a class="nav-link" href="dashboard.html"><i class="bi bi-columns-gap"></i> Dashboard</a>
+        <a class="nav-link" href="myprofile.html"><i class="bi bi-person-badge"></i> My Profile</a>
+        <a class="nav-link" href="farm-mapping.html"><i class="bi bi-geo-alt"></i> Farm Mapping</a>
+        <div class="nav-section mt-2">Farm Management</div>
+        <a class="nav-link" href="crop-records.html"><i class="bi bi-flower1"></i> Crop Records</a>
+        <a class="nav-link" href="produce-tracking.html"><i class="bi bi-box-seam"></i> Produce Tracking <span class="badge-pill">3</span></a>
+        <a class="nav-link" href="inputs-chemicals.html"><i class="bi bi-droplet"></i> Inputs & Chemicals</a>
+        <div class="nav-section mt-2">Finance & Market</div>
+        <a class="nav-link" href="wallet.html"><i class="bi bi-wallet2"></i> Wallet</a>
+        <a class="nav-link" href="loans-credit.html"><i class="bi bi-cash-stack"></i> Loans & Credit</a>
+        <a class="nav-link" href="marketplace.html"><i class="bi bi-shop"></i> Marketplace</a>
+        <div class="nav-section mt-2">Insights</div>
+        <a class="nav-link" href="climate-alerts.html"><i class="bi bi-cloud-sun"></i> Climate Alerts <span class="badge-pill">2</span></a>
+        <a class="nav-link" href="analytics.html"><i class="bi bi-graph-up"></i> Analytics</a>
+        <a class="nav-link active" href="traceability-qr.html"><i class="bi bi-qr-code"></i> Traceability QR</a>
+    </nav>
+    <div class="sidebar-footer">
+        <a href="#" style="color:rgba(255,255,255,0.45);font-size:0.78rem;text-decoration:none;">
+            <i class="bi bi-box-arrow-right me-1"></i> Sign Out
+        </a>
+    </div>
+</aside>
+
+<!-- ==================== MAIN CONTENT ==================== -->
+<div class="main-content" id="mainContent">
+
+    <!-- Top Navbar -->
+    <nav class="top-navbar">
+        <div class="d-flex align-items-center justify-content-between w-100">
+            <div class="d-flex align-items-center gap-3">
+                <button class="navbar-toggler d-lg-none btn-icon border-0" id="sidebarToggle">
+                    <i class="bi bi-list"></i>
+                </button>
+                <h5 class="mb-0 fw-bold" style="color:var(--text-primary);">
+                    <i class="bi bi-qr-code me-2" style="color:var(--primary);"></i>Traceability & QR Codes
+                </h5>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                <span class="badge bg-success bg-opacity-10 text-success rounded-pill d-none d-md-inline-flex align-items-center gap-1" style="font-size:0.7rem;">
+                    <i class="bi bi-shield-check"></i> EU Compliant
+                </span>
+                <button class="btn-icon" data-bs-toggle="modal" data-bs-target="#scanQRModal">
+                    <i class="bi bi-qr-code-scan"></i>
+                </button>
+                <button class="btn-icon"><i class="bi bi-bell"></i><span class="notification-dot"></span></button>
+                <div style="width:32px;height:32px;background:linear-gradient(135deg,#0d9488,#14b8a6);border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:0.8rem;">AI</div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Content -->
+    <div class="p-3 p-md-4">
+
+        <!-- QR Display + Stats Row -->
+        <div class="row g-3 mb-3">
+            <div class="col-12 col-lg-5 animate-in delay-1">
+                <div class="qr-display-card">
+                    <div class="qr-code-large">
+                        <div class="qr-inner-logo">
+                            <i class="bi bi-grid-3x3-gap-fill"></i>
+                        </div>
+                    </div>
+                    <h6 class="qr-label mt-3">FARM-2847</h6>
+                    <p class="qr-subtitle mb-3">Abubakar Ibrahim · Kaduna State, Nigeria</p>
+                    <div class="d-flex justify-content-center gap-2" style="position:relative;z-index:1;">
+                        <button class="btn btn-light btn-sm-pill" onclick="showToast('QR Code downloaded!','success')">
+                            <i class="bi bi-download me-1"></i> Download
+                        </button>
+                        <button class="btn btn-outline-light btn-sm-pill" onclick="showToast('Link copied to clipboard!','success')">
+                            <i class="bi bi-share me-1"></i> Share
+                        </button>
+                        <button class="btn btn-outline-light btn-sm-pill" onclick="window.print()">
+                            <i class="bi bi-printer me-1"></i> Print
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-lg-2 animate-in delay-2">
+                <div class="stat-card">
+                    <div class="stat-icon mb-2" style="background:#ecfdf5;color:#059669;"><i class="bi bi-upc-scan"></i></div>
+                    <div class="stat-label">QR Codes Generated</div>
+                    <div class="stat-value">12</div>
+                    <small style="color:var(--text-muted);font-size:0.7rem;">Active batches</small>
+                </div>
+            </div>
+            <div class="col-6 col-lg-2 animate-in delay-3">
+                <div class="stat-card">
+                    <div class="stat-icon mb-2" style="background:#eff6ff;color:#3b82f6;"><i class="bi bi-eye"></i></div>
+                    <div class="stat-label">Total Scans</div>
+                    <div class="stat-value">247</div>
+                    <small style="color:var(--text-muted);font-size:0.7rem;">This season</small>
+                </div>
+            </div>
+            <div class="col-6 col-lg-3 animate-in delay-4">
+                <div class="stat-card">
+                    <div class="stat-icon mb-2" style="background:#f5f3ff;color:#8b5cf6;"><i class="bi bi-patch-check"></i></div>
+                    <div class="stat-label">Compliance Score</div>
+                    <div class="stat-value">100<span style="font-size:0.8rem;">%</span></div>
+                    <small style="color:var(--text-muted);font-size:0.7rem;">EU + Organic standards</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <ul class="nav mb-3 animate-in delay-1" id="qrTabs" role="tablist" style="border-bottom:2px solid var(--border-light);gap:0.25rem;">
+            <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#myQRCodes" type="button" style="border:none;padding:0.75rem 1.25rem;font-size:0.82rem;font-weight:600;color:var(--primary);border-bottom:2px solid var(--primary);background:transparent;"><i class="bi bi-upc-scan me-1"></i> My QR Codes</button></li>
+            <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#traceChain" type="button" style="border:none;padding:0.75rem 1.25rem;font-size:0.82rem;font-weight:600;color:var(--text-muted);background:transparent;"><i class="bi bi-arrow-repeat me-1"></i> Traceability Chain</button></li>
+            <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#compliance" type="button" style="border:none;padding:0.75rem 1.25rem;font-size:0.82rem;font-weight:600;color:var(--text-muted);background:transparent;"><i class="bi bi-clipboard-check me-1"></i> Compliance</button></li>
+            <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#consumerView" type="button" style="border:none;padding:0.75rem 1.25rem;font-size:0.82rem;font-weight:600;color:var(--text-muted);background:transparent;"><i class="bi bi-phone me-1"></i> Consumer View</button></li>
+        </ul>
+
+        <!-- Tab Content -->
+        <div class="tab-content">
+
+            <!-- MY QR CODES TAB -->
+            <div class="tab-pane fade show active" id="myQRCodes">
+                <div class="row g-3">
+                    <div class="col-12 animate-in delay-1">
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <span><span class="header-icon" style="background:#ecfdf5;color:#0d9488;width:28px;height:28px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;margin-right:0.45rem;"><i class="bi bi-upc-scan"></i></span>Generated QR Codes</span>
+                                <button class="btn-teal btn-sm-pill" data-bs-toggle="modal" data-bs-target="#generateQRModal">
+                                    <i class="bi bi-plus-lg me-1"></i> Generate New QR
+                                </button>
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="table-responsive">
+                                    <table class="table table-modern">
+                                        <thead><tr><th>QR Code</th><th>Batch ID</th><th>Product</th><th>Generated</th><th>Scans</th><th>Status</th><th>Actions</th></tr></thead>
+                                        <tbody>
+                                            <tr>
+                                                <td><div style="width:40px;height:40px;background:repeating-linear-gradient(45deg,#1b4332 0px,#1b4332 3px,#2d6a4f 3px,#2d6a4f 6px);border-radius:4px;"></div></td>
+                                                <td><strong>SES-2024-001</strong></td>
+                                                <td>🌾 Sesame · Premium</td>
+                                                <td>15 May 2024</td>
+                                                <td><strong>87</strong></td>
+                                                <td><span class="badge bg-success bg-opacity-10 text-success rounded-pill">Active</span></td>
+                                                <td>
+                                                    <button class="btn-outline-teal btn-xs me-1" onclick="showToast('QR downloaded!','success')"><i class="bi bi-download"></i></button>
+                                                    <button class="btn-outline-teal btn-xs me-1" onclick="showToast('Link copied!','success')"><i class="bi bi-share"></i></button>
+                                                    <button class="btn-outline-teal btn-xs" data-bs-toggle="modal" data-bs-target="#qrDetailModal" onclick="openQRDetail('SES-2024-001')"><i class="bi bi-eye"></i></button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td><div style="width:40px;height:40px;background:repeating-linear-gradient(45deg,#1b4332 0px,#1b4332 3px,#2d6a4f 3px,#2d6a4f 6px);border-radius:4px;"></div></td>
+                                                <td><strong>GIN-2024-003</strong></td>
+                                                <td>🫚 Ginger · Export A</td>
+                                                <td>10 May 2024</td>
+                                                <td><strong>124</strong></td>
+                                                <td><span class="badge bg-success bg-opacity-10 text-success rounded-pill">Active</span></td>
+                                                <td>
+                                                    <button class="btn-outline-teal btn-xs me-1" onclick="showToast('QR downloaded!','success')"><i class="bi bi-download"></i></button>
+                                                    <button class="btn-outline-teal btn-xs me-1" onclick="showToast('Link copied!','success')"><i class="bi bi-share"></i></button>
+                                                    <button class="btn-outline-teal btn-xs" data-bs-toggle="modal" data-bs-target="#qrDetailModal" onclick="openQRDetail('GIN-2024-003')"><i class="bi bi-eye"></i></button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td><div style="width:40px;height:40px;background:repeating-linear-gradient(45deg,#1b4332 0px,#1b4332 3px,#2d6a4f 3px,#2d6a4f 6px);border-radius:4px;"></div></td>
+                                                <td><strong>MAI-2024-002</strong></td>
+                                                <td>🌽 Maize · Standard</td>
+                                                <td>01 May 2024</td>
+                                                <td><strong>36</strong></td>
+                                                <td><span class="badge bg-warning bg-opacity-10 text-warning rounded-pill">In Transit</span></td>
+                                                <td>
+                                                    <button class="btn-outline-teal btn-xs me-1" onclick="showToast('QR downloaded!','success')"><i class="bi bi-download"></i></button>
+                                                    <button class="btn-outline-teal btn-xs me-1" onclick="showToast('Link copied!','success')"><i class="bi bi-share"></i></button>
+                                                    <button class="btn-outline-teal btn-xs" data-bs-toggle="modal" data-bs-target="#qrDetailModal" onclick="openQRDetail('MAI-2024-002')"><i class="bi bi-eye"></i></button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TRACEABILITY CHAIN TAB -->
+            <div class="tab-pane fade" id="traceChain">
+                <div class="row g-3">
+                    <div class="col-12 animate-in delay-1">
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <span><i class="bi bi-arrow-repeat me-2" style="color:var(--purple);"></i>Supply Chain Journey: SES-2024-001</span>
+                                <select class="form-select form-select-sm" style="width:auto;font-size:0.72rem;">
+                                    <option>SES-2024-001 (Sesame)</option>
+                                    <option>GIN-2024-003 (Ginger)</option>
+                                    <option>MAI-2024-002 (Maize)</option>
+                                </select>
+                            </div>
+                            <div class="card-body">
+                                <div class="trace-chain-horizontal">
+                                    <div class="trace-node">
+                                        <div class="trace-node-icon completed">🌱</div>
+                                        <div class="trace-label completed" style="font-size:0.68rem;font-weight:600;color:var(--success);">Farm</div>
+                                        <small style="font-size:0.6rem;display:block;">Field A · Kaduna</small>
+                                    </div>
+                                    <div class="trace-connector completed"></div>
+                                    <div class="trace-node">
+                                        <div class="trace-node-icon completed">🚜</div>
+                                        <div class="trace-label completed" style="font-size:0.68rem;font-weight:600;color:var(--success);">Harvest</div>
+                                        <small style="font-size:0.6rem;display:block;">15 May 2024</small>
+                                    </div>
+                                    <div class="trace-connector completed"></div>
+                                    <div class="trace-node">
+                                        <div class="trace-node-icon completed">🔬</div>
+                                        <div class="trace-label completed" style="font-size:0.68rem;font-weight:600;color:var(--success);">Quality</div>
+                                        <small style="font-size:0.6rem;display:block;">Grade A · Passed</small>
+                                    </div>
+                                    <div class="trace-connector active"></div>
+                                    <div class="trace-node">
+                                        <div class="trace-node-icon active">🏭</div>
+                                        <div class="trace-label active" style="font-size:0.68rem;font-weight:600;color:var(--primary);">Warehouse</div>
+                                        <small style="font-size:0.6rem;display:block;color:var(--primary);">Kano Central</small>
+                                    </div>
+                                    <div class="trace-connector"></div>
+                                    <div class="trace-node">
+                                        <div class="trace-node-icon">🚚</div>
+                                        <div class="trace-label" style="font-size:0.68rem;font-weight:600;color:var(--text-muted);">Transport</div>
+                                        <small style="font-size:0.6rem;display:block;">Pending</small>
+                                    </div>
+                                    <div class="trace-connector"></div>
+                                    <div class="trace-node">
+                                        <div class="trace-node-icon">📦</div>
+                                        <div class="trace-label" style="font-size:0.68rem;font-weight:600;color:var(--text-muted);">Delivery</div>
+                                        <small style="font-size:0.6rem;display:block;">Pending</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 animate-in delay-2">
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <span><i class="bi bi-info-circle me-2" style="color:var(--info);"></i>Batch Provenance</span>
+                            </div>
+                            <div class="card-body">
+                                <table class="table table-sm" style="font-size:0.78rem;">
+                                    <tr><td class="text-muted">Farmer</td><td><strong>Abubakar Ibrahim (FARM-2847)</strong></td></tr>
+                                    <tr><td class="text-muted">Farm GPS</td><td>10.5234°N, 7.4388°E · Kaduna, Nigeria</td></tr>
+                                    <tr><td class="text-muted">Crop Variety</td><td>Sesame · Premium Grade</td></tr>
+                                    <tr><td class="text-muted">Harvest Date</td><td>15 May 2024</td></tr>
+                                    <tr><td class="text-muted">Chemicals Used</td><td>Organic Biopesticide (2L) · No synthetic fertilizers</td></tr>
+                                    <tr><td class="text-muted">Soil Type</td><td>Sandy Loam · pH 6.4</td></tr>
+                                    <tr><td class="text-muted">Water Source</td><td>Borehole Irrigation</td></tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 animate-in delay-3">
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <span><i class="bi bi-graph-up me-2" style="color:var(--success);"></i>Sustainability Metrics</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between mb-1"><small>Carbon Footprint</small><strong style="color:#059669;">Low</strong></div>
+                                    <div class="progress" style="height:6px;"><div class="progress-bar bg-success" style="width:25%;"></div></div>
+                                </div>
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between mb-1"><small>Water Efficiency</small><strong style="color:#059669;">85%</strong></div>
+                                    <div class="progress" style="height:6px;"><div class="progress-bar bg-success" style="width:85%;"></div></div>
+                                </div>
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between mb-1"><small>Soil Health Score</small><strong style="color:#3b82f6;">7.2/10</strong></div>
+                                    <div class="progress" style="height:6px;"><div class="progress-bar bg-info" style="width:72%;"></div></div>
+                                </div>
+                                <div>
+                                    <div class="d-flex justify-content-between mb-1"><small>Biodiversity Index</small><strong style="color:#8b5cf6;">Good</strong></div>
+                                    <div class="progress" style="height:6px;"><div class="progress-bar bg-purple" style="width:68%;background:#8b5cf6;"></div></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- COMPLIANCE TAB -->
+            <div class="tab-pane fade" id="compliance">
+                <div class="row g-3">
+                    <div class="col-12 col-lg-8 animate-in delay-1">
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <span><i class="bi bi-clipboard-check me-2" style="color:var(--success);"></i>Compliance Checklist</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="compliance-item">
+                                    <div class="compliance-check passed"><i class="bi bi-check-lg"></i></div>
+                                    <div class="flex-grow-1"><strong style="font-size:0.82rem;">EU Deforestation Regulation (EUDR)</strong><br><small class="text-muted">Farm location verified · No deforestation since 2020</small></div>
+                                    <span class="badge bg-success bg-opacity-10 text-success rounded-pill">Compliant</span>
+                                </div>
+                                <div class="compliance-item">
+                                    <div class="compliance-check passed"><i class="bi bi-check-lg"></i></div>
+                                    <div class="flex-grow-1"><strong style="font-size:0.82rem;">Organic Certification</strong><br><small class="text-muted">Valid until Dec 2025 · Annual audit passed</small></div>
+                                    <span class="badge bg-success bg-opacity-10 text-success rounded-pill">Certified</span>
+                                </div>
+                                <div class="compliance-item">
+                                    <div class="compliance-check passed"><i class="bi bi-check-lg"></i></div>
+                                    <div class="flex-grow-1"><strong style="font-size:0.82rem;">Fair Trade Standards</strong><br><small class="text-muted">Labor practices verified · Fair wages documented</small></div>
+                                    <span class="badge bg-success bg-opacity-10 text-success rounded-pill">Verified</span>
+                                </div>
+                                <div class="compliance-item">
+                                    <div class="compliance-check passed"><i class="bi bi-check-lg"></i></div>
+                                    <div class="flex-grow-1"><strong style="font-size:0.82rem;">Pesticide Residue Testing</strong><br><small class="text-muted">Aflatoxin < 4ppb · No banned substances detected</small></div>
+                                    <span class="badge bg-success bg-opacity-10 text-success rounded-pill">Passed</span>
+                                </div>
+                                <div class="compliance-item">
+                                    <div class="compliance-check passed"><i class="bi bi-check-lg"></i></div>
+                                    <div class="flex-grow-1"><strong style="font-size:0.82rem;">Traceability Documentation</strong><br><small class="text-muted">Complete chain from farm to warehouse</small></div>
+                                    <span class="badge bg-success bg-opacity-10 text-success rounded-pill">Complete</span>
+                                </div>
+                                <div class="compliance-item">
+                                    <div class="compliance-check pending"><i class="bi bi-hourglass-split"></i></div>
+                                    <div class="flex-grow-1"><strong style="font-size:0.82rem;">Carbon Credit Verification</strong><br><small class="text-muted">Under review · Expected approval: Jul 2024</small></div>
+                                    <span class="badge bg-warning bg-opacity-10 text-warning rounded-pill">In Review</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg-4 animate-in delay-2">
+                        <div class="dashboard-card mb-3">
+                            <div class="card-header">
+                                <span><i class="bi bi-patch-check me-2" style="color:var(--purple);"></i>Certifications</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="cert-badge mb-2 w-100" style="background:#ecfdf5;color:#059669;border:1px solid #a7f3d0;">
+                                    <i class="bi bi-patch-check-fill"></i> EU Organic Certified
+                                </div>
+                                <div class="cert-badge mb-2 w-100" style="background:#eff6ff;color:#3b82f6;border:1px solid #bfdbfe;">
+                                    <i class="bi bi-patch-check-fill"></i> EUDR Compliant
+                                </div>
+                                <div class="cert-badge mb-2 w-100" style="background:#f5f3ff;color:#8b5cf6;border:1px solid #c4b5fd;">
+                                    <i class="bi bi-patch-check-fill"></i> Fair Trade Verified
+                                </div>
+                                <div class="cert-badge w-100" style="background:#fffbeb;color:#d97706;border:1px solid #fde68a;">
+                                    <i class="bi bi-hourglass-split"></i> Carbon Credit (Pending)
+                                </div>
+                            </div>
+                        </div>
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <span><i class="bi bi-download me-2" style="color:var(--info);"></i>Export Documents</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="d-grid gap-2">
+                                    <button class="btn-outline-teal btn-sm text-start" onclick="showToast('Certificate downloaded!','success')">
+                                        <i class="bi bi-file-pdf text-danger me-2"></i> Organic Certificate
+                                    </button>
+                                    <button class="btn-outline-teal btn-sm text-start" onclick="showToast('Certificate downloaded!','success')">
+                                        <i class="bi bi-file-pdf text-danger me-2"></i> EUDR Compliance Letter
+                                    </button>
+                                    <button class="btn-outline-teal btn-sm text-start" onclick="showToast('Certificate downloaded!','success')">
+                                        <i class="bi bi-file-pdf text-danger me-2"></i> Phytosanitary Certificate
+                                    </button>
+                                    <button class="btn-outline-teal btn-sm text-start" onclick="showToast('Certificate downloaded!','success')">
+                                        <i class="bi bi-file-pdf text-danger me-2"></i> Certificate of Origin
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CONSUMER VIEW TAB -->
+            <div class="tab-pane fade" id="consumerView">
+                <div class="row g-3">
+                    <div class="col-12 col-lg-6 animate-in delay-1">
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <span><i class="bi bi-phone me-2" style="color:var(--info);"></i>What Consumers See</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="text-center mb-4">
+                                    <div style="width:120px;height:120px;background:repeating-linear-gradient(45deg,#1b4332 0px,#1b4332 5px,#2d6a4f 5px,#2d6a4f 10px);margin:0 auto;border-radius:var(--radius);"></div>
+                                    <small class="text-muted d-block mt-2">Scan with any phone camera</small>
+                                </div>
+                                <div class="p-3 rounded-3" style="background:var(--surface-alt);">
+                                    <h6 class="fw-bold mb-2">What they'll see:</h6>
+                                    <ul style="font-size:0.78rem;padding-left:1.2rem;">
+                                        <li class="mb-1">Farmer name & location</li>
+                                        <li class="mb-1">Farm GPS coordinates</li>
+                                        <li class="mb-1">Crop variety & harvest date</li>
+                                        <li class="mb-1">Quality grade & certifications</li>
+                                        <li class="mb-1">Chemical usage records</li>
+                                        <li class="mb-1">Sustainability metrics</li>
+                                        <li class="mb-1">Full supply chain journey</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg-6 animate-in delay-2">
+                        <div class="dashboard-card mb-3">
+                            <div class="card-header">
+                                <span><i class="bi bi-bar-chart me-2" style="color:var(--accent);"></i>Scan Analytics</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="row g-2 text-center">
+                                    <div class="col-4">
+                                        <div class="p-2 rounded-2" style="background:var(--success-light);">
+                                            <div class="fw-bold" style="font-size:1.2rem;color:#059669;">247</div>
+                                            <small class="text-muted">Total Scans</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="p-2 rounded-2" style="background:var(--info-light);">
+                                            <div class="fw-bold" style="font-size:1.2rem;color:#3b82f6;">12</div>
+                                            <small class="text-muted">Countries</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="p-2 rounded-2" style="background:var(--warning-light);">
+                                            <div class="fw-bold" style="font-size:1.2rem;color:#d97706;">85%</div>
+                                            <small class="text-muted">Engagement</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mt-3">
+                                    <small class="text-muted">Top scanning countries:</small>
+                                    <div class="d-flex gap-2 mt-1">
+                                        <span class="badge bg-light text-dark">🇳🇬 Nigeria</span>
+                                        <span class="badge bg-light text-dark">🇩🇪 Germany</span>
+                                        <span class="badge bg-light text-dark">🇳🇱 Netherlands</span>
+                                        <span class="badge bg-light text-dark">🇬🇧 UK</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <span><i class="bi bi-lightbulb me-2" style="color:var(--accent);"></i>Tips to Increase Trust</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="d-flex gap-2 mb-2">
+                                    <i class="bi bi-check-circle-fill text-success"></i>
+                                    <small style="font-size:0.75rem;">Add farm photos to your QR profile</small>
+                                </div>
+                                <div class="d-flex gap-2 mb-2">
+                                    <i class="bi bi-check-circle-fill text-success"></i>
+                                    <small style="font-size:0.75rem;">Include a personal farmer story</small>
+                                </div>
+                                <div class="d-flex gap-2">
+                                    <i class="bi bi-check-circle-fill text-success"></i>
+                                    <small style="font-size:0.75rem;">Update sustainability metrics regularly</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== TOAST ==================== -->
+<div class="toast-custom success" id="toast">
+    <i class="bi bi-check-circle-fill"></i>
+    <span id="toastMessage">Action completed!</span>
+</div>
+
+<!-- ==================== MODALS ==================== -->
+
+<!-- Generate QR Modal -->
+<div class="modal fade" id="generateQRModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="bi bi-qr-code me-2" style="color:var(--primary);"></i>Generate New QR Code</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row g-3">
+                    <div class="col-12">
+                        <label class="form-label">Select Batch</label>
+                        <select class="form-select">
+                            <option>SES-2024-001 (Sesame · 450kg)</option>
+                            <option>GIN-2024-003 (Ginger · 200kg)</option>
+                            <option>MAI-2024-002 (Maize · 800kg)</option>
+                        </select>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label">QR Code Type</label>
+                        <select class="form-select">
+                            <option>Standard Traceability</option>
+                            <option>Export Compliance</option>
+                            <option>Consumer Marketing</option>
+                            <option>Internal Tracking</option>
+                        </select>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label">Include Information</label>
+                        <div class="form-check"><input class="form-check-input" type="checkbox" checked><label class="form-check-label" style="font-size:0.78rem;">Farmer Details</label></div>
+                        <div class="form-check"><input class="form-check-input" type="checkbox" checked><label class="form-check-label" style="font-size:0.78rem;">Farm Location</label></div>
+                        <div class="form-check"><input class="form-check-input" type="checkbox" checked><label class="form-check-label" style="font-size:0.78rem;">Certifications</label></div>
+                        <div class="form-check"><input class="form-check-input" type="checkbox"><label class="form-check-label" style="font-size:0.78rem;">Sustainability Metrics</label></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-outline-teal" data-bs-dismiss="modal">Cancel</button>
+                <button class="btn-teal" onclick="generateQR()">Generate QR Code</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Scan QR Modal -->
+<div class="modal fade" id="scanQRModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content text-center">
+            <div class="modal-header border-0 pb-0">
+                <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body pt-0">
+                <div class="p-4 rounded-3 mb-3" style="background:var(--surface-alt);border:2px dashed var(--border);cursor:pointer;" onclick="showToast('QR Code scanned! Batch: SES-2024-001','success')">
+                    <i class="bi bi-qr-code-scan" style="font-size:3rem;color:var(--primary);"></i>
+                    <p class="mb-0 mt-2 fw-semibold">Scan QR Code</p>
+                    <small class="text-muted">Point camera at any batch QR label</small>
+                </div>
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Or enter Batch ID">
+                    <button class="btn-teal" onclick="showToast('Batch found!','success')">Search</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- QR Detail Modal -->
+<div class="modal fade" id="qrDetailModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="qrDetailTitle"><i class="bi bi-qr-code me-2" style="color:var(--primary);"></i>QR Code Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="qrDetailBody"></div>
+            <div class="modal-footer">
+                <button class="btn-outline-teal" data-bs-dismiss="modal">Close</button>
+                <button class="btn-teal" onclick="showToast('QR Code downloaded!','success')"><i class="bi bi-download me-1"></i> Download QR</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== SCRIPTS ==================== -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Sidebar
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    const sidebar = document.getElementById('sidebar');
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
+    function openSidebar() { sidebar.classList.add('show'); sidebarOverlay.classList.add('show'); document.body.style.overflow = 'hidden'; }
+    function closeSidebar() { sidebar.classList.remove('show'); sidebarOverlay.classList.remove('show'); document.body.style.overflow = ''; }
+    sidebarToggle.addEventListener('click', openSidebar);
+    sidebarOverlay.addEventListener('click', closeSidebar);
+
+    // Toast
+    function showToast(message, type = 'success') {
+        const toast = document.getElementById('toast');
+        document.getElementById('toastMessage').textContent = message;
+        toast.className = 'toast-custom ' + type;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+
+    // Tab styling
+    document.querySelectorAll('#qrTabs button').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('#qrTabs button').forEach(b => {
+                b.classList.remove('active'); b.style.color = 'var(--text-muted)'; b.style.borderBottom = 'none';
+            });
+            this.classList.add('active'); this.style.color = 'var(--primary)'; this.style.borderBottom = '2px solid var(--primary)';
+        });
+    });
+
+    // QR Detail
+    function openQRDetail(batchId) {
+        const data = {
+            'SES-2024-001': { title:'🌾 Sesame · Premium', batch:'SES-2024-001', qty:'450 kg', generated:'15 May 2024', scans:'87', status:'Active', farmer:'Abubakar Ibrahim', location:'Kaduna, Nigeria', certs:'Organic · EU Compliant' },
+            'GIN-2024-003': { title:'🫚 Ginger · Export A', batch:'GIN-2024-003', qty:'200 kg', generated:'10 May 2024', scans:'124', status:'Active', farmer:'Abubakar Ibrahim', location:'Kaduna, Nigeria', certs:'Organic · EU Compliant' },
+            'MAI-2024-002': { title:'🌽 Maize · Standard', batch:'MAI-2024-002', qty:'800 kg', generated:'01 May 2024', scans:'36', status:'In Transit', farmer:'Abubakar Ibrahim', location:'Kaduna, Nigeria', certs:'Standard' }
+        };
+        const d = data[batchId] || data['SES-2024-001'];
+        document.getElementById('qrDetailTitle').innerHTML = `<i class="bi bi-qr-code me-2" style="color:var(--primary);"></i>${d.title}`;
+        document.getElementById('qrDetailBody').innerHTML = `
+            <div class="row g-3">
+                <div class="col-md-4 text-center">
+                    <div style="width:120px;height:120px;background:repeating-linear-gradient(45deg,#1b4332 0px,#1b4332 4px,#2d6a4f 4px,#2d6a4f 8px);margin:0 auto;border-radius:12px;"></div>
+                    <p class="mt-2 fw-bold">${d.batch}</p>
+                </div>
+                <div class="col-md-8">
+                    <table class="table table-sm" style="font-size:0.78rem;">
+                        <tr><td class="text-muted">Batch</td><td><strong>${d.batch}</strong></td></tr>
+                        <tr><td class="text-muted">Quantity</td><td><strong>${d.qty}</strong></td></tr>
+                        <tr><td class="text-muted">Generated</td><td><strong>${d.generated}</strong></td></tr>
+                        <tr><td class="text-muted">Total Scans</td><td><strong>${d.scans}</strong></td></tr>
+                        <tr><td class="text-muted">Status</td><td><strong>${d.status}</strong></td></tr>
+                        <tr><td class="text-muted">Farmer</td><td><strong>${d.farmer}</strong></td></tr>
+                        <tr><td class="text-muted">Certifications</td><td><strong>${d.certs}</strong></td></tr>
+                    </table>
+                </div>
+            </div>`;
+    }
+
+    function generateQR() {
+        const modal = bootstrap.Modal.getInstance(document.getElementById('generateQRModal'));
+        modal.hide();
+        showToast('✅ QR Code generated successfully!', 'success');
+    }
+</script>
+
+</body>
+</html>

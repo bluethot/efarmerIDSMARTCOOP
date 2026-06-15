@@ -1,0 +1,1219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farm Mapping - SmartCoop Platform</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        :root {
+            --primary: #0d9488;
+            --primary-dark: #0f766e;
+            --primary-light: #14b8a6;
+            --primary-bg: #f0fdfa;
+            --accent: #f59e0b;
+            --accent-light: #fef3c7;
+            --surface: #ffffff;
+            --surface-alt: #f8fafc;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #94a3b8;
+            --border: #e2e8f0;
+            --border-light: #f1f5f9;
+            --danger: #ef4444;
+            --danger-light: #fef2f2;
+            --success: #10b981;
+            --success-light: #ecfdf5;
+            --warning: #f59e0b;
+            --warning-light: #fffbeb;
+            --info: #3b82f6;
+            --info-light: #eff6ff;
+            --purple: #8b5cf6;
+            --purple-light: #f5f3ff;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+            --shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.06);
+            --shadow-lg: 0 10px 15px rgba(0,0,0,0.1), 0 4px 6px rgba(0,0,0,0.05);
+            --shadow-xl: 0 20px 40px rgba(0,0,0,0.15);
+            --radius-sm: 8px;
+            --radius: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 20px;
+            --sidebar-width: 280px;
+            --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-slow: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: var(--surface-alt);
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            color: var(--text-primary);
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+        }
+
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+
+        /* ========== SIDEBAR ========== */
+        .sidebar {
+            position: fixed;
+            top: 0; left: 0;
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: linear-gradient(195deg, #0f172a 0%, #1e293b 100%);
+            z-index: 1050;
+            overflow-y: auto;
+            transition: transform var(--transition-slow);
+            box-shadow: var(--shadow-xl);
+        }
+        .sidebar::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 250px;
+            background: radial-gradient(ellipse at 60% 0%, rgba(13,148,136,0.12) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .sidebar-brand {
+            padding: 1.75rem 1.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            position: relative;
+        }
+        .logo-icon {
+            width: 42px; height: 42px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            border-radius: var(--radius);
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-size: 1.3rem;
+            box-shadow: 0 4px 15px rgba(13,148,136,0.3);
+        }
+        .sidebar-brand h4 { color: #fff; font-weight: 700; font-size: 1.1rem; margin: 0; letter-spacing: -0.3px; }
+        .sidebar-brand small { color: rgba(255,255,255,0.4); font-size: 0.68rem; text-transform: uppercase; letter-spacing: 1px; }
+        .sidebar-user {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .avatar {
+            width: 42px; height: 42px;
+            border-radius: var(--radius);
+            background: linear-gradient(135deg, #f59e0b, #fbbf24);
+            display: flex; align-items: center; justify-content: center;
+            color: #1e293b; font-weight: 700; font-size: 1rem;
+            position: relative;
+        }
+        .avatar::after {
+            content: '';
+            position: absolute;
+            bottom: -2px; right: -2px;
+            width: 13px; height: 13px;
+            background: #10b981;
+            border: 3px solid #1e293b;
+            border-radius: 50%;
+        }
+        .sidebar-user .user-name { color: #f1f5f9; font-weight: 600; font-size: 0.85rem; }
+        .sidebar-user .user-role { color: rgba(255,255,255,0.4); font-size: 0.7rem; }
+        .sidebar-nav { padding: 0.5rem 0.75rem; }
+        .nav-section {
+            color: rgba(255,255,255,0.25);
+            font-size: 0.62rem; text-transform: uppercase;
+            letter-spacing: 1.8px; padding: 0.75rem 1rem 0.4rem;
+            font-weight: 700;
+        }
+        .sidebar-nav .nav-link {
+            color: rgba(255,255,255,0.5);
+            padding: 0.6rem 0.9rem; font-size: 0.82rem; font-weight: 500;
+            display: flex; align-items: center;
+            border-radius: var(--radius-sm);
+            margin-bottom: 1px;
+            transition: all var(--transition);
+            letter-spacing: -0.2px;
+        }
+        .sidebar-nav .nav-link:hover { background: rgba(255,255,255,0.04); color: #e2e8f0; }
+        .sidebar-nav .nav-link.active {
+            background: rgba(13,148,136,0.15);
+            color: #fff; font-weight: 600;
+            box-shadow: inset 0 0 0 1px rgba(13,148,136,0.25);
+        }
+        .sidebar-nav .nav-link i { width: 20px; margin-right: 0.7rem; font-size: 1rem; opacity: 0.75; }
+        .sidebar-nav .nav-link.active i { opacity: 1; color: var(--primary-light); }
+        .badge-pill {
+            background: var(--danger); color: #fff;
+            font-size: 0.62rem; padding: 0.2em 0.55em;
+            border-radius: 20px; margin-left: auto; font-weight: 700;
+        }
+        .sidebar-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+        .sidebar-overlay {
+            display: none;
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(15,23,42,0.45);
+            backdrop-filter: blur(3px);
+            z-index: 1045;
+        }
+        .sidebar-overlay.show { display: block; }
+
+        /* ========== MAIN CONTENT ========== */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+            transition: margin var(--transition-slow);
+        }
+
+        /* ========== TOP NAVBAR ========== */
+        .top-navbar {
+            background: rgba(255,255,255,0.75);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 0.7rem 1.75rem;
+            border-bottom: 1px solid rgba(226,232,240,0.6);
+            position: sticky; top: 0; z-index: 1040;
+        }
+        .btn-icon {
+            width: 37px; height: 37px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            background: var(--surface);
+            color: var(--text-secondary);
+            display: flex; align-items: center; justify-content: center;
+            transition: all var(--transition);
+            position: relative; cursor: pointer;
+        }
+        .btn-icon:hover { background: var(--surface-alt); border-color: #cbd5e1; color: var(--text-primary); }
+        .notification-dot {
+            position: absolute;
+            top: 7px; right: 7px;
+            width: 9px; height: 9px;
+            background: var(--danger);
+            border-radius: 50%; border: 2px solid #fff;
+        }
+
+        /* ========== MAP CONTAINER ========== */
+        .map-wrapper {
+            position: relative;
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border-light);
+        }
+        #farmMap {
+            height: 500px;
+            width: 100%;
+            z-index: 1;
+        }
+        .map-overlay-tools {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .map-tool-btn {
+            width: 40px;
+            height: 40px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all var(--transition);
+            box-shadow: var(--shadow-sm);
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+        .map-tool-btn:hover {
+            background: var(--surface-alt);
+            border-color: #cbd5e1;
+            color: var(--primary);
+            box-shadow: var(--shadow-md);
+        }
+        .map-tool-btn.active {
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--primary);
+        }
+        .map-legend {
+            position: absolute;
+            bottom: 20px;
+            left: 15px;
+            z-index: 1000;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 0.75rem 1rem;
+            box-shadow: var(--shadow-md);
+            font-size: 0.72rem;
+        }
+        .map-legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.35rem;
+        }
+        .map-legend-item:last-child { margin-bottom: 0; }
+        .legend-color {
+            width: 14px;
+            height: 14px;
+            border-radius: 3px;
+            flex-shrink: 0;
+        }
+
+        /* ========== FIELD CARDS ========== */
+        .field-card {
+            background: var(--surface);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius);
+            padding: 1rem;
+            transition: all var(--transition);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        .field-card:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-2px);
+            border-color: #cbd5e1;
+        }
+        .field-card.selected {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(13,148,136,0.1);
+        }
+        .field-card .field-color-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            border-radius: var(--radius) 0 0 var(--radius);
+        }
+        .field-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-size: 0.68rem;
+            font-weight: 600;
+            padding: 0.2em 0.55em;
+            border-radius: 20px;
+        }
+
+        /* ========== CARDS ========== */
+        .dashboard-card {
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-light);
+            overflow: hidden;
+            height: 100%;
+            transition: all var(--transition);
+        }
+        .dashboard-card:hover { box-shadow: var(--shadow-md); }
+        .dashboard-card .card-header {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border-light);
+            padding: 1rem 1.3rem;
+            font-weight: 650; font-size: 0.88rem;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .dashboard-card .card-body { padding: 1.3rem; }
+
+        /* ========== BUTTONS ========== */
+        .btn-teal {
+            background: var(--primary); color: #fff;
+            border: none; font-weight: 600; font-size: 0.78rem;
+            padding: 0.5rem 1rem; border-radius: var(--radius-sm);
+            letter-spacing: -0.2px; transition: all var(--transition);
+            box-shadow: 0 2px 6px rgba(13,148,136,0.2);
+        }
+        .btn-teal:hover {
+            background: var(--primary-dark);
+            box-shadow: 0 4px 12px rgba(13,148,136,0.3);
+            transform: translateY(-1px); color: #fff;
+        }
+        .btn-outline-teal {
+            border: 1.5px solid #cbd5e1; color: var(--text-secondary);
+            background: var(--surface); font-weight: 500; font-size: 0.78rem;
+            padding: 0.48rem 1rem; border-radius: var(--radius-sm);
+            transition: all var(--transition);
+        }
+        .btn-outline-teal:hover {
+            border-color: var(--primary); color: var(--primary);
+            background: var(--primary-bg);
+        }
+        .btn-sm-pill { font-size: 0.7rem; padding: 0.3rem 0.8rem; border-radius: 20px; font-weight: 600; }
+
+        /* ========== STAT MINI ========== */
+        .stat-mini {
+            background: var(--surface-alt);
+            border-radius: var(--radius);
+            padding: 0.8rem 1rem;
+            text-align: center;
+            border: 1px solid var(--border-light);
+        }
+        .stat-mini-value {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            letter-spacing: -0.3px;
+        }
+        .stat-mini-label {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            font-weight: 600;
+        }
+
+        /* ========== SATELLITE INDICATOR ========== */
+        .satellite-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            background: var(--info-light);
+            color: #1d4ed8;
+            font-size: 0.7rem;
+            font-weight: 600;
+            padding: 0.3rem 0.7rem;
+            border-radius: 20px;
+        }
+        .ndvi-indicator {
+            width: 100%;
+            height: 8px;
+            border-radius: 10px;
+            background: linear-gradient(90deg, #ef4444, #f59e0b, #84cc16, #10b981, #22c55e);
+            position: relative;
+            margin: 0.5rem 0;
+        }
+        .ndvi-marker {
+            position: absolute;
+            top: -5px;
+            width: 14px;
+            height: 18px;
+            background: var(--text-primary);
+            border-radius: 3px;
+            border: 2px solid #fff;
+            box-shadow: var(--shadow);
+            transform: translateX(-50%);
+        }
+
+        /* ========== TOAST ========== */
+        .toast-custom {
+            position: fixed;
+            bottom: 2rem; right: 2rem;
+            background: #0f172a; color: #fff;
+            padding: 0.9rem 1.3rem;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-xl);
+            z-index: 1070;
+            display: flex; align-items: center; gap: 0.6rem;
+            font-weight: 500; font-size: 0.85rem;
+            transform: translateY(120px);
+            opacity: 0;
+            transition: all var(--transition-slow);
+        }
+        .toast-custom.show { transform: translateY(0); opacity: 1; }
+        .toast-custom.success { border-left: 4px solid #10b981; }
+        .toast-custom.warning { border-left: 4px solid #f59e0b; }
+
+        /* ========== MODALS ========== */
+        .modal-content {
+            border: none; border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-xl); overflow: hidden;
+        }
+        .modal-header {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border-light);
+            padding: 1.2rem 1.5rem;
+        }
+        .modal-header .modal-title {
+            font-weight: 700; font-size: 1.1rem;
+            letter-spacing: -0.3px; color: var(--text-primary);
+        }
+        .modal-body { padding: 1.5rem; }
+        .modal-footer {
+            border-top: 1px solid var(--border-light);
+            padding: 1rem 1.5rem;
+        }
+        .form-label {
+            font-weight: 600; font-size: 0.76rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.3rem;
+            letter-spacing: -0.2px;
+        }
+        .form-control, .form-select {
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            padding: 0.55rem 0.85rem;
+            font-size: 0.84rem; transition: all var(--transition);
+            font-family: 'Inter', sans-serif;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(13,148,136,0.08);
+        }
+
+        /* ========== ANIMATIONS ========== */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-in { animation: fadeInUp 0.45s ease forwards; opacity: 0; }
+        .delay-1 { animation-delay: 0.05s; }
+        .delay-2 { animation-delay: 0.1s; }
+        .delay-3 { animation-delay: 0.15s; }
+
+        /* ========== RESPONSIVE ========== */
+        @media (max-width: 991.98px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.show { transform: translateX(0); }
+            .main-content { margin-left: 0; }
+            .sidebar-overlay.show { display: block; }
+            #farmMap { height: 350px; }
+        }
+        @media (max-width: 767.98px) {
+            .top-navbar { padding: 0.55rem 0.9rem; }
+            #farmMap { height: 280px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Sidebar Overlay -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<!-- ==================== SIDEBAR ==================== -->
+<aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+        <div class="d-flex align-items-center gap-3">
+            <div class="logo-icon"><i class="bi bi-grid-3x3-gap-fill"></i></div>
+            <div>
+                <h4>SmartCoop</h4>
+                <small>Farmer Platform</small>
+            </div>
+        </div>
+    </div>
+    <div class="sidebar-user">
+        <div class="d-flex align-items-center gap-3">
+            <div class="avatar">AI</div>
+            <div>
+                <div class="user-name">Abubakar Ibrahim</div>
+                <div class="user-role">Farmer · FARM-2847</div>
+            </div>
+        </div>
+    </div>
+    <nav class="sidebar-nav">
+        <div class="nav-section">Main Menu</div>
+        <a class="nav-link" href="dashboard.html"><i class="bi bi-columns-gap"></i> Dashboard</a>
+        <a class="nav-link" href="myprofile.html"><i class="bi bi-person-badge"></i> My Profile</a>
+        <a class="nav-link active" href="farm-mapping.html"><i class="bi bi-geo-alt"></i> Farm Mapping</a>
+        <div class="nav-section mt-2">Farm Management</div>
+        <a class="nav-link" href="crop-records.html"><i class="bi bi-flower1"></i> Crop Records</a>
+        <a class="nav-link" href="produce-tracking.html"><i class="bi bi-box-seam"></i> Produce Tracking <span class="badge-pill">3</span></a>
+        <a class="nav-link" href="inputs-chemicals.html"><i class="bi bi-droplet"></i> Inputs & Chemicals</a>
+        <div class="nav-section mt-2">Finance & Market</div>
+        <a class="nav-link" href="wallet.html"><i class="bi bi-wallet2"></i> Wallet</a>
+        <a class="nav-link" href="loans-credit.html"><i class="bi bi-cash-stack"></i> Loans & Credit</a>
+        <a class="nav-link" href="marketplace.html"><i class="bi bi-shop"></i> Marketplace</a>
+        <div class="nav-section mt-2">Insights</div>
+        <a class="nav-link" href="climate-alerts.html"><i class="bi bi-cloud-sun"></i> Climate Alerts <span class="badge-pill">2</span></a>
+        <a class="nav-link" href="analytics.html"><i class="bi bi-graph-up"></i> Analytics</a>
+        <a class="nav-link" href="traceability-qr.html"><i class="bi bi-qr-code"></i> Traceability QR</a>
+    </nav>
+    <div class="sidebar-footer">
+        <a href="#" style="color:rgba(255,255,255,0.45);font-size:0.78rem;text-decoration:none;">
+            <i class="bi bi-box-arrow-right me-1"></i> Sign Out
+        </a>
+    </div>
+</aside>
+
+<!-- ==================== MAIN CONTENT ==================== -->
+<div class="main-content" id="mainContent">
+
+    <!-- Top Navbar -->
+    <nav class="top-navbar">
+        <div class="d-flex align-items-center justify-content-between w-100">
+            <div class="d-flex align-items-center gap-3">
+                <button class="navbar-toggler d-lg-none btn-icon border-0" id="sidebarToggle">
+                    <i class="bi bi-list"></i>
+                </button>
+                <h5 class="mb-0 fw-bold" style="color:var(--text-primary);letter-spacing:-0.3px;">
+                    <i class="bi bi-geo-alt-fill me-2" style="color:var(--primary);"></i>Farm Mapping & GIS
+                </h5>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                <span class="satellite-badge d-none d-md-inline-flex">
+                    <i class="bi bi-satellite"></i> Sentinel-2 · Last update: 2 days ago
+                </span>
+                <button class="btn-icon"><i class="bi bi-bell"></i><span class="notification-dot"></span></button>
+                <div style="width:32px;height:32px;background:linear-gradient(135deg,#0d9488,#14b8a6);border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:0.8rem;">AI</div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Content -->
+    <div class="p-3 p-md-4">
+
+        <!-- Stats Row -->
+        <div class="row g-2 mb-3 animate-in delay-1">
+            <div class="col-6 col-md-3">
+                <div class="stat-mini">
+                    <div class="stat-mini-value">4.5 Ha</div>
+                    <div class="stat-mini-label">Total Area</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="stat-mini">
+                    <div class="stat-mini-value">4</div>
+                    <div class="stat-mini-label">Fields Mapped</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="stat-mini">
+                    <div class="stat-mini-value">3</div>
+                    <div class="stat-mini-label">Active Crops</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="stat-mini">
+                    <div class="stat-mini-value">0.72</div>
+                    <div class="stat-mini-label">NDVI Avg</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Map + Sidebar -->
+        <div class="row g-3">
+            <!-- Map Column -->
+            <div class="col-12 col-lg-8 animate-in delay-2">
+                <div class="map-wrapper">
+                    <div id="farmMap"></div>
+
+                    <!-- Map Tools -->
+                    <div class="map-overlay-tools">
+                        <button class="map-tool-btn active" title="Measure Area" onclick="activateMeasure()" id="btnMeasure">
+                            <i class="bi bi-bounding-box"></i>
+                        </button>
+                        <button class="map-tool-btn" title="Draw Field" onclick="activateDraw()" id="btnDraw">
+                            <i class="bi bi-pencil"></i>
+                        </button>
+                        <button class="map-tool-btn" title="GPS Locate" onclick="locateFarm()">
+                            <i class="bi bi-crosshair"></i>
+                        </button>
+                        <button class="map-tool-btn" title="Satellite View" onclick="toggleSatellite()" id="btnSatellite">
+                            <i class="bi bi-satellite"></i>
+                        </button>
+                        <button class="map-tool-btn" title="Download Map" onclick="showToast('Map downloaded!', 'success')">
+                            <i class="bi bi-download"></i>
+                        </button>
+                        <button class="map-tool-btn" title="Full Screen" onclick="toggleFullScreen()">
+                            <i class="bi bi-arrows-fullscreen"></i>
+                        </button>
+                    </div>
+
+                    <!-- Map Legend -->
+                    <div class="map-legend">
+                        <div class="map-legend-item">
+                            <span class="legend-color" style="background:#10b981;opacity:0.6;"></span>
+                            <span>Sesame Field</span>
+                        </div>
+                        <div class="map-legend-item">
+                            <span class="legend-color" style="background:#f59e0b;opacity:0.6;"></span>
+                            <span>Maize Field</span>
+                        </div>
+                        <div class="map-legend-item">
+                            <span class="legend-color" style="background:#8b5cf6;opacity:0.6;"></span>
+                            <span>Ginger Field</span>
+                        </div>
+                        <div class="map-legend-item">
+                            <span class="legend-color" style="background:#94a3b8;opacity:0.4;"></span>
+                            <span>Fallow Land</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Field List Column -->
+            <div class="col-12 col-lg-4 animate-in delay-3">
+                <div class="dashboard-card mb-3">
+                    <div class="card-header">
+                        <span><i class="bi bi-grid-3x3 me-2" style="color:var(--primary);"></i>My Fields</span>
+                        <button class="btn-teal btn-sm-pill" data-bs-toggle="modal" data-bs-target="#addFieldModal">
+                            <i class="bi bi-plus-lg me-1"></i> Add Field
+                        </button>
+                    </div>
+                    <div class="card-body p-0" style="max-height:420px;overflow-y:auto;">
+                        <!-- Field 1 -->
+                        <div class="field-card m-2 selected" onclick="selectField(this, 1)">
+                            <div class="field-color-bar" style="background:#10b981;"></div>
+                            <div class="ps-3">
+                                <div class="d-flex justify-content-between align-items-start mb-1">
+                                    <strong style="font-size:0.85rem;">Field A - Sesame</strong>
+                                    <span class="field-status bg-success bg-opacity-10 text-success">● Active</span>
+                                </div>
+                                <div style="font-size:0.72rem;color:var(--text-muted);">
+                                    <div><i class="bi bi-arrows-angle-expand me-1"></i> 2.0 Ha</div>
+                                    <div><i class="bi bi-geo-alt me-1"></i> 10.5234° N, 7.4388° E</div>
+                                    <div><i class="bi bi-calendar me-1"></i> Planted: 15 Mar 2024</div>
+                                    <div><i class="bi bi-droplet me-1"></i> Sandy Loam · Irrigated</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Field 2 -->
+                        <div class="field-card m-2" onclick="selectField(this, 2)">
+                            <div class="field-color-bar" style="background:#f59e0b;"></div>
+                            <div class="ps-3">
+                                <div class="d-flex justify-content-between align-items-start mb-1">
+                                    <strong style="font-size:0.85rem;">Field B - Maize</strong>
+                                    <span class="field-status bg-warning bg-opacity-10 text-warning">● Monitor</span>
+                                </div>
+                                <div style="font-size:0.72rem;color:var(--text-muted);">
+                                    <div><i class="bi bi-arrows-angle-expand me-1"></i> 1.5 Ha</div>
+                                    <div><i class="bi bi-geo-alt me-1"></i> 10.5240° N, 7.4395° E</div>
+                                    <div><i class="bi bi-calendar me-1"></i> Planted: 01 Apr 2024</div>
+                                    <div><i class="bi bi-droplet me-1"></i> Clay Loam · Rain-fed</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Field 3 -->
+                        <div class="field-card m-2" onclick="selectField(this, 3)">
+                            <div class="field-color-bar" style="background:#8b5cf6;"></div>
+                            <div class="ps-3">
+                                <div class="d-flex justify-content-between align-items-start mb-1">
+                                    <strong style="font-size:0.85rem;">Field C - Ginger</strong>
+                                    <span class="field-status bg-success bg-opacity-10 text-success">● Healthy</span>
+                                </div>
+                                <div style="font-size:0.72rem;color:var(--text-muted);">
+                                    <div><i class="bi bi-arrows-angle-expand me-1"></i> 1.0 Ha</div>
+                                    <div><i class="bi bi-geo-alt me-1"></i> 10.5228° N, 7.4401° E</div>
+                                    <div><i class="bi bi-calendar me-1"></i> Planted: 20 Feb 2024</div>
+                                    <div><i class="bi bi-droplet me-1"></i> Sandy Loam · Borehole</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Field 4 (Fallow) -->
+                        <div class="field-card m-2" onclick="selectField(this, 4)">
+                            <div class="field-color-bar" style="background:#94a3b8;"></div>
+                            <div class="ps-3">
+                                <div class="d-flex justify-content-between align-items-start mb-1">
+                                    <strong style="font-size:0.85rem;">Field D - Fallow</strong>
+                                    <span class="field-status bg-secondary bg-opacity-10 text-secondary">● Resting</span>
+                                </div>
+                                <div style="font-size:0.72rem;color:var(--text-muted);">
+                                    <div><i class="bi bi-arrows-angle-expand me-1"></i> 0.5 Ha</div>
+                                    <div><i class="bi bi-geo-alt me-1"></i> 10.5250° N, 7.4380° E</div>
+                                    <div><i class="bi bi-calendar me-1"></i> Last crop: Nov 2023</div>
+                                    <div><i class="bi bi-droplet me-1"></i> Regenerating</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- NDVI Health Card -->
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <span><i class="bi bi-activity me-2" style="color:var(--success);"></i>Vegetation Health (NDVI)</span>
+                        <span class="badge bg-info bg-opacity-10 text-info rounded-pill" style="font-size:0.65rem;">
+                            <i class="bi bi-broadcast me-1"></i> Live
+                        </span>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-2 d-flex justify-content-between">
+                            <small class="text-muted">Current Avg: <strong style="color:var(--success);">0.72</strong></small>
+                            <small class="text-muted">Healthy Range: 0.60 - 0.85</small>
+                        </div>
+                        <div class="ndvi-indicator">
+                            <div class="ndvi-marker" style="left:72%;"></div>
+                        </div>
+                        <div class="d-flex justify-content-between mt-2">
+                            <small style="font-size:0.65rem;color:#ef4444;">0.0<br>Stress</small>
+                            <small style="font-size:0.65rem;color:#f59e0b;">0.4<br>Low</small>
+                            <small style="font-size:0.65rem;color:#84cc16;">0.6<br>Moderate</small>
+                            <small style="font-size:0.65rem;color:#22c55e;">1.0<br>Excellent</small>
+                        </div>
+                        <div class="row g-2 mt-3">
+                            <div class="col-6">
+                                <div class="p-2 rounded-2 text-center" style="background:var(--success-light);">
+                                    <div class="fw-bold" style="font-size:0.85rem;color:#059669;">0.78</div>
+                                    <small class="text-muted">Field A (Sesame)</small>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="p-2 rounded-2 text-center" style="background:var(--warning-light);">
+                                    <div class="fw-bold" style="font-size:0.85rem;color:#d97706;">0.64</div>
+                                    <small class="text-muted">Field B (Maize)</small>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="p-2 rounded-2 text-center" style="background:var(--success-light);">
+                                    <div class="fw-bold" style="font-size:0.85rem;color:#059669;">0.81</div>
+                                    <small class="text-muted">Field C (Ginger)</small>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="p-2 rounded-2 text-center" style="background:var(--surface-alt);">
+                                    <div class="fw-bold" style="font-size:0.85rem;color:var(--text-muted);">0.42</div>
+                                    <small class="text-muted">Field D (Fallow)</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Soil & Climate Info Row -->
+        <div class="row g-3 mt-1 animate-in delay-2">
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <span><i class="bi bi-droplet me-2" style="color:var(--info);"></i>Soil Analysis</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex align-items-center justify-content-between mb-2">
+                            <span style="font-size:0.78rem;">pH Level</span>
+                            <strong style="font-size:0.82rem;">6.4</strong>
+                        </div>
+                        <div class="progress mb-2" style="height:6px;">
+                            <div class="progress-bar bg-success" style="width:64%;"></div>
+                        </div>
+                        <div class="d-flex align-items-center justify-content-between mb-2">
+                            <span style="font-size:0.78rem;">Organic Matter</span>
+                            <strong style="font-size:0.82rem;">3.2%</strong>
+                        </div>
+                        <div class="progress mb-2" style="height:6px;">
+                            <div class="progress-bar bg-warning" style="width:45%;"></div>
+                        </div>
+                        <div class="d-flex align-items-center justify-content-between mb-2">
+                            <span style="font-size:0.78rem;">Nitrogen (N)</span>
+                            <strong style="font-size:0.82rem;">Medium</strong>
+                        </div>
+                        <div class="progress mb-2" style="height:6px;">
+                            <div class="progress-bar bg-info" style="width:55%;"></div>
+                        </div>
+                        <div class="d-flex align-items-center justify-content-between">
+                            <span style="font-size:0.78rem;">Phosphorus (P)</span>
+                            <strong style="font-size:0.82rem;">High</strong>
+                        </div>
+                        <div class="progress" style="height:6px;">
+                            <div class="progress-bar bg-success" style="width:82%;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <span><i class="bi bi-cloud-sun me-2" style="color:var(--accent);"></i>Climate Summary</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-2">
+                            <div class="col-6">
+                                <div class="p-2 rounded-2 text-center" style="background:var(--warning-light);">
+                                    <i class="bi bi-thermometer-half" style="font-size:1.3rem;color:#d97706;"></i>
+                                    <div class="fw-bold" style="font-size:0.8rem;">32°C</div>
+                                    <small class="text-muted">Avg Temp</small>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="p-2 rounded-2 text-center" style="background:var(--info-light);">
+                                    <i class="bi bi-droplet-fill" style="font-size:1.3rem;color:#3b82f6;"></i>
+                                    <div class="fw-bold" style="font-size:0.8rem;">450mm</div>
+                                    <small class="text-muted">Rainfall</small>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="p-2 rounded-2 text-center" style="background:var(--success-light);">
+                                    <i class="bi bi-sun-fill" style="font-size:1.3rem;color:#059669;"></i>
+                                    <div class="fw-bold" style="font-size:0.8rem;">120d</div>
+                                    <small class="text-muted">Growing Days</small>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="p-2 rounded-2 text-center" style="background:var(--purple-light);">
+                                    <i class="bi bi-wind" style="font-size:1.3rem;color:#8b5cf6;"></i>
+                                    <div class="fw-bold" style="font-size:0.8rem;">8 km/h</div>
+                                    <small class="text-muted">Wind Speed</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-lg-4">
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <span><i class="bi bi-lightbulb me-2" style="color:var(--accent);"></i>AI Recommendations</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex gap-2 mb-3">
+                            <i class="bi bi-robot" style="font-size:1.5rem;color:var(--purple);"></i>
+                            <div>
+                                <strong style="font-size:0.8rem;">Field B (Maize) Alert</strong>
+                                <p class="mb-0" style="font-size:0.72rem;color:var(--text-muted);">NDVI declining. Consider nitrogen top-dressing within 5 days.</p>
+                            </div>
+                        </div>
+                        <div class="d-flex gap-2 mb-3">
+                            <i class="bi bi-robot" style="font-size:1.5rem;color:var(--purple);"></i>
+                            <div>
+                                <strong style="font-size:0.8rem;">Field D Rotation</strong>
+                                <p class="mb-0" style="font-size:0.72rem;color:var(--text-muted);">Fall period ending. Recommend planting soybean to restore nitrogen.</p>
+                            </div>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <i class="bi bi-robot" style="font-size:1.5rem;color:var(--purple);"></i>
+                            <div>
+                                <strong style="font-size:0.8rem;">Water Management</strong>
+                                <p class="mb-0" style="font-size:0.72rem;color:var(--text-muted);">Heavy rain expected Thu. Ensure drainage channels are clear.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== TOAST ==================== -->
+<div class="toast-custom success" id="toast">
+    <i class="bi bi-check-circle-fill"></i>
+    <span id="toastMessage">Action completed!</span>
+</div>
+
+<!-- ==================== ADD FIELD MODAL ==================== -->
+<div class="modal fade" id="addFieldModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="bi bi-plus-circle me-2" style="color:var(--primary);"></i>Add New Field</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row g-3">
+                    <div class="col-12">
+                        <label class="form-label">Field Name</label>
+                        <input type="text" class="form-control" placeholder="e.g., Field E - Soybean">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Area (Hectares)</label>
+                        <input type="number" step="0.1" class="form-control" placeholder="0.0">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Soil Type</label>
+                        <select class="form-select">
+                            <option>Select soil type...</option>
+                            <option>Sandy Loam</option>
+                            <option>Clay Loam</option>
+                            <option>Silty Clay</option>
+                            <option>Loamy Sand</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Latitude</label>
+                        <input type="text" class="form-control" placeholder="10.5234">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Longitude</label>
+                        <input type="text" class="form-control" placeholder="7.4388">
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label">Irrigation Method</label>
+                        <select class="form-select">
+                            <option>Select method...</option>
+                            <option>Rain-fed</option>
+                            <option>Borehole Irrigation</option>
+                            <option>Drip Irrigation</option>
+                            <option>Flood Irrigation</option>
+                        </select>
+                    </div>
+                    <div class="col-12">
+                        <div class="p-3 rounded-3 text-center" style="background:var(--surface-alt);border:1px dashed var(--border);cursor:pointer;" onclick="showToast('GPS location captured!', 'success')">
+                            <i class="bi bi-crosshair" style="font-size:1.5rem;color:var(--primary);"></i>
+                            <p class="mb-0 mt-1 fw-semibold" style="font-size:0.8rem;">Capture GPS Coordinates</p>
+                            <small class="text-muted">Click to use current location</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-outline-teal" data-bs-dismiss="modal">Cancel</button>
+                <button class="btn-teal" onclick="addNewField()">Save Field</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== FIELD DETAIL MODAL ==================== -->
+<div class="modal fade" id="fieldDetailModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="bi bi-info-circle me-2" style="color:var(--primary);"></i>Field Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row g-3">
+                    <div class="col-md-8">
+                        <div id="fieldDetailMap" style="height:250px;border-radius:var(--radius);background:var(--surface-alt);border:1px dashed var(--border);"></div>
+                    </div>
+                    <div class="col-md-4">
+                        <h6 class="fw-bold" id="detailFieldName">Field A - Sesame</h6>
+                        <table class="table table-sm" style="font-size:0.78rem;">
+                            <tr><td class="text-muted">Area</td><td><strong id="detailArea">2.0 Ha</strong></td></tr>
+                            <tr><td class="text-muted">GPS</td><td><strong id="detailGPS">10.5234° N, 7.4388° E</strong></td></tr>
+                            <tr><td class="text-muted">Soil</td><td><strong id="detailSoil">Sandy Loam</strong></td></tr>
+                            <tr><td class="text-muted">Crop</td><td><strong id="detailCrop">Sesame (Premium)</strong></td></tr>
+                            <tr><td class="text-muted">Planted</td><td><strong id="detailPlanted">15 Mar 2024</strong></td></tr>
+                            <tr><td class="text-muted">NDVI</td><td><strong class="text-success" id="detailNDVI">0.78</strong></td></tr>
+                        </table>
+                        <button class="btn-outline-teal btn-sm w-100" onclick="showToast('Satellite analysis started!', 'success')">
+                            <i class="bi bi-satellite me-1"></i> Request Satellite Image
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== SCRIPTS ==================== -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+    // ========== SIDEBAR ==========
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    const sidebar = document.getElementById('sidebar');
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
+    function openSidebar() { sidebar.classList.add('show'); sidebarOverlay.classList.add('show'); document.body.style.overflow = 'hidden'; }
+    function closeSidebar() { sidebar.classList.remove('show'); sidebarOverlay.classList.remove('show'); document.body.style.overflow = ''; }
+    sidebarToggle.addEventListener('click', openSidebar);
+    sidebarOverlay.addEventListener('click', closeSidebar);
+
+    // ========== TOAST ==========
+    function showToast(message, type = 'success') {
+        const toast = document.getElementById('toast');
+        document.getElementById('toastMessage').textContent = message;
+        toast.className = 'toast-custom ' + type;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+
+    // ========== INITIALIZE MAP ==========
+    const farmCenter = [10.5234, 7.4388];
+    const map = L.map('farmMap').setView(farmCenter, 15);
+
+    // Tile Layers
+    const osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors',
+        maxZoom: 19
+    });
+
+    const satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+        attribution: '&copy; Esri',
+        maxZoom: 19
+    });
+
+    osmLayer.addTo(map);
+    let isSatellite = false;
+
+    // Farm boundary polygon
+    const farmBoundary = L.polygon([
+        [10.5245, 7.4375],
+        [10.5245, 7.4405],
+        [10.5220, 7.4405],
+        [10.5220, 7.4375]
+    ], {
+        color: '#0d9488',
+        weight: 3,
+        fillColor: '#0d9488',
+        fillOpacity: 0.08,
+        dashArray: '10, 10'
+    }).addTo(map).bindPopup('<strong>Ibrahim Farms</strong><br>Total: 4.5 Ha');
+
+    // Field A - Sesame
+    const fieldA = L.polygon([
+        [10.5243, 7.4378],
+        [10.5243, 7.4398],
+        [10.5230, 7.4398],
+        [10.5230, 7.4378]
+    ], {
+        color: '#10b981',
+        weight: 2,
+        fillColor: '#10b981',
+        fillOpacity: 0.25
+    }).addTo(map).bindPopup(`
+        <strong>Field A - Sesame</strong><br>
+        Area: 2.0 Ha<br>
+        Planted: 15 Mar 2024<br>
+        NDVI: 0.78<br>
+        <button onclick="showToast('Field selected!', 'success')" style="font-size:0.7rem;padding:0.2rem 0.5rem;background:#0d9488;color:#fff;border:none;border-radius:4px;cursor:pointer;">View Details</button>
+    `);
+
+    // Field B - Maize
+    const fieldB = L.polygon([
+        [10.5245, 7.4390],
+        [10.5245, 7.4403],
+        [10.5235, 7.4403],
+        [10.5235, 7.4390]
+    ], {
+        color: '#f59e0b',
+        weight: 2,
+        fillColor: '#f59e0b',
+        fillOpacity: 0.25
+    }).addTo(map).bindPopup(`
+        <strong>Field B - Maize</strong><br>
+        Area: 1.5 Ha<br>
+        Planted: 01 Apr 2024<br>
+        NDVI: 0.64<br>
+        <span style="color:#d97706;font-size:0.7rem;">⚠️ Monitor - Declining health</span>
+    `);
+
+    // Field C - Ginger
+    const fieldC = L.polygon([
+        [10.5225, 7.4380],
+        [10.5225, 7.4395],
+        [10.5215, 7.4395],
+        [10.5215, 7.4380]
+    ], {
+        color: '#8b5cf6',
+        weight: 2,
+        fillColor: '#8b5cf6',
+        fillOpacity: 0.25
+    }).addTo(map).bindPopup(`
+        <strong>Field C - Ginger</strong><br>
+        Area: 1.0 Ha<br>
+        Planted: 20 Feb 2024<br>
+        NDVI: 0.81<br>
+        <span style="color:#059669;font-size:0.7rem;">● Excellent health</span>
+    `);
+
+    // Field D - Fallow
+    const fieldD = L.polygon([
+        [10.5250, 7.4378],
+        [10.5250, 7.4385],
+        [10.5245, 7.4385],
+        [10.5245, 7.4378]
+    ], {
+        color: '#94a3b8',
+        weight: 2,
+        fillColor: '#94a3b8',
+        fillOpacity: 0.15,
+        dashArray: '5, 5'
+    }).addTo(map).bindPopup(`
+        <strong>Field D - Fallow</strong><br>
+        Area: 0.5 Ha<br>
+        Status: Resting<br>
+        NDVI: 0.42
+    `);
+
+    // Marker for farm center
+    const farmMarker = L.marker(farmCenter, {
+        icon: L.divIcon({
+            className: '',
+            html: '<div style="background:#0d9488;color:white;padding:6px 12px;border-radius:20px;font-weight:700;font-size:0.75rem;box-shadow:0 4px 15px rgba(0,0,0,0.3);white-space:nowrap;">🏠 Ibrahim Farms</div>',
+            iconSize: [120, 35],
+            iconAnchor: [60, 17]
+        })
+    }).addTo(map);
+
+    // ========== MAP TOOLS ==========
+    function activateMeasure() {
+        showToast('Click on the map to measure area. Right-click to finish.', 'warning');
+        document.getElementById('btnMeasure').classList.add('active');
+        document.getElementById('btnDraw').classList.remove('active');
+    }
+
+    function activateDraw() {
+        showToast('Click to draw a new field boundary.', 'warning');
+        document.getElementById('btnDraw').classList.add('active');
+        document.getElementById('btnMeasure').classList.remove('active');
+    }
+
+    function locateFarm() {
+        map.setView(farmCenter, 17);
+        showToast('Centered on your farm location', 'success');
+    }
+
+    function toggleSatellite() {
+        if (isSatellite) {
+            map.removeLayer(satelliteLayer);
+            osmLayer.addTo(map);
+            document.getElementById('btnSatellite').classList.remove('active');
+        } else {
+            map.removeLayer(osmLayer);
+            satelliteLayer.addTo(map);
+            document.getElementById('btnSatellite').classList.add('active');
+        }
+        isSatellite = !isSatellite;
+    }
+
+    function toggleFullScreen() {
+        const mapEl = document.getElementById('farmMap');
+        if (document.fullscreenElement) {
+            document.exitFullscreen();
+        } else {
+            mapEl.requestFullscreen();
+        }
+        setTimeout(() => map.invalidateSize(), 300);
+    }
+
+    // ========== FIELD SELECTION ==========
+    function selectField(card, fieldNum) {
+        document.querySelectorAll('.field-card').forEach(c => c.classList.remove('selected'));
+        card.classList.add('selected');
+
+        const fieldData = {
+            1: { center: [10.5236, 7.4388], zoom: 16, name: 'Field A - Sesame', area: '2.0 Ha', gps: '10.5234° N, 7.4388° E', soil: 'Sandy Loam', crop: 'Sesame (Premium)', planted: '15 Mar 2024', ndvi: '0.78' },
+            2: { center: [10.5240, 7.4395], zoom: 16, name: 'Field B - Maize', area: '1.5 Ha', gps: '10.5240° N, 7.4395° E', soil: 'Clay Loam', crop: 'Maize (Yellow)', planted: '01 Apr 2024', ndvi: '0.64' },
+            3: { center: [10.5220, 7.4388], zoom: 16, name: 'Field C - Ginger', area: '1.0 Ha', gps: '10.5228° N, 7.4401° E', soil: 'Sandy Loam', crop: 'Ginger (Export)', planted: '20 Feb 2024', ndvi: '0.81' },
+            4: { center: [10.5248, 7.4380], zoom: 16, name: 'Field D - Fallow', area: '0.5 Ha', gps: '10.5250° N, 7.4380° E', soil: 'Sandy Loam', crop: 'None (Fallow)', planted: 'Last: Nov 2023', ndvi: '0.42' }
+        };
+
+        const data = fieldData[fieldNum];
+        map.flyTo(data.center, data.zoom, { duration: 1 });
+
+        // Update detail modal
+        document.getElementById('detailFieldName').textContent = data.name;
+        document.getElementById('detailArea').textContent = data.area;
+        document.getElementById('detailGPS').textContent = data.gps;
+        document.getElementById('detailSoil').textContent = data.soil;
+        document.getElementById('detailCrop').textContent = data.crop;
+        document.getElementById('detailPlanted').textContent = data.planted;
+        document.getElementById('detailNDVI').textContent = data.ndvi;
+
+        // Show modal
+        const modal = new bootstrap.Modal(document.getElementById('fieldDetailModal'));
+        modal.show();
+    }
+
+    // ========== ADD FIELD ==========
+    function addNewField() {
+        const modal = bootstrap.Modal.getInstance(document.getElementById('addFieldModal'));
+        modal.hide();
+        showToast('✅ New field added successfully!', 'success');
+    }
+
+    // ========== RESIZE MAP ON TAB CHANGE ==========
+    window.addEventListener('resize', () => map.invalidateSize());
+    document.querySelectorAll('button[data-bs-toggle="tab"]').forEach(tab => {
+        tab.addEventListener('shown.bs.tab', () => map.invalidateSize());
+    });
+</script>
+
+</body>
+</html>

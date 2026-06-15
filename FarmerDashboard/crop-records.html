@@ -1,0 +1,1415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crop Records - SmartCoop Platform</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0d9488;
+            --primary-dark: #0f766e;
+            --primary-light: #14b8a6;
+            --primary-bg: #f0fdfa;
+            --accent: #f59e0b;
+            --accent-light: #fef3c7;
+            --surface: #ffffff;
+            --surface-alt: #f8fafc;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #94a3b8;
+            --border: #e2e8f0;
+            --border-light: #f1f5f9;
+            --danger: #ef4444;
+            --danger-light: #fef2f2;
+            --success: #10b981;
+            --success-light: #ecfdf5;
+            --warning: #f59e0b;
+            --warning-light: #fffbeb;
+            --info: #3b82f6;
+            --info-light: #eff6ff;
+            --purple: #8b5cf6;
+            --purple-light: #f5f3ff;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+            --shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.06);
+            --shadow-lg: 0 10px 15px rgba(0,0,0,0.1), 0 4px 6px rgba(0,0,0,0.05);
+            --shadow-xl: 0 20px 40px rgba(0,0,0,0.15);
+            --radius-sm: 8px;
+            --radius: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 20px;
+            --sidebar-width: 280px;
+            --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-slow: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: var(--surface-alt);
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            color: var(--text-primary);
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+        }
+
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+
+        /* ========== SIDEBAR ========== */
+        .sidebar {
+            position: fixed;
+            top: 0; left: 0;
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: linear-gradient(195deg, #0f172a 0%, #1e293b 100%);
+            z-index: 1050;
+            overflow-y: auto;
+            transition: transform var(--transition-slow);
+            box-shadow: var(--shadow-xl);
+        }
+        .sidebar::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 250px;
+            background: radial-gradient(ellipse at 60% 0%, rgba(13,148,136,0.12) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .sidebar-brand {
+            padding: 1.75rem 1.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            position: relative;
+        }
+        .logo-icon {
+            width: 42px; height: 42px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            border-radius: var(--radius);
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-size: 1.3rem;
+            box-shadow: 0 4px 15px rgba(13,148,136,0.3);
+        }
+        .sidebar-brand h4 { color: #fff; font-weight: 700; font-size: 1.1rem; margin: 0; letter-spacing: -0.3px; }
+        .sidebar-brand small { color: rgba(255,255,255,0.4); font-size: 0.68rem; text-transform: uppercase; letter-spacing: 1px; }
+        .sidebar-user { padding: 1.25rem 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .avatar {
+            width: 42px; height: 42px;
+            border-radius: var(--radius);
+            background: linear-gradient(135deg, #f59e0b, #fbbf24);
+            display: flex; align-items: center; justify-content: center;
+            color: #1e293b; font-weight: 700; font-size: 1rem;
+            position: relative;
+        }
+        .avatar::after {
+            content: '';
+            position: absolute;
+            bottom: -2px; right: -2px;
+            width: 13px; height: 13px;
+            background: #10b981;
+            border: 3px solid #1e293b;
+            border-radius: 50%;
+        }
+        .sidebar-user .user-name { color: #f1f5f9; font-weight: 600; font-size: 0.85rem; }
+        .sidebar-user .user-role { color: rgba(255,255,255,0.4); font-size: 0.7rem; }
+        .sidebar-nav { padding: 0.5rem 0.75rem; }
+        .nav-section {
+            color: rgba(255,255,255,0.25);
+            font-size: 0.62rem; text-transform: uppercase;
+            letter-spacing: 1.8px; padding: 0.75rem 1rem 0.4rem;
+            font-weight: 700;
+        }
+        .sidebar-nav .nav-link {
+            color: rgba(255,255,255,0.5);
+            padding: 0.6rem 0.9rem; font-size: 0.82rem; font-weight: 500;
+            display: flex; align-items: center;
+            border-radius: var(--radius-sm);
+            margin-bottom: 1px;
+            transition: all var(--transition);
+            letter-spacing: -0.2px;
+        }
+        .sidebar-nav .nav-link:hover { background: rgba(255,255,255,0.04); color: #e2e8f0; }
+        .sidebar-nav .nav-link.active {
+            background: rgba(13,148,136,0.15);
+            color: #fff; font-weight: 600;
+            box-shadow: inset 0 0 0 1px rgba(13,148,136,0.25);
+        }
+        .sidebar-nav .nav-link i { width: 20px; margin-right: 0.7rem; font-size: 1rem; opacity: 0.75; }
+        .sidebar-nav .nav-link.active i { opacity: 1; color: var(--primary-light); }
+        .badge-pill {
+            background: var(--danger); color: #fff;
+            font-size: 0.62rem; padding: 0.2em 0.55em;
+            border-radius: 20px; margin-left: auto; font-weight: 700;
+        }
+        .sidebar-footer { padding: 1rem 1.5rem; border-top: 1px solid rgba(255,255,255,0.05); }
+        .sidebar-overlay {
+            display: none;
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(15,23,42,0.45);
+            backdrop-filter: blur(3px);
+            z-index: 1045;
+        }
+        .sidebar-overlay.show { display: block; }
+
+        /* ========== MAIN CONTENT ========== */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+            transition: margin var(--transition-slow);
+        }
+
+        /* ========== TOP NAVBAR ========== */
+        .top-navbar {
+            background: rgba(255,255,255,0.75);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 0.7rem 1.75rem;
+            border-bottom: 1px solid rgba(226,232,240,0.6);
+            position: sticky; top: 0; z-index: 1040;
+        }
+        .btn-icon {
+            width: 37px; height: 37px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            background: var(--surface);
+            color: var(--text-secondary);
+            display: flex; align-items: center; justify-content: center;
+            transition: all var(--transition);
+            position: relative; cursor: pointer;
+        }
+        .btn-icon:hover { background: var(--surface-alt); border-color: #cbd5e1; color: var(--text-primary); }
+        .notification-dot {
+            position: absolute;
+            top: 7px; right: 7px;
+            width: 9px; height: 9px;
+            background: var(--danger);
+            border-radius: 50%; border: 2px solid #fff;
+        }
+
+        /* ========== STAT CARDS ========== */
+        .stat-card {
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            padding: 1.3rem;
+            border: 1px solid var(--border-light);
+            transition: all var(--transition);
+            height: 100%; position: relative; overflow: hidden;
+        }
+        .stat-card::before {
+            content: '';
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 3px;
+            border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+            opacity: 0; transition: opacity var(--transition);
+        }
+        .stat-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-2px); }
+        .stat-card:hover::before { opacity: 1; }
+        .stat-card.crop-total::before { background: linear-gradient(90deg, #0d9488, #14b8a6); }
+        .stat-card.crop-active::before { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+        .stat-card.crop-harvested::before { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+        .stat-card.crop-yield::before { background: linear-gradient(90deg, #8b5cf6, #a78bfa); }
+        .stat-icon {
+            width: 42px; height: 42px;
+            border-radius: var(--radius);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem;
+        }
+        .icon-total { background: linear-gradient(135deg, #ecfdf5, #d1fae5); color: #0d9488; }
+        .icon-active { background: linear-gradient(135deg, #fffbeb, #fef3c7); color: #f59e0b; }
+        .icon-harvested { background: linear-gradient(135deg, #eff6ff, #dbeafe); color: #3b82f6; }
+        .icon-yield { background: linear-gradient(135deg, #f5f3ff, #ede9fe); color: #8b5cf6; }
+        .stat-value { font-size: 1.7rem; font-weight: 800; color: var(--text-primary); letter-spacing: -0.5px; line-height: 1; }
+        .stat-label { color: var(--text-muted); font-size: 0.7rem; font-weight: 650; text-transform: uppercase; letter-spacing: 0.7px; margin-bottom: 0.2rem; }
+        .stat-change {
+            font-size: 0.72rem; font-weight: 600;
+            display: inline-flex; align-items: center; gap: 0.15rem;
+            padding: 0.12rem 0.45rem; border-radius: 20px;
+        }
+        .stat-change.positive { background: var(--success-light); color: #059669; }
+
+        /* ========== CARDS ========== */
+        .dashboard-card {
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-light);
+            overflow: hidden; height: 100%;
+            transition: all var(--transition);
+        }
+        .dashboard-card:hover { box-shadow: var(--shadow-md); }
+        .dashboard-card .card-header {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border-light);
+            padding: 1rem 1.3rem;
+            font-weight: 650; font-size: 0.88rem;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .dashboard-card .card-body { padding: 1.3rem; }
+        .header-icon {
+            width: 28px; height: 28px;
+            border-radius: var(--radius-sm);
+            display: inline-flex; align-items: center; justify-content: center;
+            margin-right: 0.45rem;
+        }
+        .icon-h-green { background: #ecfdf5; color: #0d9488; }
+        .icon-h-amber { background: #fffbeb; color: #f59e0b; }
+        .icon-h-blue { background: #eff6ff; color: #3b82f6; }
+        .icon-h-purple { background: #f5f3ff; color: #8b5cf6; }
+
+        /* ========== BUTTONS ========== */
+        .btn-teal {
+            background: var(--primary); color: #fff;
+            border: none; font-weight: 600; font-size: 0.78rem;
+            padding: 0.5rem 1rem; border-radius: var(--radius-sm);
+            letter-spacing: -0.2px; transition: all var(--transition);
+            box-shadow: 0 2px 6px rgba(13,148,136,0.2);
+        }
+        .btn-teal:hover {
+            background: var(--primary-dark);
+            box-shadow: 0 4px 12px rgba(13,148,136,0.3);
+            transform: translateY(-1px); color: #fff;
+        }
+        .btn-outline-teal {
+            border: 1.5px solid #cbd5e1; color: var(--text-secondary);
+            background: var(--surface); font-weight: 500; font-size: 0.78rem;
+            padding: 0.48rem 1rem; border-radius: var(--radius-sm);
+            transition: all var(--transition);
+        }
+        .btn-outline-teal:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-bg); }
+        .btn-sm-pill { font-size: 0.7rem; padding: 0.3rem 0.8rem; border-radius: 20px; font-weight: 600; }
+        .btn-xs { font-size: 0.62rem; padding: 0.2rem 0.55rem; border-radius: 15px; font-weight: 600; }
+
+        /* ========== TABLE ========== */
+        .table-modern { font-size: 0.8rem; margin-bottom: 0; }
+        .table-modern th {
+            background: var(--surface-alt);
+            color: var(--text-muted); font-weight: 650;
+            font-size: 0.68rem; text-transform: uppercase;
+            letter-spacing: 0.7px; border-bottom: 2px solid var(--border-light);
+            padding: 0.8rem 1rem;
+        }
+        .table-modern td {
+            vertical-align: middle; padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border-light);
+        }
+        .table-modern tbody tr { transition: background var(--transition); cursor: pointer; }
+        .table-modern tbody tr:hover { background: var(--surface-alt); }
+        .crop-progress {
+            height: 6px; border-radius: 10px;
+            background: #f1f5f9; width: 80px; overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%; border-radius: 10px;
+            background: linear-gradient(90deg, #0d9488, #14b8a6);
+        }
+        .badge-status {
+            padding: 0.25em 0.6em; border-radius: 20px;
+            font-weight: 600; font-size: 0.66rem;
+        }
+        .badge-healthy { background: #ecfdf5; color: #059669; }
+        .badge-monitor { background: #fffbeb; color: #d97706; }
+        .badge-harvested { background: #eff6ff; color: #3b82f6; }
+        .badge-danger { background: #fef2f2; color: #dc2626; }
+        .badge-planted { background: #f5f3ff; color: #8b5cf6; }
+
+        /* ========== CROP CARD ========== */
+        .crop-card {
+            background: var(--surface);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            transition: all var(--transition);
+            cursor: pointer;
+            position: relative;
+        }
+        .crop-card:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-3px);
+        }
+        .crop-card-image {
+            height: 140px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3.5rem;
+            position: relative;
+        }
+        .crop-card-image.sesame { background: linear-gradient(135deg, #ecfdf5, #d1fae5); }
+        .crop-card-image.maize { background: linear-gradient(135deg, #fffbeb, #fef3c7); }
+        .crop-card-image.ginger { background: linear-gradient(135deg, #f5f3ff, #ede9fe); }
+        .crop-card-image.cassava { background: linear-gradient(135deg, #fef2f2, #fee2e2); }
+        .crop-card-badge {
+            position: absolute;
+            top: 10px; right: 10px;
+        }
+
+        /* ========== GROWTH STAGE ========== */
+        .growth-timeline {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            padding: 0 0.5rem;
+        }
+        .growth-timeline::before {
+            content: '';
+            position: absolute;
+            top: 18px; left: 30px; right: 30px;
+            height: 3px;
+            background: var(--border-light);
+            border-radius: 3px;
+        }
+        .growth-stage {
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+        .growth-dot {
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            background: var(--surface);
+            border: 3px solid var(--border);
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 0.35rem;
+            font-size: 0.9rem;
+            transition: all var(--transition);
+        }
+        .growth-dot.completed {
+            background: var(--success);
+            border-color: var(--success);
+            color: #fff;
+        }
+        .growth-dot.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: #fff;
+            box-shadow: 0 0 0 6px rgba(13,148,136,0.15);
+            animation: pulse-grow 2s ease-in-out infinite;
+        }
+        @keyframes pulse-grow {
+            0%, 100% { box-shadow: 0 0 0 6px rgba(13,148,136,0.15); }
+            50% { box-shadow: 0 0 0 14px rgba(13,148,136,0.05); }
+        }
+        .growth-label {
+            font-size: 0.62rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+        .growth-label.active { color: var(--primary); }
+
+        /* ========== CALENDAR ========== */
+        .mini-calendar {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 2px;
+            text-align: center;
+        }
+        .mini-calendar .day-header {
+            font-size: 0.6rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            padding: 0.3rem 0;
+            text-transform: uppercase;
+        }
+        .mini-calendar .day {
+            font-size: 0.7rem;
+            padding: 0.4rem;
+            border-radius: var(--radius-sm);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--transition);
+        }
+        .mini-calendar .day:hover { background: var(--surface-alt); }
+        .mini-calendar .day.today { background: var(--primary); color: #fff; font-weight: 700; }
+        .mini-calendar .day.event { position: relative; }
+        .mini-calendar .day.event::after {
+            content: '';
+            position: absolute;
+            bottom: 3px; left: 50%;
+            transform: translateX(-50%);
+            width: 5px; height: 5px;
+            border-radius: 50%;
+            background: var(--accent);
+        }
+        .mini-calendar .day.event.harvest::after { background: var(--success); }
+        .mini-calendar .day.event.planting::after { background: var(--info); }
+
+        /* ========== MODALS ========== */
+        .modal-content {
+            border: none; border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-xl); overflow: hidden;
+        }
+        .modal-header {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border-light);
+            padding: 1.2rem 1.5rem;
+        }
+        .modal-header .modal-title {
+            font-weight: 700; font-size: 1.1rem;
+            letter-spacing: -0.3px; color: var(--text-primary);
+        }
+        .modal-body { padding: 1.5rem; }
+        .modal-footer {
+            border-top: 1px solid var(--border-light);
+            padding: 1rem 1.5rem;
+        }
+        .form-label {
+            font-weight: 600; font-size: 0.76rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.3rem;
+        }
+        .form-control, .form-select {
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            padding: 0.55rem 0.85rem;
+            font-size: 0.84rem; transition: all var(--transition);
+            font-family: 'Inter', sans-serif;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(13,148,136,0.08);
+        }
+
+        /* ========== TOAST ========== */
+        .toast-custom {
+            position: fixed;
+            bottom: 2rem; right: 2rem;
+            background: #0f172a; color: #fff;
+            padding: 0.9rem 1.3rem;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-xl);
+            z-index: 1070;
+            display: flex; align-items: center; gap: 0.6rem;
+            font-weight: 500; font-size: 0.85rem;
+            transform: translateY(120px);
+            opacity: 0;
+            transition: all var(--transition-slow);
+        }
+        .toast-custom.show { transform: translateY(0); opacity: 1; }
+        .toast-custom.success { border-left: 4px solid #10b981; }
+        .toast-custom.warning { border-left: 4px solid #f59e0b; }
+
+        /* ========== ANIMATIONS ========== */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-in { animation: fadeInUp 0.45s ease forwards; opacity: 0; }
+        .delay-1 { animation-delay: 0.05s; }
+        .delay-2 { animation-delay: 0.1s; }
+        .delay-3 { animation-delay: 0.15s; }
+        .delay-4 { animation-delay: 0.2s; }
+
+        /* ========== RESPONSIVE ========== */
+        @media (max-width: 991.98px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.show { transform: translateX(0); }
+            .main-content { margin-left: 0; }
+            .sidebar-overlay.show { display: block; }
+        }
+        @media (max-width: 767.98px) {
+            .top-navbar { padding: 0.55rem 0.9rem; }
+            .stat-card { padding: 1rem; }
+            .stat-value { font-size: 1.3rem; }
+            .crop-card-image { height: 100px; font-size: 2.5rem; }
+            .growth-timeline { overflow-x: auto; padding-bottom: 0.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Sidebar Overlay -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<!-- ==================== SIDEBAR ==================== -->
+<aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+        <div class="d-flex align-items-center gap-3">
+            <div class="logo-icon"><i class="bi bi-grid-3x3-gap-fill"></i></div>
+            <div>
+                <h4>SmartCoop</h4>
+                <small>Farmer Platform</small>
+            </div>
+        </div>
+    </div>
+    <div class="sidebar-user">
+        <div class="d-flex align-items-center gap-3">
+            <div class="avatar">AI</div>
+            <div>
+                <div class="user-name">Abubakar Ibrahim</div>
+                <div class="user-role">Farmer · FARM-2847</div>
+            </div>
+        </div>
+    </div>
+    <nav class="sidebar-nav">
+        <div class="nav-section">Main Menu</div>
+        <a class="nav-link" href="dashboard.html"><i class="bi bi-columns-gap"></i> Dashboard</a>
+        <a class="nav-link" href="myprofile.html"><i class="bi bi-person-badge"></i> My Profile</a>
+        <a class="nav-link" href="farm-mapping.html"><i class="bi bi-geo-alt"></i> Farm Mapping</a>
+        <div class="nav-section mt-2">Farm Management</div>
+        <a class="nav-link active" href="crop-records.html"><i class="bi bi-flower1"></i> Crop Records</a>
+        <a class="nav-link" href="produce-tracking.html"><i class="bi bi-box-seam"></i> Produce Tracking <span class="badge-pill">3</span></a>
+        <a class="nav-link" href="inputs-chemicals.html"><i class="bi bi-droplet"></i> Inputs & Chemicals</a>
+        <div class="nav-section mt-2">Finance & Market</div>
+        <a class="nav-link" href="wallet.html"><i class="bi bi-wallet2"></i> Wallet</a>
+        <a class="nav-link" href="loans-credit.html"><i class="bi bi-cash-stack"></i> Loans & Credit</a>
+        <a class="nav-link" href="marketplace.html"><i class="bi bi-shop"></i> Marketplace</a>
+        <div class="nav-section mt-2">Insights</div>
+        <a class="nav-link" href="climate-alerts.html"><i class="bi bi-cloud-sun"></i> Climate Alerts <span class="badge-pill">2</span></a>
+        <a class="nav-link" href="analytics.html"><i class="bi bi-graph-up"></i> Analytics</a>
+        <a class="nav-link" href="traceability-qr.html"><i class="bi bi-qr-code"></i> Traceability QR</a>
+    </nav>
+    <div class="sidebar-footer">
+        <a href="#" style="color:rgba(255,255,255,0.45);font-size:0.78rem;text-decoration:none;">
+            <i class="bi bi-box-arrow-right me-1"></i> Sign Out
+        </a>
+    </div>
+</aside>
+
+<!-- ==================== MAIN CONTENT ==================== -->
+<div class="main-content" id="mainContent">
+
+    <!-- Top Navbar -->
+    <nav class="top-navbar">
+        <div class="d-flex align-items-center justify-content-between w-100">
+            <div class="d-flex align-items-center gap-3">
+                <button class="navbar-toggler d-lg-none btn-icon border-0" id="sidebarToggle">
+                    <i class="bi bi-list"></i>
+                </button>
+                <h5 class="mb-0 fw-bold" style="color:var(--text-primary);letter-spacing:-0.3px;">
+                    <i class="bi bi-flower1 me-2" style="color:var(--primary);"></i>Crop Records & Management
+                </h5>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                <span class="badge bg-info bg-opacity-10 text-info rounded-pill d-none d-md-inline-flex align-items-center gap-1" style="font-size:0.7rem;">
+                    <i class="bi bi-calendar3"></i> 2024 Season
+                </span>
+                <button class="btn-icon"><i class="bi bi-bell"></i><span class="notification-dot"></span></button>
+                <div style="width:32px;height:32px;background:linear-gradient(135deg,#0d9488,#14b8a6);border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:0.8rem;">AI</div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Content -->
+    <div class="p-3 p-md-4">
+
+        <!-- Stat Cards -->
+        <div class="row g-3 mb-3">
+            <div class="col-6 col-xl-3 animate-in delay-1">
+                <div class="stat-card crop-total">
+                    <div class="d-flex align-items-start justify-content-between mb-2">
+                        <div class="stat-icon icon-total"><i class="bi bi-grid-3x3-gap-fill"></i></div>
+                        <span class="stat-change positive"><i class="bi bi-arrow-up-short"></i> +2</span>
+                    </div>
+                    <div class="stat-label">Total Crops</div>
+                    <div class="stat-value">12</div>
+                    <small style="color:var(--text-muted);font-size:0.7rem;">All time varieties</small>
+                </div>
+            </div>
+            <div class="col-6 col-xl-3 animate-in delay-2">
+                <div class="stat-card crop-active">
+                    <div class="d-flex align-items-start justify-content-between mb-2">
+                        <div class="stat-icon icon-active"><i class="bi bi-flower1"></i></div>
+                        <span class="badge bg-warning bg-opacity-10 text-warning rounded-pill" style="font-size:0.65rem;">Growing</span>
+                    </div>
+                    <div class="stat-label">Active Crops</div>
+                    <div class="stat-value">3</div>
+                    <small style="color:var(--text-muted);font-size:0.7rem;">Sesame · Maize · Ginger</small>
+                </div>
+            </div>
+            <div class="col-6 col-xl-3 animate-in delay-3">
+                <div class="stat-card crop-harvested">
+                    <div class="d-flex align-items-start justify-content-between mb-2">
+                        <div class="stat-icon icon-harvested"><i class="bi bi-basket"></i></div>
+                        <span class="stat-change positive"><i class="bi bi-arrow-up-short"></i> +18%</span>
+                    </div>
+                    <div class="stat-label">Total Harvested</div>
+                    <div class="stat-value">9</div>
+                    <small style="color:var(--text-muted);font-size:0.7rem;">Completed cycles</small>
+                </div>
+            </div>
+            <div class="col-6 col-xl-3 animate-in delay-4">
+                <div class="stat-card crop-yield">
+                    <div class="d-flex align-items-start justify-content-between mb-2">
+                        <div class="stat-icon icon-yield"><i class="bi bi-graph-up-arrow"></i></div>
+                        <span class="stat-change positive"><i class="bi bi-arrow-up-short"></i> +16%</span>
+                    </div>
+                    <div class="stat-label">Avg Yield</div>
+                    <div class="stat-value">1.25<span style="font-size:0.8rem;font-weight:500;"> T/Ha</span></div>
+                    <small style="color:var(--text-muted);font-size:0.7rem;">Last 4 seasons</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <ul class="nav nav-tabs-custom mb-3 animate-in delay-1" id="cropTabs" role="tablist" style="border-bottom:2px solid var(--border-light);gap:0.25rem;">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#activeCrops" type="button" style="border:none;padding:0.75rem 1.25rem;font-size:0.82rem;font-weight:600;color:var(--text-muted);border-radius:var(--radius-sm) var(--radius-sm) 0 0;transition:all var(--transition);">
+                    <i class="bi bi-flower1 me-1"></i> Active Crops
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#allCrops" type="button" style="border:none;padding:0.75rem 1.25rem;font-size:0.82rem;font-weight:600;color:var(--text-muted);border-radius:var(--radius-sm) var(--radius-sm) 0 0;transition:all var(--transition);">
+                    <i class="bi bi-list-ul me-1"></i> All Records
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#calendar" type="button" style="border:none;padding:0.75rem 1.25rem;font-size:0.82rem;font-weight:600;color:var(--text-muted);border-radius:var(--radius-sm) var(--radius-sm) 0 0;transition:all var(--transition);">
+                    <i class="bi bi-calendar3 me-1"></i> Calendar
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#analytics" type="button" style="border:none;padding:0.75rem 1.25rem;font-size:0.82rem;font-weight:600;color:var(--text-muted);border-radius:var(--radius-sm) var(--radius-sm) 0 0;transition:all var(--transition);">
+                    <i class="bi bi-graph-up me-1"></i> Analytics
+                </button>
+            </li>
+        </ul>
+
+        <!-- Tab Content -->
+        <div class="tab-content" id="cropTabsContent">
+
+            <!-- ACTIVE CROPS TAB -->
+            <div class="tab-pane fade show active" id="activeCrops">
+                <!-- Crop Cards Row -->
+                <div class="row g-3 mb-3">
+                    <div class="col-12 col-md-6 col-lg-4 animate-in delay-1">
+                        <div class="crop-card" data-bs-toggle="modal" data-bs-target="#cropDetailModal" onclick="openCropDetail('sesame')">
+                            <div class="crop-card-image sesame">
+                                <span>🌾</span>
+                                <span class="crop-card-badge badge-status badge-healthy">● Healthy</span>
+                            </div>
+                            <div class="p-3">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <div>
+                                        <h6 class="fw-bold mb-0">Sesame</h6>
+                                        <small class="text-muted">Premium Grade · Field A</small>
+                                    </div>
+                                </div>
+                                <div class="row g-2" style="font-size:0.7rem;">
+                                    <div class="col-6"><span class="text-muted">Planted:</span><br><strong>15 Mar 2024</strong></div>
+                                    <div class="col-6"><span class="text-muted">Harvest:</span><br><strong>15 Jun 2024</strong></div>
+                                    <div class="col-6"><span class="text-muted">Area:</span><br><strong>2.0 Ha</strong></div>
+                                    <div class="col-6"><span class="text-muted">Stage:</span><br><strong style="color:var(--primary);">Flowering</strong></div>
+                                </div>
+                                <div class="crop-progress mt-2" style="width:100%;">
+                                    <div class="progress-fill" style="width:85%;"></div>
+                                </div>
+                                <small class="text-muted" style="font-size:0.65rem;">85% complete · 30 days to harvest</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-md-6 col-lg-4 animate-in delay-2">
+                        <div class="crop-card" data-bs-toggle="modal" data-bs-target="#cropDetailModal" onclick="openCropDetail('maize')">
+                            <div class="crop-card-image maize">
+                                <span>🌽</span>
+                                <span class="crop-card-badge badge-status badge-monitor">● Monitor</span>
+                            </div>
+                            <div class="p-3">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <div>
+                                        <h6 class="fw-bold mb-0">Maize</h6>
+                                        <small class="text-muted">Yellow Variety · Field B</small>
+                                    </div>
+                                </div>
+                                <div class="row g-2" style="font-size:0.7rem;">
+                                    <div class="col-6"><span class="text-muted">Planted:</span><br><strong>01 Apr 2024</strong></div>
+                                    <div class="col-6"><span class="text-muted">Harvest:</span><br><strong>01 Aug 2024</strong></div>
+                                    <div class="col-6"><span class="text-muted">Area:</span><br><strong>1.5 Ha</strong></div>
+                                    <div class="col-6"><span class="text-muted">Stage:</span><br><strong style="color:#d97706;">Vegetative</strong></div>
+                                </div>
+                                <div class="crop-progress mt-2" style="width:100%;">
+                                    <div class="progress-fill" style="width:50%;background:linear-gradient(90deg,#f59e0b,#fbbf24);"></div>
+                                </div>
+                                <small class="text-muted" style="font-size:0.65rem;">50% complete · 68 days to harvest</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-md-6 col-lg-4 animate-in delay-3">
+                        <div class="crop-card" data-bs-toggle="modal" data-bs-target="#cropDetailModal" onclick="openCropDetail('ginger')">
+                            <div class="crop-card-image ginger">
+                                <span>🫚</span>
+                                <span class="crop-card-badge badge-status badge-healthy">● Healthy</span>
+                            </div>
+                            <div class="p-3">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <div>
+                                        <h6 class="fw-bold mb-0">Ginger</h6>
+                                        <small class="text-muted">Export Quality · Field C</small>
+                                    </div>
+                                </div>
+                                <div class="row g-2" style="font-size:0.7rem;">
+                                    <div class="col-6"><span class="text-muted">Planted:</span><br><strong>20 Feb 2024</strong></div>
+                                    <div class="col-6"><span class="text-muted">Harvest:</span><br><strong>20 Jul 2024</strong></div>
+                                    <div class="col-6"><span class="text-muted">Area:</span><br><strong>1.0 Ha</strong></div>
+                                    <div class="col-6"><span class="text-muted">Stage:</span><br><strong style="color:var(--primary);">Mature</strong></div>
+                                </div>
+                                <div class="crop-progress mt-2" style="width:100%;">
+                                    <div class="progress-fill" style="width:95%;"></div>
+                                </div>
+                                <small class="text-muted" style="font-size:0.65rem;">95% complete · 5 days to harvest</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Growth Stage Timeline -->
+                <div class="dashboard-card animate-in delay-2">
+                    <div class="card-header">
+                        <span><span class="header-icon icon-h-green"><i class="bi bi-arrow-repeat"></i></span>Crop Growth Stages</span>
+                        <select class="form-select form-select-sm" style="width:auto;font-size:0.72rem;" id="growthCropSelect" onchange="updateGrowthTimeline()">
+                            <option value="sesame">Sesame</option>
+                            <option value="maize">Maize</option>
+                            <option value="ginger" selected>Ginger</option>
+                        </select>
+                    </div>
+                    <div class="card-body">
+                        <div class="growth-timeline" id="growthTimeline">
+                            <div class="growth-stage">
+                                <div class="growth-dot completed"><i class="bi bi-check-lg"></i></div>
+                                <div class="growth-label completed">Planting</div>
+                                <small style="font-size:0.6rem;color:var(--text-muted);">20 Feb</small>
+                            </div>
+                            <div class="growth-stage">
+                                <div class="growth-dot completed"><i class="bi bi-check-lg"></i></div>
+                                <div class="growth-label completed">Germination</div>
+                                <small style="font-size:0.6rem;color:var(--text-muted);">05 Mar</small>
+                            </div>
+                            <div class="growth-stage">
+                                <div class="growth-dot completed"><i class="bi bi-check-lg"></i></div>
+                                <div class="growth-label completed">Vegetative</div>
+                                <small style="font-size:0.6rem;color:var(--text-muted);">01 Apr</small>
+                            </div>
+                            <div class="growth-stage">
+                                <div class="growth-dot completed"><i class="bi bi-check-lg"></i></div>
+                                <div class="growth-label completed">Flowering</div>
+                                <small style="font-size:0.6rem;color:var(--text-muted);">15 May</small>
+                            </div>
+                            <div class="growth-stage">
+                                <div class="growth-dot active"><i class="bi bi-hourglass-split"></i></div>
+                                <div class="growth-label active">Maturity</div>
+                                <small style="font-size:0.6rem;color:var(--primary);font-weight:600;">Now</small>
+                            </div>
+                            <div class="growth-stage">
+                                <div class="growth-dot"><i class="bi bi-basket"></i></div>
+                                <div class="growth-label">Harvest</div>
+                                <small style="font-size:0.6rem;color:var(--text-muted);">20 Jul</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activities -->
+                <div class="dashboard-card mt-3 animate-in delay-3">
+                    <div class="card-header">
+                        <span><span class="header-icon icon-h-amber"><i class="bi bi-activity"></i></span>Recent Crop Activities</span>
+                        <button class="btn-outline-teal btn-sm-pill" data-bs-toggle="modal" data-bs-target="#logActivityModal">
+                            <i class="bi bi-plus-lg me-1"></i> Log Activity
+                        </button>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-modern">
+                                <thead>
+                                    <tr><th>Date</th><th>Crop</th><th>Activity</th><th>Details</th><th>Input Used</th><th>By</th></tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>18 May</td>
+                                        <td>🌾 Sesame</td>
+                                        <td><span class="badge bg-info bg-opacity-10 text-info rounded-pill" style="font-size:0.62rem;">Fertilization</span></td>
+                                        <td>NPK 15-15-15 applied</td>
+                                        <td>50kg NPK</td>
+                                        <td>Self</td>
+                                    </tr>
+                                    <tr>
+                                        <td>15 May</td>
+                                        <td>🫚 Ginger</td>
+                                        <td><span class="badge bg-purple bg-opacity-10 rounded-pill" style="font-size:0.62rem;color:#8b5cf6;">Irrigation</span></td>
+                                        <td>Borehole irrigation - 2hrs</td>
+                                        <td>Water</td>
+                                        <td>Worker</td>
+                                    </tr>
+                                    <tr>
+                                        <td>10 May</td>
+                                        <td>🌽 Maize</td>
+                                        <td><span class="badge bg-danger bg-opacity-10 text-danger rounded-pill" style="font-size:0.62rem;">Pest Control</span></td>
+                                        <td>Biopesticide spray</td>
+                                        <td>5L Organic</td>
+                                        <td>Self</td>
+                                    </tr>
+                                    <tr>
+                                        <td>05 May</td>
+                                        <td>🌾 Sesame</td>
+                                        <td><span class="badge bg-success bg-opacity-10 text-success rounded-pill" style="font-size:0.62rem;">Weeding</span></td>
+                                        <td>Manual weeding - Field A</td>
+                                        <td>Labor</td>
+                                        <td>Workers</td>
+                                    </tr>
+                                    <tr>
+                                        <td>28 Apr</td>
+                                        <td>🌽 Maize</td>
+                                        <td><span class="badge bg-info bg-opacity-10 text-info rounded-pill" style="font-size:0.62rem;">Fertilization</span></td>
+                                        <td>Urea top-dressing</td>
+                                        <td>25kg Urea</td>
+                                        <td>Self</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ALL RECORDS TAB -->
+            <div class="tab-pane fade" id="allCrops">
+                <div class="dashboard-card animate-in delay-1">
+                    <div class="card-header">
+                        <span><span class="header-icon icon-h-blue"><i class="bi bi-list-ul"></i></span>Complete Crop History</span>
+                        <div class="d-flex gap-2">
+                            <select class="form-select form-select-sm" style="width:auto;font-size:0.72rem;">
+                                <option>All Seasons</option>
+                                <option>2024 Season</option>
+                                <option>2023 Season</option>
+                                <option>2022 Season</option>
+                            </select>
+                            <button class="btn-teal btn-sm-pill" data-bs-toggle="modal" data-bs-target="#addCropModal">
+                                <i class="bi bi-plus-lg me-1"></i> Add Crop
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-modern">
+                                <thead>
+                                    <tr><th>Crop</th><th>Variety</th><th>Field</th><th>Planted</th><th>Harvested</th><th>Area</th><th>Yield</th><th>Quality</th><th>Status</th></tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>🌾 Sesame</strong></td>
+                                        <td>Premium</td>
+                                        <td>Field A</td>
+                                        <td>15 Mar 2024</td>
+                                        <td>Expected: 15 Jun</td>
+                                        <td>2.0 Ha</td>
+                                        <td>--</td>
+                                        <td>--</td>
+                                        <td><span class="badge-status badge-healthy">Active</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>🌽 Maize</strong></td>
+                                        <td>Yellow</td>
+                                        <td>Field B</td>
+                                        <td>01 Apr 2024</td>
+                                        <td>Expected: 01 Aug</td>
+                                        <td>1.5 Ha</td>
+                                        <td>--</td>
+                                        <td>--</td>
+                                        <td><span class="badge-status badge-monitor">Active</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>🫚 Ginger</strong></td>
+                                        <td>Export</td>
+                                        <td>Field C</td>
+                                        <td>20 Feb 2024</td>
+                                        <td>Expected: 20 Jul</td>
+                                        <td>1.0 Ha</td>
+                                        <td>--</td>
+                                        <td>--</td>
+                                        <td><span class="badge-status badge-healthy">Active</span></td>
+                                    </tr>
+                                    <tr style="background:var(--surface-alt);">
+                                        <td><strong>🌽 Maize</strong></td>
+                                        <td>White</td>
+                                        <td>Field B</td>
+                                        <td>05 May 2023</td>
+                                        <td>05 Sep 2023</td>
+                                        <td>1.5 Ha</td>
+                                        <td>1.8 T</td>
+                                        <td>Grade A</td>
+                                        <td><span class="badge-status badge-harvested">Harvested</span></td>
+                                    </tr>
+                                    <tr style="background:var(--surface-alt);">
+                                        <td><strong>🌾 Sesame</strong></td>
+                                        <td>Premium</td>
+                                        <td>Field A</td>
+                                        <td>10 Mar 2023</td>
+                                        <td>10 Jun 2023</td>
+                                        <td>2.0 Ha</td>
+                                        <td>2.4 T</td>
+                                        <td>Grade A</td>
+                                        <td><span class="badge-status badge-harvested">Harvested</span></td>
+                                    </tr>
+                                    <tr style="background:var(--surface-alt);">
+                                        <td><strong>🥔 Cassava</strong></td>
+                                        <td>Sweet</td>
+                                        <td>Field A</td>
+                                        <td>01 Feb 2023</td>
+                                        <td>01 Dec 2023</td>
+                                        <td>1.0 Ha</td>
+                                        <td>3.5 T</td>
+                                        <td>Grade B</td>
+                                        <td><span class="badge-status badge-harvested">Harvested</span></td>
+                                    </tr>
+                                    <tr style="background:var(--surface-alt);">
+                                        <td><strong>🌾 Sesame</strong></td>
+                                        <td>Standard</td>
+                                        <td>Field A</td>
+                                        <td>12 Mar 2022</td>
+                                        <td>12 Jun 2022</td>
+                                        <td>1.5 Ha</td>
+                                        <td>1.8 T</td>
+                                        <td>Grade B</td>
+                                        <td><span class="badge-status badge-harvested">Harvested</span></td>
+                                    </tr>
+                                    <tr style="background:var(--surface-alt);">
+                                        <td><strong>🌽 Maize</strong></td>
+                                        <td>Yellow</td>
+                                        <td>Field B</td>
+                                        <td>08 May 2022</td>
+                                        <td>08 Sep 2022</td>
+                                        <td>1.5 Ha</td>
+                                        <td>1.4 T</td>
+                                        <td>Grade B</td>
+                                        <td><span class="badge-status badge-harvested">Harvested</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CALENDAR TAB -->
+            <div class="tab-pane fade" id="calendar">
+                <div class="row g-3">
+                    <div class="col-12 col-lg-8 animate-in delay-1">
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <span><span class="header-icon icon-h-blue"><i class="bi bi-calendar3"></i></span>June 2024 - Crop Calendar</span>
+                                <div class="btn-group btn-group-sm">
+                                    <button class="btn-outline-teal btn-sm-pill"><i class="bi bi-chevron-left"></i></button>
+                                    <button class="btn-teal btn-sm-pill">Today</button>
+                                    <button class="btn-outline-teal btn-sm-pill"><i class="bi bi-chevron-right"></i></button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="mini-calendar">
+                                    <div class="day-header">Sun</div><div class="day-header">Mon</div><div class="day-header">Tue</div><div class="day-header">Wed</div><div class="day-header">Thu</div><div class="day-header">Fri</div><div class="day-header">Sat</div>
+                                    <div class="day"></div><div class="day"></div><div class="day"></div><div class="day"></div><div class="day"></div><div class="day"></div><div class="day">1</div>
+                                    <div class="day">2</div><div class="day">3</div><div class="day">4</div><div class="day">5</div><div class="day">6</div><div class="day">7</div><div class="day">8</div>
+                                    <div class="day">9</div><div class="day">10</div><div class="day">11</div><div class="day">12</div><div class="day">13</div><div class="day">14</div><div class="day event harvest" title="Sesame Harvest">15</div>
+                                    <div class="day">16</div><div class="day">17</div><div class="day">18</div><div class="day">19</div><div class="day">20</div><div class="day">21</div><div class="day">22</div>
+                                    <div class="day">23</div><div class="day">24</div><div class="day today event planting" title="Plan next crop">25</div><div class="day">26</div><div class="day">27</div><div class="day">28</div><div class="day">29</div>
+                                    <div class="day">30</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg-4 animate-in delay-2">
+                        <div class="dashboard-card mb-3">
+                            <div class="card-header">
+                                <span><i class="bi bi-calendar-event me-2" style="color:var(--accent);"></i>Upcoming Events</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="d-flex gap-2 mb-3 p-2 rounded-2" style="background:var(--success-light);">
+                                    <div style="width:40px;height:40px;background:#ecfdf5;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;color:#059669;font-weight:700;font-size:0.75rem;">15<br>Jun</div>
+                                    <div>
+                                        <strong style="font-size:0.8rem;">Sesame Harvest</strong>
+                                        <br><small class="text-muted">Field A · 2.0 Ha</small>
+                                    </div>
+                                </div>
+                                <div class="d-flex gap-2 mb-3 p-2 rounded-2" style="background:var(--warning-light);">
+                                    <div style="width:40px;height:40px;background:#fffbeb;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;color:#d97706;font-weight:700;font-size:0.75rem;">20<br>Jul</div>
+                                    <div>
+                                        <strong style="font-size:0.8rem;">Ginger Harvest</strong>
+                                        <br><small class="text-muted">Field C · 1.0 Ha</small>
+                                    </div>
+                                </div>
+                                <div class="d-flex gap-2 p-2 rounded-2" style="background:var(--info-light);">
+                                    <div style="width:40px;height:40px;background:#eff6ff;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;color:#3b82f6;font-weight:700;font-size:0.75rem;">01<br>Aug</div>
+                                    <div>
+                                        <strong style="font-size:0.8rem;">Maize Harvest</strong>
+                                        <br><small class="text-muted">Field B · 1.5 Ha</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <span><i class="bi bi-lightbulb me-2" style="color:var(--accent);"></i>Seasonal Tips</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="d-flex gap-2 mb-2">
+                                    <i class="bi bi-info-circle-fill" style="color:var(--info);"></i>
+                                    <small style="font-size:0.75rem;">Prepare storage for upcoming sesame harvest. Ensure moisture meters are calibrated.</small>
+                                </div>
+                                <div class="d-flex gap-2">
+                                    <i class="bi bi-info-circle-fill" style="color:var(--warning);"></i>
+                                    <small style="font-size:0.75rem;">Heavy rain expected in July. Plan ginger harvest before peak rainfall.</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ANALYTICS TAB -->
+            <div class="tab-pane fade" id="analytics">
+                <div class="row g-3">
+                    <div class="col-12 col-lg-8 animate-in delay-1">
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <span><span class="header-icon icon-h-amber"><i class="bi bi-graph-up"></i></span>Yield Trends (Per Crop)</span>
+                                <select class="form-select form-select-sm" style="width:auto;font-size:0.72rem;">
+                                    <option>All Crops</option>
+                                    <option>Sesame</option>
+                                    <option>Maize</option>
+                                    <option>Ginger</option>
+                                </select>
+                            </div>
+                            <div class="card-body">
+                                <div class="d-flex align-items-end justify-content-around" style="min-height:200px;gap:2rem;">
+                                    <div class="text-center">
+                                        <div style="width:55px;height:120px;background:linear-gradient(180deg,#5eead4,#0d9488);border-radius:8px 8px 0 0;margin:0 auto;position:relative;">
+                                            <span style="position:absolute;top:-22px;left:50%;transform:translateX(-50%);font-weight:700;font-size:0.75rem;">1.2T</span>
+                                        </div>
+                                        <small style="font-size:0.68rem;color:var(--text-muted);font-weight:600;display:block;margin-top:0.4rem;">2022</small>
+                                    </div>
+                                    <div class="text-center">
+                                        <div style="width:55px;height:150px;background:linear-gradient(180deg,#5eead4,#0f766e);border-radius:8px 8px 0 0;margin:0 auto;position:relative;">
+                                            <span style="position:absolute;top:-22px;left:50%;transform:translateX(-50%);font-weight:700;font-size:0.75rem;">1.5T</span>
+                                        </div>
+                                        <small style="font-size:0.68rem;color:var(--text-muted);font-weight:600;display:block;margin-top:0.4rem;">2023</small>
+                                    </div>
+                                    <div class="text-center">
+                                        <div style="width:55px;height:135px;background:linear-gradient(180deg,#99f6e4,#0d9488);border-radius:8px 8px 0 0;margin:0 auto;position:relative;box-shadow:0 0 20px rgba(13,148,136,0.3);">
+                                            <span style="position:absolute;top:-22px;left:50%;transform:translateX(-50%);font-weight:700;font-size:0.75rem;">1.4T*</span>
+                                        </div>
+                                        <small style="font-size:0.68rem;color:var(--text-muted);font-weight:600;display:block;margin-top:0.4rem;">2024*</small>
+                                    </div>
+                                </div>
+                                <div class="text-center mt-3 pt-3 border-top">
+                                    <span style="font-size:0.75rem;color:var(--text-muted);">* Projected · <span class="text-success fw-semibold"><i class="bi bi-arrow-up-right"></i> +16% since 2022</span></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg-4 animate-in delay-2">
+                        <div class="dashboard-card mb-3">
+                            <div class="card-header">
+                                <span><i class="bi bi-pie-chart me-2" style="color:var(--purple);"></i>Crop Distribution</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between mb-1"><span style="font-size:0.78rem;">🌾 Sesame</span><strong style="font-size:0.8rem;">44%</strong></div>
+                                    <div class="progress" style="height:8px;"><div class="progress-bar bg-success" style="width:44%;"></div></div>
+                                </div>
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between mb-1"><span style="font-size:0.78rem;">🌽 Maize</span><strong style="font-size:0.8rem;">33%</strong></div>
+                                    <div class="progress" style="height:8px;"><div class="progress-bar bg-warning" style="width:33%;"></div></div>
+                                </div>
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between mb-1"><span style="font-size:0.78rem;">🫚 Ginger</span><strong style="font-size:0.8rem;">22%</strong></div>
+                                    <div class="progress" style="height:8px;"><div class="progress-bar bg-purple" style="width:22%;background:#8b5cf6;"></div></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <span><i class="bi bi-trophy me-2" style="color:var(--accent);"></i>Best Performing</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="p-3 rounded-3 text-center mb-2" style="background:linear-gradient(135deg,#ecfdf5,#d1fae5);">
+                                    <span style="font-size:2rem;">🏆</span>
+                                    <h6 class="fw-bold mb-0">Ginger - Export Grade</h6>
+                                    <small class="text-muted">0.81 NDVI · Highest yield ratio</small>
+                                </div>
+                                <div class="d-flex justify-content-between" style="font-size:0.72rem;">
+                                    <span class="text-muted">Revenue Generated:</span>
+                                    <strong>₦1.8M (2023)</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== TOAST ==================== -->
+<div class="toast-custom success" id="toast">
+    <i class="bi bi-check-circle-fill"></i>
+    <span id="toastMessage">Action completed!</span>
+</div>
+
+<!-- ==================== MODALS ==================== -->
+
+<!-- Add Crop Modal -->
+<div class="modal fade" id="addCropModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="bi bi-plus-circle me-2" style="color:var(--success);"></i>Register New Crop</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Crop Type</label>
+                        <select class="form-select"><option>Select crop...</option><option>Sesame</option><option>Maize</option><option>Ginger</option><option>Cassava</option><option>Rice</option><option>Soybean</option><option>Cocoa</option><option>Cashew</option></select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Variety</label>
+                        <input type="text" class="form-control" placeholder="e.g., Premium, Yellow, Export">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Field</label>
+                        <select class="form-select"><option>Select field...</option><option>Field A (2.0 Ha)</option><option>Field B (1.5 Ha)</option><option>Field C (1.0 Ha)</option><option>Field D (0.5 Ha)</option></select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Area (Ha)</label>
+                        <input type="number" step="0.1" class="form-control" placeholder="0.0">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Planting Date</label>
+                        <input type="date" class="form-control">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Expected Harvest Date</label>
+                        <input type="date" class="form-control">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Seed Source</label>
+                        <select class="form-select"><option>Select source...</option><option>Cooperative Store</option><option>Local Market</option><option>Saved Seed</option><option>Certified Supplier</option></select>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label">Notes</label>
+                        <textarea class="form-control" rows="2" placeholder="Any special instructions or observations..."></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-outline-teal" data-bs-dismiss="modal">Cancel</button>
+                <button class="btn-teal" onclick="addCrop()">Register Crop</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Log Activity Modal -->
+<div class="modal fade" id="logActivityModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="bi bi-journal-plus me-2" style="color:var(--info);"></i>Log Crop Activity</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row g-3">
+                    <div class="col-12">
+                        <label class="form-label">Crop</label>
+                        <select class="form-select"><option>Select crop...</option><option>Sesame - Field A</option><option>Maize - Field B</option><option>Ginger - Field C</option></select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Activity Type</label>
+                        <select class="form-select"><option>Select activity...</option><option>Fertilization</option><option>Irrigation</option><option>Pest Control</option><option>Weeding</option><option>Pruning</option><option>Soil Test</option><option>Harvest Sample</option></select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Date</label>
+                        <input type="date" class="form-control">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Input Used</label>
+                        <input type="text" class="form-control" placeholder="e.g., 50kg NPK">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Performed By</label>
+                        <select class="form-select"><option>Self</option><option>Worker</option><option>Extension Officer</option></select>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label">Notes</label>
+                        <textarea class="form-control" rows="2" placeholder="Observations..."></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-outline-teal" data-bs-dismiss="modal">Cancel</button>
+                <button class="btn-teal" onclick="logActivity()">Save Activity</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Crop Detail Modal -->
+<div class="modal fade" id="cropDetailModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="cropDetailTitle"><i class="bi bi-flower1 me-2" style="color:var(--primary);"></i>Crop Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="cropDetailBody">
+                <!-- Dynamically filled -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn-outline-teal" data-bs-dismiss="modal">Close</button>
+                <button class="btn-teal" onclick="showToast('Crop report generated!', 'success')">
+                    <i class="bi bi-download me-1"></i> Download Report
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== SCRIPTS ==================== -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Sidebar
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    const sidebar = document.getElementById('sidebar');
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
+    function openSidebar() { sidebar.classList.add('show'); sidebarOverlay.classList.add('show'); document.body.style.overflow = 'hidden'; }
+    function closeSidebar() { sidebar.classList.remove('show'); sidebarOverlay.classList.remove('show'); document.body.style.overflow = ''; }
+    sidebarToggle.addEventListener('click', openSidebar);
+    sidebarOverlay.addEventListener('click', closeSidebar);
+
+    // Toast
+    function showToast(message, type = 'success') {
+        const toast = document.getElementById('toast');
+        document.getElementById('toastMessage').textContent = message;
+        toast.className = 'toast-custom ' + type;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+
+    // Tab persistence
+    document.querySelectorAll('#cropTabs button').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('#cropTabs button').forEach(b => {
+                b.classList.remove('active');
+                b.style.color = 'var(--text-muted)';
+            });
+            this.classList.add('active');
+            this.style.color = 'var(--primary)';
+            this.style.borderBottom = '2px solid var(--primary)';
+        });
+    });
+
+    // Set initial active tab style
+    const initialActive = document.querySelector('#cropTabs button.active');
+    if (initialActive) {
+        initialActive.style.color = 'var(--primary)';
+        initialActive.style.borderBottom = '2px solid var(--primary)';
+    }
+
+    // Crop Detail Modal
+    function openCropDetail(crop) {
+        const data = {
+            sesame: {
+                title: '🌾 Sesame - Premium Grade',
+                field: 'Field A',
+                area: '2.0 Ha',
+                planted: '15 Mar 2024',
+                harvest: '15 Jun 2024',
+                stage: 'Flowering (85%)',
+                ndvi: '0.78',
+                soil: 'Sandy Loam',
+                irrigation: 'Borehole',
+                inputs: 'NPK 50kg, Organic Pesticide 5L',
+                activities: '4 activities logged',
+                yield: 'Expected: 2.4 Tons',
+                quality: 'Premium (Grade A expected)'
+            },
+            maize: {
+                title: '🌽 Maize - Yellow Variety',
+                field: 'Field B',
+                area: '1.5 Ha',
+                planted: '01 Apr 2024',
+                harvest: '01 Aug 2024',
+                stage: 'Vegetative (50%)',
+                ndvi: '0.64',
+                soil: 'Clay Loam',
+                irrigation: 'Rain-fed',
+                inputs: 'Urea 25kg, Biopesticide 3L',
+                activities: '3 activities logged',
+                yield: 'Expected: 1.8 Tons',
+                quality: 'Standard (Grade B expected)'
+            },
+            ginger: {
+                title: '🫚 Ginger - Export Quality',
+                field: 'Field C',
+                area: '1.0 Ha',
+                planted: '20 Feb 2024',
+                harvest: '20 Jul 2024',
+                stage: 'Mature (95%)',
+                ndvi: '0.81',
+                soil: 'Sandy Loam',
+                irrigation: 'Borehole + Drip',
+                inputs: 'Compost 200kg, Organic Spray 2L',
+                activities: '6 activities logged',
+                yield: 'Expected: 1.2 Tons',
+                quality: 'Export Grade A'
+            }
+        };
+
+        const d = data[crop];
+        document.getElementById('cropDetailTitle').innerHTML = `<i class="bi bi-flower1 me-2" style="color:var(--primary);"></i>${d.title}`;
+        document.getElementById('cropDetailBody').innerHTML = `
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <table class="table table-sm" style="font-size:0.8rem;">
+                        <tr><td class="text-muted">Field</td><td><strong>${d.field}</strong></td></tr>
+                        <tr><td class="text-muted">Area</td><td><strong>${d.area}</strong></td></tr>
+                        <tr><td class="text-muted">Planted</td><td><strong>${d.planted}</strong></td></tr>
+                        <tr><td class="text-muted">Expected Harvest</td><td><strong>${d.harvest}</strong></td></tr>
+                        <tr><td class="text-muted">Growth Stage</td><td><strong>${d.stage}</strong></td></tr>
+                    </table>
+                </div>
+                <div class="col-md-6">
+                    <table class="table table-sm" style="font-size:0.8rem;">
+                        <tr><td class="text-muted">NDVI Health</td><td><strong class="text-success">${d.ndvi}</strong></td></tr>
+                        <tr><td class="text-muted">Soil Type</td><td><strong>${d.soil}</strong></td></tr>
+                        <tr><td class="text-muted">Irrigation</td><td><strong>${d.irrigation}</strong></td></tr>
+                        <tr><td class="text-muted">Inputs Used</td><td><strong>${d.inputs}</strong></td></tr>
+                        <tr><td class="text-muted">Activities</td><td><strong>${d.activities}</strong></td></tr>
+                    </table>
+                </div>
+                <div class="col-12">
+                    <div class="p-3 rounded-3" style="background:var(--surface-alt);">
+                        <div class="row">
+                            <div class="col-6"><span class="text-muted">Expected Yield:</span> <strong>${d.yield}</strong></div>
+                            <div class="col-6"><span class="text-muted">Quality:</span> <strong>${d.quality}</strong></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    // Add Crop
+    function addCrop() {
+        const modal = bootstrap.Modal.getInstance(document.getElementById('addCropModal'));
+        modal.hide();
+        showToast('✅ New crop registered successfully!', 'success');
+    }
+
+    // Log Activity
+    function logActivity() {
+        const modal = bootstrap.Modal.getInstance(document.getElementById('logActivityModal'));
+        modal.hide();
+        showToast('📝 Activity logged successfully!', 'success');
+    }
+
+    // Update Growth Timeline
+    function updateGrowthTimeline() {
+        showToast('Growth timeline updated!', 'success');
+    }
+</script>
+
+</body>
+</html>

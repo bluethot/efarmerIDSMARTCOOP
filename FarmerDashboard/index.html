@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartCoop - Climate-Smart Digital Platform for African Cooperatives</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0d9488;
+            --primary-dark: #0f766e;
+            --primary-light: #14b8a6;
+            --primary-bg: #f0fdfa;
+            --accent: #f59e0b;
+            --accent-light: #fef3c7;
+            --surface: #ffffff;
+            --surface-alt: #f8fafc;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #94a3b8;
+            --border: #e2e8f0;
+            --border-light: #f1f5f9;
+            --danger: #ef4444;
+            --danger-light: #fef2f2;
+            --success: #10b981;
+            --success-light: #ecfdf5;
+            --warning: #f59e0b;
+            --warning-light: #fffbeb;
+            --info: #3b82f6;
+            --info-light: #eff6ff;
+            --purple: #8b5cf6;
+            --purple-light: #f5f3ff;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+            --shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.06);
+            --shadow-lg: 0 10px 15px rgba(0,0,0,0.1), 0 4px 6px rgba(0,0,0,0.05);
+            --shadow-xl: 0 20px 40px rgba(0,0,0,0.15);
+            --radius-sm: 8px;
+            --radius: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 20px;
+            --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: var(--surface-alt);
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            color: var(--text-primary);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ========== NAVBAR ========== */
+        .navbar-main {
+            background: rgba(255,255,255,0.9);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-light);
+            padding: 0.6rem 0;
+            position: sticky; top: 0; z-index: 1030;
+        }
+        .navbar-brand-custom {
+            display: flex; align-items: center; gap: 0.75rem;
+            text-decoration: none;
+        }
+        .brand-logo {
+            width: 42px; height: 42px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            border-radius: var(--radius);
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-size: 1.3rem;
+            box-shadow: 0 4px 15px rgba(13,148,136,0.3);
+        }
+        .brand-text h5 { color: var(--text-primary); font-weight: 700; font-size: 1.1rem; margin: 0; letter-spacing: -0.3px; }
+        .brand-text small { color: var(--text-muted); font-size: 0.62rem; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600; }
+
+        /* ========== HERO SECTION ========== */
+        .hero-section {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 40%, #0f766e 100%);
+            padding: 5rem 0; position: relative; overflow: hidden;
+        }
+        .hero-section::before {
+            content: '';
+            position: absolute; top: -100px; right: -100px;
+            width: 500px; height: 500px;
+            background: radial-gradient(circle, rgba(13,148,136,0.3) 0%, transparent 70%);
+            border-radius: 50%; pointer-events: none;
+        }
+        .hero-section::after {
+            content: '';
+            position: absolute; bottom: -80px; left: -80px;
+            width: 400px; height: 400px;
+            background: radial-gradient(circle, rgba(245,158,11,0.2) 0%, transparent 70%);
+            border-radius: 50%; pointer-events: none;
+        }
+        .hero-title {
+            font-size: 3rem; font-weight: 800; color: #ffffff;
+            letter-spacing: -1.5px; position: relative; z-index: 1; line-height: 1.15;
+        }
+        .hero-subtitle {
+            font-size: 1.15rem; color: rgba(255,255,255,0.7);
+            position: relative; z-index: 1; line-height: 1.6;
+        }
+        .hero-badge {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            background: rgba(255,255,255,0.1); backdrop-filter: blur(10px);
+            color: #fff; padding: 0.5rem 1rem; border-radius: 25px;
+            font-size: 0.8rem; font-weight: 500; position: relative; z-index: 1;
+            border: 1px solid rgba(255,255,255,0.15);
+        }
+
+        /* ========== STAT BANNER ========== */
+        .stat-banner {
+            background: var(--surface); border-radius: var(--radius-xl);
+            padding: 2rem; margin-top: -3rem; position: relative; z-index: 2;
+            box-shadow: var(--shadow-xl); border: 1px solid var(--border-light);
+        }
+        .stat-item { text-align: center; padding: 1rem; }
+        .stat-number { font-size: 2rem; font-weight: 800; color: var(--text-primary); letter-spacing: -1px; }
+        .stat-desc { font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
+
+        /* ========== ROLE CARDS ========== */
+        .role-card {
+            background: var(--surface); border: 1px solid var(--border-light);
+            border-radius: var(--radius-xl); padding: 2rem;
+            transition: all var(--transition); cursor: pointer;
+            text-align: center; position: relative; overflow: hidden; height: 100%;
+        }
+        .role-card:hover { box-shadow: var(--shadow-xl); transform: translateY(-4px); border-color: var(--primary); }
+        .role-card::before {
+            content: ''; position: absolute; top: 0; left: 0;
+            width: 100%; height: 4px;
+        }
+        .role-card.farmer::before { background: linear-gradient(90deg, #0d9488, #14b8a6); }
+        .role-card.admin::before { background: linear-gradient(90deg, #8b5cf6, #a78bfa); }
+        .role-card.buyer::before { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+        .role-card.gov::before { background: linear-gradient(90deg, #22c55e, #4ade80); }
+        .role-card.finance::before { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+        .role-card.field::before { background: linear-gradient(90deg, #ef4444, #f87171); }
+        .role-icon {
+            width: 70px; height: 70px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 1rem; font-size: 2rem;
+        }
+
+        /* ========== FEATURE SECTION ========== */
+        .feature-card {
+            background: var(--surface); border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg); padding: 1.5rem;
+            transition: all var(--transition); text-align: center; height: 100%;
+        }
+        .feature-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-2px); }
+        .feature-icon {
+            width: 55px; height: 55px; border-radius: var(--radius);
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 1rem; font-size: 1.5rem;
+        }
+
+        /* ========== MODULE CARD ========== */
+        .module-card {
+            background: var(--surface); border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg); padding: 1.3rem;
+            transition: all var(--transition); cursor: pointer;
+            display: flex; align-items: flex-start; gap: 0.75rem; height: 100%;
+        }
+        .module-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-2px); border-color: #cbd5e1; }
+        .module-icon {
+            width: 44px; height: 44px; border-radius: var(--radius-sm);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem; flex-shrink: 0;
+        }
+
+        /* ========== BUTTONS ========== */
+        .btn-teal {
+            background: var(--primary); color: #fff; border: none;
+            font-weight: 600; font-size: 0.85rem; padding: 0.6rem 1.5rem;
+            border-radius: 25px; transition: all var(--transition);
+            box-shadow: 0 2px 8px rgba(13,148,136,0.25);
+        }
+        .btn-teal:hover { background: var(--primary-dark); box-shadow: 0 4px 15px rgba(13,148,136,0.35); transform: translateY(-1px); color: #fff; }
+        .btn-outline-teal {
+            border: 1.5px solid var(--primary); color: var(--primary);
+            background: transparent; font-weight: 500; font-size: 0.85rem;
+            padding: 0.55rem 1.3rem; border-radius: 25px; transition: all var(--transition);
+            text-decoration: none;
+        }
+        .btn-outline-teal:hover { background: var(--primary); color: #fff; }
+        .btn-outline-light-custom {
+            border: 1.5px solid rgba(255,255,255,0.3); color: #fff;
+            background: transparent; font-weight: 500; font-size: 0.85rem;
+            padding: 0.55rem 1.3rem; border-radius: 25px; transition: all var(--transition);
+            text-decoration: none;
+        }
+        .btn-outline-light-custom:hover { background: rgba(255,255,255,0.1); border-color: #fff; color: #fff; }
+
+        /* ========== MODALS ========== */
+        .modal-content { border: none; border-radius: var(--radius-xl); box-shadow: var(--shadow-xl); overflow: hidden; }
+        .modal-header { background: var(--surface); border-bottom: 1px solid var(--border-light); padding: 1.5rem 1.75rem; }
+        .modal-header .modal-title { font-weight: 700; font-size: 1.2rem; letter-spacing: -0.3px; }
+        .modal-body { padding: 1.75rem; }
+        .modal-footer { border-top: 1px solid var(--border-light); padding: 1.25rem 1.75rem; }
+        .form-label { font-weight: 600; font-size: 0.78rem; color: var(--text-secondary); margin-bottom: 0.3rem; }
+        .form-control, .form-select {
+            border-radius: var(--radius-sm); border: 1px solid var(--border);
+            padding: 0.6rem 0.9rem; font-size: 0.88rem;
+            transition: all var(--transition); font-family: 'Inter', sans-serif;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary); box-shadow: 0 0 0 3px rgba(13,148,136,0.08);
+        }
+        .input-group-text {
+            background: var(--surface-alt); border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+        }
+        .auth-divider {
+            display: flex; align-items: center; gap: 1rem;
+            margin: 1.25rem 0; color: var(--text-muted); font-size: 0.75rem;
+        }
+        .auth-divider::before, .auth-divider::after {
+            content: ''; flex: 1; height: 1px; background: var(--border);
+        }
+        .password-strength {
+            height: 4px; border-radius: 2px; margin-top: 0.35rem;
+            background: var(--border-light); transition: all var(--transition);
+        }
+
+        /* ========== TOAST ========== */
+        .toast-custom {
+            position: fixed; bottom: 2rem; right: 2rem;
+            background: #0f172a; color: #fff;
+            padding: 0.9rem 1.3rem; border-radius: var(--radius);
+            box-shadow: var(--shadow-xl); z-index: 1070;
+            display: flex; align-items: center; gap: 0.6rem;
+            font-weight: 500; font-size: 0.85rem;
+            transform: translateY(120px); opacity: 0;
+            transition: all 0.35s ease;
+        }
+        .toast-custom.show { transform: translateY(0); opacity: 1; }
+        .toast-custom.success { border-left: 4px solid #10b981; }
+        .toast-custom.error { border-left: 4px solid #ef4444; }
+
+        /* ========== FOOTER ========== */
+        .footer-custom {
+            background: #0f172a; color: rgba(255,255,255,0.6);
+            padding: 3rem 0 1.5rem;
+        }
+        .footer-custom h6 { color: #fff; font-weight: 600; margin-bottom: 1rem; }
+        .footer-custom a { color: rgba(255,255,255,0.5); text-decoration: none; font-size: 0.82rem; transition: color 0.2s; }
+        .footer-custom a:hover { color: #fff; }
+
+        /* ========== ANIMATIONS ========== */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-in { animation: fadeInUp 0.6s ease forwards; opacity: 0; }
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; }
+        .delay-4 { animation-delay: 0.4s; }
+
+        /* ========== RESPONSIVE ========== */
+        @media (max-width: 991.98px) {
+            .hero-title { font-size: 2.2rem; }
+            .stat-number { font-size: 1.5rem; }
+        }
+        @media (max-width: 767.98px) {
+            .hero-title { font-size: 1.8rem; }
+            .hero-section { padding: 3rem 0; }
+            .stat-banner { margin-top: -2rem; padding: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ==================== NAVBAR ==================== -->
+<nav class="navbar-main">
+    <div class="container">
+        <div class="d-flex align-items-center justify-content-between">
+            <a href="#" class="navbar-brand-custom">
+                <div class="brand-logo"><i class="bi bi-grid-3x3-gap-fill"></i></div>
+                <div class="brand-text">
+                    <h5>SmartCoop</h5>
+                    <small>Climate-Smart Platform</small>
+                </div>
+            </a>
+            <div class="d-flex align-items-center gap-2">
+                <a href="#" class="btn-outline-teal btn-sm" style="border-radius:20px;font-size:0.8rem;" data-bs-toggle="modal" data-bs-target="#signInModal">Sign In</a>
+                <a href="#" class="btn-teal btn-sm" style="font-size:0.8rem;" data-bs-toggle="modal" data-bs-target="#signUpModal">Get Started</a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- ==================== HERO SECTION ==================== -->
+<section class="hero-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-7 animate-in delay-1">
+                <div class="hero-badge mb-3">
+                    <i class="bi bi-geo-alt-fill"></i> Operating Across Africa
+                </div>
+                <h1 class="hero-title mb-3">
+                    The Operating System for<br>African Agricultural Cooperatives
+                </h1>
+                <p class="hero-subtitle mb-4">
+                    ERP + Fintech + Traceability + Marketplace — all in one climate-smart platform.
+                    Empowering cooperatives with digital infrastructure for sustainable agriculture.
+                </p>
+                <div class="d-flex flex-wrap gap-2">
+                    <a href="#" class="btn-teal btn-lg" data-bs-toggle="modal" data-bs-target="#signUpModal">
+                        <i class="bi bi-rocket-takeoff me-2"></i>Get Started Free
+                    </a>
+                    <a href="#" class="btn-outline-light-custom btn-lg" onclick="showToast('Demo video coming soon!', 'success')">
+                        <i class="bi bi-play-circle me-2"></i>Watch Demo
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-5 text-center animate-in delay-2 d-none d-lg-block">
+                <div style="position:relative;z-index:1;">
+                    <div style="width:280px;height:280px;background:rgba(255,255,255,0.05);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto;border:2px solid rgba(255,255,255,0.1);">
+                        <i class="bi bi-grid-3x3-gap-fill" style="font-size:5rem;color:rgba(255,255,255,0.3);"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ==================== STAT BANNER ==================== -->
+<div class="container animate-in delay-3">
+    <div class="stat-banner">
+        <div class="row g-3">
+            <div class="col-6 col-md-3"><div class="stat-item"><div class="stat-number">12,847</div><div class="stat-desc">Farmers Registered</div></div></div>
+            <div class="col-6 col-md-3"><div class="stat-item"><div class="stat-number">48</div><div class="stat-desc">Cooperatives</div></div></div>
+            <div class="col-6 col-md-3"><div class="stat-item"><div class="stat-number">₦84M</div><div class="stat-desc">Platform Revenue</div></div></div>
+            <div class="col-6 col-md-3"><div class="stat-item"><div class="stat-number">12</div><div class="stat-desc">Export Countries</div></div></div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== ROLE SELECTION ==================== -->
+<section class="py-5">
+    <div class="container">
+        <div class="text-center mb-5 animate-in delay-1">
+            <h2 class="fw-bold" style="letter-spacing:-0.5px;">Choose Your Portal</h2>
+            <p class="text-muted">Select your role to access the appropriate dashboard</p>
+        </div>
+        <div class="row g-3">
+            <div class="col-6 col-lg-4 col-xl-2 animate-in delay-1">
+                <div class="role-card farmer" onclick="navigateTo('farmer')">
+                    <div class="role-icon" style="background:#ecfdf5;color:#0d9488;"><i class="bi bi-person-fill"></i></div>
+                    <h6 class="fw-bold">Farmer</h6>
+                    <small class="text-muted">Farm management & sales</small>
+                </div>
+            </div>
+            <div class="col-6 col-lg-4 col-xl-2 animate-in delay-2">
+                <div class="role-card admin" onclick="navigateTo('admin')">
+                    <div class="role-icon" style="background:#f5f3ff;color:#8b5cf6;"><i class="bi bi-building"></i></div>
+                    <h6 class="fw-bold">Cooperative Admin</h6>
+                    <small class="text-muted">Member & produce management</small>
+                </div>
+            </div>
+            <div class="col-6 col-lg-4 col-xl-2 animate-in delay-3">
+                <div class="role-card buyer" onclick="navigateTo('buyer')">
+                    <div class="role-icon" style="background:#fffbeb;color:#d97706;"><i class="bi bi-shop"></i></div>
+                    <h6 class="fw-bold">Buyer</h6>
+                    <small class="text-muted">Source quality produce</small>
+                </div>
+            </div>
+            <div class="col-6 col-lg-4 col-xl-2 animate-in delay-4">
+                <div class="role-card gov" onclick="navigateTo('government')">
+                    <div class="role-icon" style="background:#f0fdf4;color:#166534;"><i class="bi bi-flag-fill"></i></div>
+                    <h6 class="fw-bold">Government</h6>
+                    <small class="text-muted">National monitoring</small>
+                </div>
+            </div>
+            <div class="col-6 col-lg-4 col-xl-2 animate-in delay-1">
+                <div class="role-card finance" onclick="navigateTo('finance')">
+                    <div class="role-icon" style="background:#eff6ff;color:#3b82f6;"><i class="bi bi-bank"></i></div>
+                    <h6 class="fw-bold">Finance Partner</h6>
+                    <small class="text-muted">Lending & risk analysis</small>
+                </div>
+            </div>
+            <div class="col-6 col-lg-4 col-xl-2 animate-in delay-2">
+                <div class="role-card field" onclick="navigateTo('field')">
+                    <div class="role-icon" style="background:#fef2f2;color:#ef4444;"><i class="bi bi-clipboard-check"></i></div>
+                    <h6 class="fw-bold">Field Officer</h6>
+                    <small class="text-muted">On-ground registration</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ==================== KEY FEATURES ==================== -->
+<section class="py-5" style="background:var(--surface);">
+    <div class="container">
+        <div class="text-center mb-5 animate-in delay-1">
+            <h2 class="fw-bold" style="letter-spacing:-0.5px;">Why SmartCoop?</h2>
+            <p class="text-muted">Built for African cooperatives — practical, scalable, climate-smart</p>
+        </div>
+        <div class="row g-3">
+            <div class="col-md-6 col-lg-3 animate-in delay-1">
+                <div class="feature-card">
+                    <div class="feature-icon" style="background:#ecfdf5;color:#059669;"><i class="bi bi-shield-check"></i></div>
+                    <h6 class="fw-bold">Digital Identity</h6>
+                    <p class="text-muted" style="font-size:0.82rem;">Verified farmer profiles with GPS farm mapping & reputation scores</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3 animate-in delay-2">
+                <div class="feature-card">
+                    <div class="feature-icon" style="background:#eff6ff;color:#3b82f6;"><i class="bi bi-graph-up"></i></div>
+                    <h6 class="fw-bold">Embedded Finance</h6>
+                    <p class="text-muted" style="font-size:0.82rem;">Loans, savings, insurance & payments — all within the platform</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3 animate-in delay-3">
+                <div class="feature-card">
+                    <div class="feature-icon" style="background:#f5f3ff;color:#8b5cf6;"><i class="bi bi-qr-code"></i></div>
+                    <h6 class="fw-bold">Full Traceability</h6>
+                    <p class="text-muted" style="font-size:0.82rem;">Farm-to-fork tracking with QR codes for export compliance</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3 animate-in delay-4">
+                <div class="feature-card">
+                    <div class="feature-icon" style="background:#fffbeb;color:#d97706;"><i class="bi bi-cloud-sun"></i></div>
+                    <h6 class="fw-bold">Climate-Smart</h6>
+                    <p class="text-muted" style="font-size:0.82rem;">Weather alerts, pest warnings & AI-powered farming recommendations</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ==================== KEY MODULES ==================== -->
+<section class="py-5">
+    <div class="container">
+        <div class="text-center mb-5 animate-in delay-1">
+            <h2 class="fw-bold" style="letter-spacing:-0.5px;">Platform Modules</h2>
+            <p class="text-muted">Everything cooperatives need in one integrated platform</p>
+        </div>
+        <div class="row g-3">
+            <div class="col-md-6 col-lg-4 animate-in delay-1">
+                <div class="module-card" onclick="navigateTo('admin')">
+                    <div class="module-icon" style="background:#ecfdf5;color:#0d9488;"><i class="bi bi-people-fill"></i></div>
+                    <div><h6 class="fw-bold mb-1" style="font-size:0.85rem;">Member Management</h6><p class="text-muted mb-0" style="font-size:0.75rem;">Register, verify & manage cooperative members</p></div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4 animate-in delay-1">
+                <div class="module-card" onclick="navigateTo('admin')">
+                    <div class="module-icon" style="background:#fffbeb;color:#d97706;"><i class="bi bi-basket-fill"></i></div>
+                    <div><h6 class="fw-bold mb-1" style="font-size:0.85rem;">Produce Collection</h6><p class="text-muted mb-0" style="font-size:0.75rem;">Track intake, quality & batch labeling</p></div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4 animate-in delay-1">
+                <div class="module-card" onclick="navigateTo('admin')">
+                    <div class="module-icon" style="background:#eff6ff;color:#3b82f6;"><i class="bi bi-building"></i></div>
+                    <div><h6 class="fw-bold mb-1" style="font-size:0.85rem;">Warehouse Management</h6><p class="text-muted mb-0" style="font-size:0.75rem;">Manage zones, climate & stock movements</p></div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4 animate-in delay-2">
+                <div class="module-card" onclick="navigateTo('finance')">
+                    <div class="module-icon" style="background:#fef2f2;color:#ef4444;"><i class="bi bi-cash-stack"></i></div>
+                    <div><h6 class="fw-bold mb-1" style="font-size:0.85rem;">Loan Management</h6><p class="text-muted mb-0" style="font-size:0.75rem;">Disburse, track repayments & assess risk</p></div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4 animate-in delay-2">
+                <div class="module-card" onclick="navigateTo('admin')">
+                    <div class="module-icon" style="background:#f5f3ff;color:#8b5cf6;"><i class="bi bi-droplet-fill"></i></div>
+                    <div><h6 class="fw-bold mb-1" style="font-size:0.85rem;">Input Distribution</h6><p class="text-muted mb-0" style="font-size:0.75rem;">Manage fertilizer, seeds & chemicals</p></div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4 animate-in delay-2">
+                <div class="module-card" onclick="navigateTo('government')">
+                    <div class="module-icon" style="background:#f0fdf4;color:#166534;"><i class="bi bi-cloud-sun-fill"></i></div>
+                    <div><h6 class="fw-bold mb-1" style="font-size:0.85rem;">Climate Intelligence</h6><p class="text-muted mb-0" style="font-size:0.75rem;">Weather, pest alerts & drought monitoring</p></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ==================== CTA SECTION ==================== -->
+<section class="py-5" style="background:linear-gradient(135deg, #0f172a 0%, #1e293b 40%, #0f766e 100%);">
+    <div class="container text-center">
+        <h2 class="fw-bold text-white mb-3 animate-in delay-1" style="letter-spacing:-0.5px;">Ready to Digitize Your Cooperative?</h2>
+        <p class="text-white-50 mb-4 animate-in delay-2" style="font-size:1rem;">Join 12,847 farmers already using SmartCoop across Nigeria</p>
+        <div class="d-flex justify-content-center gap-2 animate-in delay-3">
+            <a href="#" class="btn-teal btn-lg" data-bs-toggle="modal" data-bs-target="#signUpModal">
+                <i class="bi bi-rocket-takeoff me-2"></i>Get Started Free
+            </a>
+            <a href="#" class="btn-outline-light-custom btn-lg" onclick="showToast('Our team will contact you shortly!', 'success')">
+                <i class="bi bi-telephone me-2"></i>Request Demo
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- ==================== FOOTER ==================== -->
+<footer class="footer-custom">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="d-flex align-items-center gap-2 mb-3">
+                    <div class="brand-logo" style="width:35px;height:35px;font-size:1rem;"><i class="bi bi-grid-3x3-gap-fill"></i></div>
+                    <h6 class="mb-0">SmartCoop</h6>
+                </div>
+                <p style="font-size:0.78rem;">Climate-smart digital operating system for farmer cooperatives across Africa.</p>
+            </div>
+            <div class="col-md-2"><h6>Platform</h6><a href="#" class="d-block mb-1">Farmer Portal</a><a href="#" class="d-block mb-1">Admin Dashboard</a><a href="#" class="d-block mb-1">Marketplace</a></div>
+            <div class="col-md-2"><h6>Features</h6><a href="#" class="d-block mb-1">Traceability</a><a href="#" class="d-block mb-1">Loans & Credit</a><a href="#" class="d-block mb-1">Climate Alerts</a></div>
+            <div class="col-md-2"><h6>Company</h6><a href="#" class="d-block mb-1">About Us</a><a href="#" class="d-block mb-1">Contact</a><a href="#" class="d-block mb-1">Blog</a></div>
+            <div class="col-md-2"><h6>Contact</h6><p style="font-size:0.75rem;">Kaduna, Nigeria<br>hello@smartcoop.africa<br>+234 800 123 4567</p></div>
+        </div>
+        <hr style="border-color:rgba(255,255,255,0.1);">
+        <div class="d-flex justify-content-between align-items-center">
+            <small>© 2024 SmartCoop. All rights reserved.</small>
+            <div class="d-flex gap-3"><a href="#"><i class="bi bi-twitter-x"></i></a><a href="#"><i class="bi bi-linkedin"></i></a><a href="#"><i class="bi bi-facebook"></i></a></div>
+        </div>
+    </div>
+</footer>
+
+<!-- ==================== TOAST NOTIFICATION ==================== -->
+<div class="toast-custom" id="toast">
+    <i class="bi bi-check-circle-fill"></i>
+    <span id="toastMessage"></span>
+</div>
+
+<!-- ==================== SIGN IN MODAL ==================== -->
+<div class="modal fade" id="signInModal" tabindex="-1" aria-labelledby="signInModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="signInModalLabel"><i class="bi bi-box-arrow-in-right me-2" style="color:var(--primary);"></i>Sign In</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label">Email or Phone</label>
+                    <input type="text" class="form-control" id="signInEmail" placeholder="Enter email or phone number">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Password</label>
+                    <div class="input-group">
+                        <input type="password" class="form-control" id="signInPassword" placeholder="Enter password">
+                        <span class="input-group-text" onclick="togglePassword('signInPassword', this)" style="cursor:pointer;"><i class="bi bi-eye-slash"></i></span>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="rememberMe">
+                        <label class="form-check-label" for="rememberMe" style="font-size:0.8rem;">Remember me</label>
+                    </div>
+                    <a href="#" style="font-size:0.8rem;color:var(--primary);text-decoration:none;">Forgot password?</a>
+                </div>
+                <button class="btn btn-teal w-100 mb-3" onclick="handleSignIn()">Sign In</button>
+                <div class="auth-divider"><span>or continue with</span></div>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-outline-secondary w-100" onclick="showToast('Google sign-in coming soon!', 'success')">
+                        <i class="bi bi-google me-2"></i>Google
+                    </button>
+                    <button class="btn btn-outline-secondary w-100" onclick="showToast('Microsoft sign-in coming soon!', 'success')">
+                        <i class="bi bi-microsoft me-2"></i>Microsoft
+                    </button>
+                </div>
+                <p class="text-center mt-3 mb-0" style="font-size:0.82rem;">
+                    Don't have an account? <a href="#" data-bs-toggle="modal" data-bs-target="#signUpModal" data-bs-dismiss="modal" style="color:var(--primary);">Sign Up</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== SIGN UP MODAL ==================== -->
+<div class="modal fade" id="signUpModal" tabindex="-1" aria-labelledby="signUpModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="signUpModalLabel"><i class="bi bi-person-plus me-2" style="color:var(--primary);"></i>Create Account</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Full Name</label>
+                        <input type="text" class="form-control" id="signUpName" placeholder="Enter full name">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Email Address</label>
+                        <input type="email" class="form-control" id="signUpEmail" placeholder="Enter email">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Phone Number</label>
+                        <input type="tel" class="form-control" id="signUpPhone" placeholder="+234 XXX XXX XXXX">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Role</label>
+                        <select class="form-select" id="signUpRole">
+                            <option value="">Select your role</option>
+                            <option value="farmer">Farmer</option>
+                            <option value="admin">Cooperative Admin</option>
+                            <option value="buyer">Buyer</option>
+                            <option value="government">Government</option>
+                            <option value="finance">Finance Partner</option>
+                            <option value="field">Field Officer</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Password</label>
+                        <div class="input-group">
+                            <input type="password" class="form-control" id="signUpPassword" placeholder="Create password" oninput="checkPasswordStrength()">
+                            <span class="input-group-text" onclick="togglePassword('signUpPassword', this)" style="cursor:pointer;"><i class="bi bi-eye-slash"></i></span>
+                        </div>
+                        <div class="password-strength" id="passwordStrength"></div>
+                        <small class="text-muted" style="font-size:0.7rem;">Min 8 characters with uppercase, lowercase & number</small>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Confirm Password</label>
+                        <input type="password" class="form-control" id="signUpConfirmPassword" placeholder="Confirm password">
+                    </div>
+                    <div class="col-12">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="agreeTerms">
+                            <label class="form-check-label" for="agreeTerms" style="font-size:0.82rem;">
+                                I agree to the <a href="#" style="color:var(--primary);">Terms of Service</a> and <a href="#" style="color:var(--primary);">Privacy Policy</a>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn btn-teal w-100 mt-3" onclick="handleSignUp()">Create Account</button>
+                <p class="text-center mt-3 mb-0" style="font-size:0.82rem;">
+                    Already have an account? <a href="#" data-bs-toggle="modal" data-bs-target="#signInModal" data-bs-dismiss="modal" style="color:var(--primary);">Sign In</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== SCRIPTS ==================== -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // ========== NAVIGATION HANDLER ==========
+    function navigateTo(role) {
+        const roleNames = {
+            farmer: 'Farmer',
+            admin: 'Cooperative Admin',
+            buyer: 'Buyer',
+            government: 'Government',
+            finance: 'Finance Partner',
+            field: 'Field Officer'
+        };
+        
+        const roleName = roleNames[role] || role;
+        showToast(`Redirecting to ${roleName} dashboard...`, 'success');
+        
+        // Redirect to dashboard.html with role parameter
+        setTimeout(() => {
+            window.location.href = `dashboard.html?role=${role}`;
+        }, 1000);
+    }
+
+    // ========== TOAST NOTIFICATIONS ==========
+    function showToast(message, type = 'success') {
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toastMessage');
+        const icon = toast.querySelector('i');
+        
+        toastMessage.textContent = message;
+        toast.className = `toast-custom ${type}`;
+        
+        // Update icon based on type
+        if (type === 'success') {
+            icon.className = 'bi bi-check-circle-fill';
+        } else if (type === 'error') {
+            icon.className = 'bi bi-x-circle-fill';
+        }
+        
+        // Show toast
+        toast.classList.add('show');
+        
+        // Hide after 3 seconds
+        setTimeout(() => {
+            toast.classList.remove('show');
+        }, 3000);
+    }
+
+    // ========== SIGN IN HANDLER ==========
+    function handleSignIn() {
+        const email = document.getElementById('signInEmail').value;
+        const password = document.getElementById('signInPassword').value;
+        const rememberMe = document.getElementById('rememberMe').checked;
+        
+        if (!email || !password) {
+            showToast('Please fill in all fields', 'error');
+            return;
+        }
+        
+        // Simulate authentication and redirect to dashboard
+        if (email && password) {
+            showToast('Sign in successful! Redirecting to dashboard...', 'success');
+            
+            // Store user session (simulated)
+            const userData = {
+                email: email,
+                role: 'user', // Default role, can be enhanced based on actual authentication
+                loggedIn: true,
+                timestamp: new Date().toISOString()
+            };
+            
+            // Save to localStorage for persistence
+            localStorage.setItem('smartcoop_user', JSON.stringify(userData));
+            
+            // Close modal and redirect to dashboard
+            setTimeout(() => {
+                const modal = bootstrap.Modal.getInstance(document.getElementById('signInModal'));
+                modal.hide();
+                // Redirect to dashboard.html
+                window.location.href = 'dashboard.html';
+            }, 1500);
+        }
+    }
+
+    // ========== SIGN UP HANDLER ==========
+    function handleSignUp() {
+        const name = document.getElementById('signUpName').value;
+        const email = document.getElementById('signUpEmail').value;
+        const phone = document.getElementById('signUpPhone').value;
+        const role = document.getElementById('signUpRole').value;
+        const password = document.getElementById('signUpPassword').value;
+        const confirmPassword = document.getElementById('signUpConfirmPassword').value;
+        const agreeTerms = document.getElementById('agreeTerms').checked;
+        
+        // Validation
+        if (!name || !email || !phone || !role || !password || !confirmPassword) {
+            showToast('Please fill in all required fields', 'error');
+            return;
+        }
+        
+        if (password !== confirmPassword) {
+            showToast('Passwords do not match', 'error');
+            return;
+        }
+        
+        if (password.length < 8) {
+            showToast('Password must be at least 8 characters', 'error');
+            return;
+        }
+        
+        if (!agreeTerms) {
+            showToast('Please agree to the Terms of Service', 'error');
+            return;
+        }
+        
+        // Simulate registration and redirect to dashboard
+        showToast('Account created successfully! Redirecting to dashboard...', 'success');
+        
+        // Store user session (simulated)
+        const userData = {
+            name: name,
+            email: email,
+            phone: phone,
+            role: role,
+            loggedIn: true,
+            timestamp: new Date().toISOString()
+        };
+        
+        // Save to localStorage for persistence
+        localStorage.setItem('smartcoop_user', JSON.stringify(userData));
+        
+        // Close modal and redirect to dashboard
+        setTimeout(() => {
+            const modal = bootstrap.Modal.getInstance(document.getElementById('signUpModal'));
+            modal.hide();
+            // Redirect to dashboard.html with role parameter
+            window.location.href = `dashboard.html?role=${role}`;
+        }, 1500);
+    }
+
+    // ========== PASSWORD TOGGLE ==========
+    function togglePassword(inputId, element) {
+        const input = document.getElementById(inputId);
+        const icon = element.querySelector('i');
+        
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.className = 'bi bi-eye';
+        } else {
+            input.type = 'password';
+            icon.className = 'bi bi-eye-slash';
+        }
+    }
+
+    // ========== PASSWORD STRENGTH CHECKER ==========
+    function checkPasswordStrength() {
+        const password = document.getElementById('signUpPassword').value;
+        const strengthBar = document.getElementById('passwordStrength');
+        
+        let strength = 0;
+        
+        if (password.length >= 8) strength++;
+        if (password.match(/[a-z]/) && password.match(/[A-Z]/)) strength++;
+        if (password.match(/[0-9]/)) strength++;
+        if (password.match(/[^a-zA-Z0-9]/)) strength++;
+        
+        const colors = ['#ef4444', '#f59e0b', '#eab308', '#10b981'];
+        const widths = ['25%', '50%', '75%', '100%'];
+        
+        if (password.length === 0) {
+            strengthBar.style.width = '0';
+            strengthBar.style.background = 'var(--border-light)';
+        } else {
+            strengthBar.style.width = widths[strength - 1] || '100%';
+            strengthBar.style.background = colors[strength - 1] || '#10b981';
+        }
+    }
+
+    // ========== SCROLL ANIMATION ==========
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add animation classes to elements as they come into view
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+        
+        // Observe all elements with animate-in class
+        document.querySelectorAll('.animate-in').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Check if user is already logged in
+        const userData = localStorage.getItem('smartcoop_user');
+        if (userData) {
+            const user = JSON.parse(userData);
+            console.log('User already logged in:', user);
+            // Optionally auto-redirect to dashboard if already logged in
+            // window.location.href = 'dashboard.html';
+        }
+    });
+
+    // ========== COUNTER ANIMATION ==========
+    function animateCounters() {
+        const counters = document.querySelectorAll('.stat-number');
+        counters.forEach(counter => {
+            const target = counter.textContent;
+            const numericTarget = parseInt(target.replace(/[^0-9]/g, ''));
+            
+            if (isNaN(numericTarget)) {
+                // Handle currency format
+                const currencyMatch = target.match(/₦(\d+)M/);
+                if (currencyMatch) {
+                    const value = parseInt(currencyMatch[1]);
+                    let current = 0;
+                    const increment = value / 50;
+                    const timer = setInterval(() => {
+                        current += increment;
+                        if (current >= value) {
+                            counter.textContent = `₦${value}M`;
+                            clearInterval(timer);
+                        } else {
+                            counter.textContent = `₦${Math.floor(current)}M`;
+                        }
+                    }, 30);
+                }
+                return;
+            }
+            
+            let current = 0;
+            const increment = numericTarget / 50;
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= numericTarget) {
+                    counter.textContent = target;
+                    clearInterval(timer);
+                } else {
+                    counter.textContent = Math.floor(current).toLocaleString();
+                }
+            }, 30);
+        });
+    }
+
+    // Start counter animation when stat banner is visible
+    const statBanner = document.querySelector('.stat-banner');
+    if (statBanner) {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    animateCounters();
+                    observer.unobserve(entry.target);
+                }
+            });
+        });
+        observer.observe(statBanner);
+    }
+
+    // ========== FORM ENTER KEY HANDLING ==========
+    document.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            const signInModal = document.getElementById('signInModal');
+            const signUpModal = document.getElementById('signUpModal');
+            
+            if (signInModal.classList.contains('show')) {
+                handleSignIn();
+            } else if (signUpModal.classList.contains('show')) {
+                handleSignUp();
+            }
+        }
+    });
+</script>
+
+</body>
+</html>

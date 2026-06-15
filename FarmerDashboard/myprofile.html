@@ -1,0 +1,1298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - SmartCoop Platform</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0d9488;
+            --primary-dark: #0f766e;
+            --primary-light: #14b8a6;
+            --primary-bg: #f0fdfa;
+            --accent: #f59e0b;
+            --accent-light: #fef3c7;
+            --surface: #ffffff;
+            --surface-alt: #f8fafc;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #94a3b8;
+            --border: #e2e8f0;
+            --border-light: #f1f5f9;
+            --danger: #ef4444;
+            --danger-light: #fef2f2;
+            --success: #10b981;
+            --success-light: #ecfdf5;
+            --warning: #f59e0b;
+            --warning-light: #fffbeb;
+            --info: #3b82f6;
+            --info-light: #eff6ff;
+            --purple: #8b5cf6;
+            --purple-light: #f5f3ff;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+            --shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.06);
+            --shadow-lg: 0 10px 15px rgba(0,0,0,0.1), 0 4px 6px rgba(0,0,0,0.05);
+            --shadow-xl: 0 20px 40px rgba(0,0,0,0.15);
+            --radius-sm: 8px;
+            --radius: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 20px;
+            --sidebar-width: 280px;
+            --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-slow: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: var(--surface-alt);
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            color: var(--text-primary);
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+        }
+
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+
+        /* ========== SIDEBAR ========== */
+        .sidebar {
+            position: fixed;
+            top: 0; left: 0;
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: linear-gradient(195deg, #0f172a 0%, #1e293b 100%);
+            z-index: 1050;
+            overflow-y: auto;
+            transition: transform var(--transition-slow);
+            box-shadow: var(--shadow-xl);
+        }
+        .sidebar::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 250px;
+            background: radial-gradient(ellipse at 60% 0%, rgba(13,148,136,0.12) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .sidebar-brand {
+            padding: 1.75rem 1.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            position: relative;
+        }
+        .logo-icon {
+            width: 42px; height: 42px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            border-radius: var(--radius);
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-size: 1.3rem;
+            box-shadow: 0 4px 15px rgba(13,148,136,0.3);
+        }
+        .sidebar-brand h4 { color: #fff; font-weight: 700; font-size: 1.1rem; margin: 0; letter-spacing: -0.3px; }
+        .sidebar-brand small { color: rgba(255,255,255,0.4); font-size: 0.68rem; text-transform: uppercase; letter-spacing: 1px; }
+        .sidebar-user {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .avatar {
+            width: 42px; height: 42px;
+            border-radius: var(--radius);
+            background: linear-gradient(135deg, #f59e0b, #fbbf24);
+            display: flex; align-items: center; justify-content: center;
+            color: #1e293b; font-weight: 700; font-size: 1rem;
+            position: relative;
+        }
+        .avatar::after {
+            content: '';
+            position: absolute;
+            bottom: -2px; right: -2px;
+            width: 13px; height: 13px;
+            background: #10b981;
+            border: 3px solid #1e293b;
+            border-radius: 50%;
+        }
+        .sidebar-user .user-name { color: #f1f5f9; font-weight: 600; font-size: 0.85rem; }
+        .sidebar-user .user-role { color: rgba(255,255,255,0.4); font-size: 0.7rem; }
+        .sidebar-nav { padding: 0.5rem 0.75rem; }
+        .nav-section {
+            color: rgba(255,255,255,0.25);
+            font-size: 0.62rem; text-transform: uppercase;
+            letter-spacing: 1.8px; padding: 0.75rem 1rem 0.4rem;
+            font-weight: 700;
+        }
+        .sidebar-nav .nav-link {
+            color: rgba(255,255,255,0.5);
+            padding: 0.6rem 0.9rem; font-size: 0.82rem; font-weight: 500;
+            display: flex; align-items: center;
+            border-radius: var(--radius-sm);
+            margin-bottom: 1px;
+            transition: all var(--transition);
+            letter-spacing: -0.2px;
+        }
+        .sidebar-nav .nav-link:hover { background: rgba(255,255,255,0.04); color: #e2e8f0; }
+        .sidebar-nav .nav-link.active {
+            background: rgba(13,148,136,0.15);
+            color: #fff; font-weight: 600;
+            box-shadow: inset 0 0 0 1px rgba(13,148,136,0.25);
+        }
+        .sidebar-nav .nav-link i { width: 20px; margin-right: 0.7rem; font-size: 1rem; opacity: 0.75; }
+        .sidebar-nav .nav-link.active i { opacity: 1; color: var(--primary-light); }
+        .badge-pill {
+            background: var(--danger); color: #fff;
+            font-size: 0.62rem; padding: 0.2em 0.55em;
+            border-radius: 20px; margin-left: auto; font-weight: 700;
+        }
+        .sidebar-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+        .sidebar-overlay {
+            display: none;
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(15,23,42,0.45);
+            backdrop-filter: blur(3px);
+            z-index: 1045;
+        }
+        .sidebar-overlay.show { display: block; }
+
+        /* ========== MAIN CONTENT ========== */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+            transition: margin var(--transition-slow);
+        }
+
+        /* ========== TOP NAVBAR ========== */
+        .top-navbar {
+            background: rgba(255,255,255,0.75);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 0.7rem 1.75rem;
+            border-bottom: 1px solid rgba(226,232,240,0.6);
+            position: sticky; top: 0; z-index: 1040;
+        }
+        .btn-icon {
+            width: 37px; height: 37px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            background: var(--surface);
+            color: var(--text-secondary);
+            display: flex; align-items: center; justify-content: center;
+            transition: all var(--transition);
+            position: relative; cursor: pointer;
+        }
+        .btn-icon:hover { background: var(--surface-alt); border-color: #cbd5e1; color: var(--text-primary); }
+        .notification-dot {
+            position: absolute;
+            top: 7px; right: 7px;
+            width: 9px; height: 9px;
+            background: var(--danger);
+            border-radius: 50%; border: 2px solid #fff;
+        }
+
+        /* ========== PROFILE HEADER ========== */
+        .profile-header {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 40%, #0f766e 100%);
+            border-radius: var(--radius-xl);
+            padding: 2.5rem;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+        }
+        .profile-header::before {
+            content: '';
+            position: absolute;
+            top: -100px; right: -100px;
+            width: 400px; height: 400px;
+            background: radial-gradient(circle, rgba(13,148,136,0.2) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        .profile-header::after {
+            content: '';
+            position: absolute;
+            bottom: -80px; left: -80px;
+            width: 300px; height: 300px;
+            background: radial-gradient(circle, rgba(245,158,11,0.15) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        .profile-avatar-lg {
+            width: 100px; height: 100px;
+            border-radius: var(--radius-lg);
+            background: linear-gradient(135deg, #f59e0b, #fbbf24);
+            display: flex; align-items: center; justify-content: center;
+            color: #1e293b; font-weight: 800; font-size: 2.5rem;
+            position: relative; z-index: 1;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+        }
+        .profile-avatar-lg .status-dot {
+            position: absolute;
+            bottom: 6px; right: 6px;
+            width: 20px; height: 20px;
+            background: #10b981;
+            border: 4px solid #1e293b;
+            border-radius: 50%;
+        }
+        .profile-header h3 {
+            color: #ffffff; font-weight: 700;
+            letter-spacing: -0.5px; position: relative; z-index: 1;
+        }
+        .profile-header .farmer-id {
+            color: rgba(255,255,255,0.6);
+            font-size: 0.82rem; position: relative; z-index: 1;
+        }
+        .profile-badge {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            color: #fff;
+            padding: 0.35rem 0.85rem;
+            border-radius: 20px;
+            font-size: 0.72rem; font-weight: 600;
+            position: relative; z-index: 1;
+            border: 1px solid rgba(255,255,255,0.15);
+        }
+        .verification-check {
+            color: #10b981; font-size: 1.1rem;
+        }
+
+        /* ========== STATS ROW ========== */
+        .profile-stat-card {
+            background: rgba(255,255,255,0.08);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: var(--radius);
+            padding: 1rem 1.5rem;
+            text-align: center;
+            position: relative; z-index: 1;
+            transition: all var(--transition);
+        }
+        .profile-stat-card:hover {
+            background: rgba(255,255,255,0.13);
+            transform: translateY(-2px);
+        }
+        .profile-stat-value {
+            font-size: 1.6rem; font-weight: 800;
+            color: #fff; letter-spacing: -0.5px;
+        }
+        .profile-stat-label {
+            font-size: 0.68rem;
+            color: rgba(255,255,255,0.5);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            font-weight: 600;
+        }
+
+        /* ========== TABS ========== */
+        .nav-tabs-custom {
+            border-bottom: 2px solid var(--border-light);
+            gap: 0.25rem;
+        }
+        .nav-tabs-custom .nav-link {
+            border: none;
+            padding: 0.75rem 1.25rem;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+            transition: all var(--transition);
+            letter-spacing: -0.2px;
+            position: relative;
+        }
+        .nav-tabs-custom .nav-link:hover {
+            color: var(--text-primary);
+            background: var(--surface-alt);
+        }
+        .nav-tabs-custom .nav-link.active {
+            color: var(--primary);
+            background: transparent;
+            border-bottom: 2px solid var(--primary);
+        }
+        .nav-tabs-custom .nav-link i {
+            margin-right: 0.4rem;
+            font-size: 0.9rem;
+        }
+
+        /* ========== CARDS ========== */
+        .profile-card {
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-light);
+            overflow: hidden;
+            transition: all var(--transition);
+        }
+        .profile-card:hover { box-shadow: var(--shadow-md); }
+        .profile-card .card-header {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border-light);
+            padding: 1rem 1.3rem;
+            font-weight: 650; font-size: 0.88rem;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .profile-card .card-body { padding: 1.3rem; }
+
+        /* ========== FORM ELEMENTS ========== */
+        .form-label {
+            font-weight: 600; font-size: 0.76rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.3rem;
+            letter-spacing: -0.2px;
+        }
+        .form-control, .form-select {
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            padding: 0.55rem 0.85rem;
+            font-size: 0.84rem; transition: all var(--transition);
+            font-family: 'Inter', sans-serif;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(13,148,136,0.08);
+        }
+        .form-control-plaintext {
+            font-size: 0.84rem; padding: 0.55rem 0.85rem;
+            color: var(--text-primary); font-weight: 500;
+        }
+        .input-group-text {
+            background: var(--surface-alt);
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+        }
+
+        /* ========== BUTTONS ========== */
+        .btn-teal {
+            background: var(--primary); color: #fff;
+            border: none; font-weight: 600; font-size: 0.78rem;
+            padding: 0.5rem 1rem; border-radius: var(--radius-sm);
+            letter-spacing: -0.2px; transition: all var(--transition);
+            box-shadow: 0 2px 6px rgba(13,148,136,0.2);
+        }
+        .btn-teal:hover {
+            background: var(--primary-dark);
+            box-shadow: 0 4px 12px rgba(13,148,136,0.3);
+            transform: translateY(-1px); color: #fff;
+        }
+        .btn-outline-teal {
+            border: 1.5px solid #cbd5e1; color: var(--text-secondary);
+            background: var(--surface); font-weight: 500; font-size: 0.78rem;
+            padding: 0.48rem 1rem; border-radius: var(--radius-sm);
+            transition: all var(--transition);
+        }
+        .btn-outline-teal:hover {
+            border-color: var(--primary); color: var(--primary);
+            background: var(--primary-bg);
+        }
+        .btn-sm-pill { font-size: 0.7rem; padding: 0.3rem 0.8rem; border-radius: 20px; font-weight: 600; }
+
+        /* ========== TIMELINE ========== */
+        .timeline-item {
+            padding: 1rem 1.3rem;
+            border-left: 3px solid var(--border-light);
+            margin-left: 1rem;
+            position: relative;
+            transition: all var(--transition);
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -9px; top: 1.3rem;
+            width: 15px; height: 15px;
+            border-radius: 50%;
+            background: var(--surface);
+            border: 3px solid var(--primary);
+        }
+        .timeline-item:hover {
+            border-left-color: var(--primary);
+            background: var(--surface-alt);
+        }
+        .timeline-date {
+            font-size: 0.68rem; color: var(--text-muted);
+            font-weight: 600; text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .timeline-title {
+            font-size: 0.85rem; font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* ========== SKILL/TAG ========== */
+        .skill-tag {
+            display: inline-flex; align-items: center; gap: 0.35rem;
+            background: var(--surface-alt);
+            border: 1px solid var(--border-light);
+            padding: 0.3rem 0.7rem;
+            border-radius: 20px;
+            font-size: 0.72rem; font-weight: 500;
+            color: var(--text-secondary);
+            transition: all var(--transition);
+        }
+        .skill-tag:hover {
+            background: var(--primary-bg);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+        .skill-tag i { font-size: 0.65rem; }
+
+        /* ========== DOCUMENT CARD ========== */
+        .doc-card {
+            background: var(--surface);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius);
+            padding: 1rem;
+            transition: all var(--transition);
+            cursor: pointer;
+        }
+        .doc-card:hover {
+            box-shadow: var(--shadow-md);
+            border-color: #cbd5e1;
+        }
+        .doc-icon {
+            width: 40px; height: 40px;
+            border-radius: var(--radius-sm);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.1rem;
+        }
+
+        /* ========== TOAST ========== */
+        .toast-custom {
+            position: fixed;
+            bottom: 2rem; right: 2rem;
+            background: #0f172a; color: #fff;
+            padding: 0.9rem 1.3rem;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-xl);
+            z-index: 1070;
+            display: flex; align-items: center; gap: 0.6rem;
+            font-weight: 500; font-size: 0.85rem;
+            transform: translateY(120px);
+            opacity: 0;
+            transition: all var(--transition-slow);
+        }
+        .toast-custom.show { transform: translateY(0); opacity: 1; }
+        .toast-custom.success { border-left: 4px solid #10b981; }
+        .toast-custom.warning { border-left: 4px solid #f59e0b; }
+
+        /* ========== QR CODE ========== */
+        .qr-display {
+            width: 150px; height: 150px;
+            background: repeating-linear-gradient(45deg, #0f172a 0px, #0f172a 6px, #1e293b 6px, #1e293b 12px);
+            border-radius: var(--radius);
+            margin: 0 auto;
+            box-shadow: var(--shadow-lg);
+        }
+
+        /* ========== ANIMATIONS ========== */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-in { animation: fadeInUp 0.45s ease forwards; opacity: 0; }
+        .delay-1 { animation-delay: 0.05s; }
+        .delay-2 { animation-delay: 0.1s; }
+        .delay-3 { animation-delay: 0.15s; }
+
+        /* ========== RESPONSIVE ========== */
+        @media (max-width: 991.98px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.show { transform: translateX(0); }
+            .main-content { margin-left: 0; }
+            .sidebar-overlay.show { display: block; }
+            .profile-header { padding: 1.5rem; }
+            .profile-avatar-lg { width: 70px; height: 70px; font-size: 1.8rem; }
+        }
+        @media (max-width: 767.98px) {
+            .top-navbar { padding: 0.55rem 0.9rem; }
+            .profile-stat-card { padding: 0.75rem; }
+            .profile-stat-value { font-size: 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Sidebar Overlay -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<!-- ==================== SIDEBAR ==================== -->
+<aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+        <div class="d-flex align-items-center gap-3">
+            <div class="logo-icon"><i class="bi bi-grid-3x3-gap-fill"></i></div>
+            <div>
+                <h4>SmartCoop</h4>
+                <small>Farmer Platform</small>
+            </div>
+        </div>
+    </div>
+    <div class="sidebar-user">
+        <div class="d-flex align-items-center gap-3">
+            <div class="avatar">AI</div>
+            <div>
+                <div class="user-name">Abubakar Ibrahim</div>
+                <div class="user-role">Farmer · FARM-2847</div>
+            </div>
+        </div>
+    </div>
+    <nav class="sidebar-nav">
+        <div class="nav-section">Main Menu</div>
+        <a class="nav-link" href="dashboard.html"><i class="bi bi-columns-gap"></i> Dashboard</a>
+        <a class="nav-link active" href="myprofile.html"><i class="bi bi-person-badge"></i> My Profile</a>
+        <a class="nav-link" href="farm-mapping.html"><i class="bi bi-geo-alt"></i> Farm Mapping</a>
+        <div class="nav-section mt-2">Farm Management</div>
+        <a class="nav-link" href="crop-records.html"><i class="bi bi-flower1"></i> Crop Records</a>
+        <a class="nav-link" href="produce-tracking.html"><i class="bi bi-box-seam"></i> Produce Tracking <span class="badge-pill">3</span></a>
+        <a class="nav-link" href="inputs-chemicals.html"><i class="bi bi-droplet"></i> Inputs & Chemicals</a>
+        <div class="nav-section mt-2">Finance & Market</div>
+        <a class="nav-link" href="wallet.html"><i class="bi bi-wallet2"></i> Wallet</a>
+        <a class="nav-link" href="loans-credit.html"><i class="bi bi-cash-stack"></i> Loans & Credit</a>
+        <a class="nav-link" href="marketplace.html"><i class="bi bi-shop"></i> Marketplace</a>
+        <div class="nav-section mt-2">Insights</div>
+        <a class="nav-link" href="climate-alerts.html"><i class="bi bi-cloud-sun"></i> Climate Alerts <span class="badge-pill">2</span></a>
+        <a class="nav-link" href="analytics.html"><i class="bi bi-graph-up"></i> Analytics</a>
+        <a class="nav-link" href="traceability-qr.html"><i class="bi bi-qr-code"></i> Traceability QR</a>
+    </nav>
+    <div class="sidebar-footer">
+        <a href="#" style="color:rgba(255,255,255,0.45);font-size:0.78rem;text-decoration:none;">
+            <i class="bi bi-box-arrow-right me-1"></i> Sign Out
+        </a>
+    </div>
+</aside>
+
+<!-- ==================== MAIN CONTENT ==================== -->
+<div class="main-content" id="mainContent">
+
+    <!-- Top Navbar -->
+    <nav class="top-navbar">
+        <div class="d-flex align-items-center justify-content-between w-100">
+            <div class="d-flex align-items-center gap-3">
+                <button class="navbar-toggler d-lg-none btn-icon border-0" id="sidebarToggle">
+                    <i class="bi bi-list"></i>
+                </button>
+                <h5 class="mb-0 fw-bold" style="color:var(--text-primary);letter-spacing:-0.3px;">
+                    <i class="bi bi-person-badge me-2" style="color:var(--primary);"></i>My Profile
+                </h5>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                <button class="btn-icon"><i class="bi bi-bell"></i><span class="notification-dot"></span></button>
+                <button class="btn-icon d-none d-sm-flex"><i class="bi bi-gear"></i></button>
+                <div style="width:32px;height:32px;background:linear-gradient(135deg,#0d9488,#14b8a6);border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:0.8rem;">AI</div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Profile Content -->
+    <div class="p-3 p-md-4">
+
+        <!-- Profile Header -->
+        <div class="profile-header animate-in delay-1">
+            <div class="row align-items-center g-4">
+                <div class="col-auto">
+                    <div class="profile-avatar-lg">
+                        AI
+                        <span class="status-dot"></span>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
+                        <h3 class="mb-0">Abubakar Ibrahim</h3>
+                        <span class="verification-check"><i class="bi bi-patch-check-fill"></i></span>
+                        <span class="profile-badge"><i class="bi bi-star-fill me-1" style="color:#f59e0b;"></i>Verified Farmer</span>
+                    </div>
+                    <p class="farmer-id mb-2">
+                        <i class="bi bi-fingerprint me-1"></i> Farmer ID: FARM-2847 · 
+                        <i class="bi bi-geo-alt-fill me-1"></i> Kaduna State, Nigeria
+                    </p>
+                    <div class="d-flex flex-wrap gap-2">
+                        <span class="profile-badge"><i class="bi bi-calendar-check me-1"></i>Member since Jan 2022</span>
+                        <span class="profile-badge"><i class="bi bi-telephone me-1"></i>+234 801 234 5678</span>
+                        <span class="profile-badge"><i class="bi bi-envelope me-1"></i>abubakar@farm.coop</span>
+                    </div>
+                </div>
+                <div class="col-auto text-end">
+                    <button class="btn btn-light rounded-pill px-3 py-2" style="position:relative;z-index:1;font-size:0.8rem;" onclick="enableEditMode()">
+                        <i class="bi bi-pencil-square me-1"></i> Edit Profile
+                    </button>
+                </div>
+            </div>
+
+            <!-- Profile Stats Row -->
+            <div class="row g-3 mt-4">
+                <div class="col-6 col-md-3">
+                    <div class="profile-stat-card">
+                        <div class="profile-stat-value">785<span style="font-size:0.7rem;color:rgba(255,255,255,0.5);">/1000</span></div>
+                        <div class="profile-stat-label">Reputation Score</div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="profile-stat-card">
+                        <div class="profile-stat-value">4.5<span style="font-size:0.7rem;color:rgba(255,255,255,0.5);"> Ha</span></div>
+                        <div class="profile-stat-label">Farm Area</div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="profile-stat-card">
+                        <div class="profile-stat-value">12</div>
+                        <div class="profile-stat-label">Crops Grown</div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="profile-stat-card">
+                        <div class="profile-stat-value">94%</div>
+                        <div class="profile-stat-label">Delivery Rate</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <ul class="nav nav-tabs-custom mb-3 animate-in delay-2" id="profileTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#personalInfo" type="button">
+                    <i class="bi bi-person-lines-fill"></i> Personal Info
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#farmDetails" type="button">
+                    <i class="bi bi-geo-alt-fill"></i> Farm Details
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#documents" type="button">
+                    <i class="bi bi-file-earmark-text"></i> Documents
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#history" type="button">
+                    <i class="bi bi-clock-history"></i> History
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#traceability" type="button">
+                    <i class="bi bi-qr-code"></i> QR & Traceability
+                </button>
+            </li>
+        </ul>
+
+        <!-- Tab Content -->
+        <div class="tab-content animate-in delay-3" id="profileTabsContent">
+
+            <!-- PERSONAL INFO TAB -->
+            <div class="tab-pane fade show active" id="personalInfo">
+                <div class="row g-3">
+                    <!-- Personal Details Card -->
+                    <div class="col-12 col-lg-6">
+                        <div class="profile-card">
+                            <div class="card-header">
+                                <span><i class="bi bi-person-vcard me-2" style="color:var(--primary);"></i>Personal Details</span>
+                                <button class="btn-outline-teal btn-sm-pill" onclick="toggleEditSection('personalSection')">
+                                    <i class="bi bi-pencil"></i> Edit
+                                </button>
+                            </div>
+                            <div class="card-body" id="personalSection">
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Full Name</label>
+                                        <p class="form-control-plaintext" data-editable="true">Abubakar Ibrahim</p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">National ID (NIN)</label>
+                                        <p class="form-control-plaintext" data-editable="true">NIN-2847-8392-XXXX</p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Date of Birth</label>
+                                        <p class="form-control-plaintext" data-editable="true">15 March 1978</p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Gender</label>
+                                        <p class="form-control-plaintext" data-editable="true">Male</p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Phone Number</label>
+                                        <p class="form-control-plaintext" data-editable="true">+234 801 234 5678</p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Email Address</label>
+                                        <p class="form-control-plaintext" data-editable="true">abubakar.ibrahim@farm.coop</p>
+                                    </div>
+                                    <div class="col-12">
+                                        <label class="form-label">Home Address</label>
+                                        <p class="form-control-plaintext" data-editable="true">Plot 42, Farmers Way, Zaria Road, Kaduna State, Nigeria</p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Marital Status</label>
+                                        <p class="form-control-plaintext" data-editable="true">Married</p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Dependents</label>
+                                        <p class="form-control-plaintext" data-editable="true">5</p>
+                                    </div>
+                                </div>
+                                <div class="d-none mt-3" id="personalSaveBtns">
+                                    <button class="btn-outline-teal btn-sm me-2" onclick="cancelEdit('personalSection')">Cancel</button>
+                                    <button class="btn-teal btn-sm" onclick="saveSection('personalSection')">Save Changes</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Biometric & Security Card -->
+                    <div class="col-12 col-lg-6">
+                        <div class="profile-card mb-3">
+                            <div class="card-header">
+                                <span><i class="bi bi-shield-check me-2" style="color:var(--success);"></i>Biometric & Security</span>
+                                <span class="badge bg-success bg-opacity-10 text-success rounded-pill" style="font-size:0.65rem;">Verified</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <div class="p-3 rounded-3 text-center" style="background:var(--success-light);">
+                                            <i class="bi bi-fingerprint" style="font-size:2rem;color:#059669;"></i>
+                                            <p class="mb-0 mt-2 fw-semibold" style="font-size:0.8rem;">Fingerprint</p>
+                                            <small class="text-muted">Registered · 15 Jan 2022</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="p-3 rounded-3 text-center" style="background:var(--info-light);">
+                                            <i class="bi bi-camera-fill" style="font-size:2rem;color:#3b82f6;"></i>
+                                            <p class="mb-0 mt-2 fw-semibold" style="font-size:0.8rem;">Facial Recognition</p>
+                                            <small class="text-muted">Registered · 15 Jan 2022</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <label class="form-label">Recovery Phone</label>
+                                        <p class="form-control-plaintext">+234 802 987 6543</p>
+                                    </div>
+                                    <div class="col-12">
+                                        <label class="form-label">Security Question</label>
+                                        <p class="form-control-plaintext">What is your mother's maiden name?</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Skills & Specializations -->
+                        <div class="profile-card">
+                            <div class="card-header">
+                                <span><i class="bi bi-tools me-2" style="color:var(--accent);"></i>Skills & Specializations</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="d-flex flex-wrap gap-2">
+                                    <span class="skill-tag"><i class="bi bi-circle-fill" style="font-size:0.35rem;"></i> Sesame Farming</span>
+                                    <span class="skill-tag"><i class="bi bi-circle-fill" style="font-size:0.35rem;"></i> Maize Cultivation</span>
+                                    <span class="skill-tag"><i class="bi bi-circle-fill" style="font-size:0.35rem;"></i> Ginger Export</span>
+                                    <span class="skill-tag"><i class="bi bi-circle-fill" style="font-size:0.35rem;"></i> Organic Practices</span>
+                                    <span class="skill-tag"><i class="bi bi-circle-fill" style="font-size:0.35rem;"></i> Irrigation Mgmt</span>
+                                    <span class="skill-tag"><i class="bi bi-circle-fill" style="font-size:0.35rem;"></i> Pest Control</span>
+                                    <span class="skill-tag"><i class="bi bi-circle-fill" style="font-size:0.35rem;"></i> Post-Harvest Handling</span>
+                                    <span class="skill-tag"><i class="bi bi-circle-fill" style="font-size:0.35rem;"></i> Cooperative Leadership</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bank Details Card -->
+                    <div class="col-12">
+                        <div class="profile-card">
+                            <div class="card-header">
+                                <span><i class="bi bi-bank me-2" style="color:var(--info);"></i>Bank & Payment Details</span>
+                                <button class="btn-outline-teal btn-sm-pill" onclick="toggleEditSection('bankSection')">
+                                    <i class="bi bi-pencil"></i> Edit
+                                </button>
+                            </div>
+                            <div class="card-body" id="bankSection">
+                                <div class="row g-3">
+                                    <div class="col-md-4">
+                                        <label class="form-label">Bank Name</label>
+                                        <p class="form-control-plaintext" data-editable="true">First Bank of Nigeria</p>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Account Number</label>
+                                        <p class="form-control-plaintext" data-editable="true">**** **** 2847</p>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Account Name</label>
+                                        <p class="form-control-plaintext" data-editable="true">Abubakar Ibrahim</p>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">BVN</label>
+                                        <p class="form-control-plaintext" data-editable="true">*** **** 8392</p>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Preferred Currency</label>
+                                        <p class="form-control-plaintext" data-editable="true">NGN (₦)</p>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Mobile Money</label>
+                                        <p class="form-control-plaintext" data-editable="true">+234 801 234 5678 (M-Pesa)</p>
+                                    </div>
+                                </div>
+                                <div class="d-none mt-3" id="bankSaveBtns">
+                                    <button class="btn-outline-teal btn-sm me-2" onclick="cancelEdit('bankSection')">Cancel</button>
+                                    <button class="btn-teal btn-sm" onclick="saveSection('bankSection')">Save Changes</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FARM DETAILS TAB -->
+            <div class="tab-pane fade" id="farmDetails">
+                <div class="row g-3">
+                    <div class="col-12 col-lg-8">
+                        <div class="profile-card">
+                            <div class="card-header">
+                                <span><i class="bi bi-map me-2" style="color:var(--success);"></i>Farm Location & Details</span>
+                                <button class="btn-outline-teal btn-sm-pill" onclick="showToast('Farm details updated!', 'success')">
+                                    <i class="bi bi-pencil"></i> Update
+                                </button>
+                            </div>
+                            <div class="card-body">
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Farm Name</label>
+                                        <p class="form-control-plaintext">Ibrahim Farms</p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Total Area</label>
+                                        <p class="form-control-plaintext">4.5 Hectares</p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">GPS Coordinates</label>
+                                        <p class="form-control-plaintext">10.5234° N, 7.4388° E</p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Land Ownership</label>
+                                        <p class="form-control-plaintext">Owned (Inherited)</p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Soil Type</label>
+                                        <p class="form-control-plaintext">Sandy Loam</p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Irrigation</label>
+                                        <p class="form-control-plaintext">Partial (Rain-fed + Borehole)</p>
+                                    </div>
+                                    <div class="col-12">
+                                        <label class="form-label">Farm Address</label>
+                                        <p class="form-control-plaintext">Zaria Road, Km 12, Kaduna North LGA, Kaduna State, Nigeria</p>
+                                    </div>
+                                </div>
+                                <!-- Mini Map Placeholder -->
+                                <div class="mt-3 p-4 rounded-3 text-center" style="background:var(--surface-alt);border:1px dashed var(--border);">
+                                    <i class="bi bi-geo-alt-fill" style="font-size:2rem;color:var(--primary);"></i>
+                                    <p class="mb-0 mt-2 fw-semibold" style="font-size:0.85rem;">Satellite Map View</p>
+                                    <small class="text-muted">Powered by Sentinel Hub · Click to expand</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg-4">
+                        <!-- Current Season -->
+                        <div class="profile-card mb-3">
+                            <div class="card-header">
+                                <span><i class="bi bi-flower1 me-2" style="color:var(--accent);"></i>Current Season</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-2"><small class="text-muted">Active Crops</small></div>
+                                <div class="d-flex align-items-center gap-2 mb-2">
+                                    <span style="font-size:1.5rem;">🌾</span>
+                                    <div><strong style="font-size:0.82rem;">Sesame</strong><br><small class="text-muted">2.0 Ha · Harvest: Jun 2024</small></div>
+                                </div>
+                                <div class="d-flex align-items-center gap-2 mb-2">
+                                    <span style="font-size:1.5rem;">🌽</span>
+                                    <div><strong style="font-size:0.82rem;">Maize</strong><br><small class="text-muted">1.5 Ha · Harvest: Aug 2024</small></div>
+                                </div>
+                                <div class="d-flex align-items-center gap-2">
+                                    <span style="font-size:1.5rem;">🫚</span>
+                                    <div><strong style="font-size:0.82rem;">Ginger</strong><br><small class="text-muted">1.0 Ha · Harvest: Jul 2024</small></div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Certifications -->
+                        <div class="profile-card">
+                            <div class="card-header">
+                                <span><i class="bi bi-award me-2" style="color:var(--purple);"></i>Certifications</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="d-flex align-items-center gap-2 mb-2 p-2 rounded-2" style="background:var(--success-light);">
+                                    <i class="bi bi-patch-check-fill text-success" style="font-size:1.2rem;"></i>
+                                    <div><strong style="font-size:0.78rem;">Organic Certified</strong><br><small class="text-muted">Valid until Dec 2025</small></div>
+                                </div>
+                                <div class="d-flex align-items-center gap-2 mb-2 p-2 rounded-2" style="background:var(--info-light);">
+                                    <i class="bi bi-patch-check-fill" style="font-size:1.2rem;color:#3b82f6;"></i>
+                                    <div><strong style="font-size:0.78rem;">EU Export Compliant</strong><br><small class="text-muted">Last audit: Mar 2024</small></div>
+                                </div>
+                                <div class="d-flex align-items-center gap-2 p-2 rounded-2" style="background:var(--warning-light);">
+                                    <i class="bi bi-patch-check-fill" style="font-size:1.2rem;color:#d97706;"></i>
+                                    <div><strong style="font-size:0.78rem;">Fair Trade Pending</strong><br><small class="text-muted">Under review</small></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DOCUMENTS TAB -->
+            <div class="tab-pane fade" id="documents">
+                <div class="row g-3">
+                    <div class="col-12">
+                        <div class="profile-card">
+                            <div class="card-header">
+                                <span><i class="bi bi-folder2-open me-2" style="color:var(--info);"></i>Uploaded Documents</span>
+                                <button class="btn-teal btn-sm-pill" onclick="showToast('Upload started...', 'success')">
+                                    <i class="bi bi-cloud-upload me-1"></i> Upload New
+                                </button>
+                            </div>
+                            <div class="card-body">
+                                <div class="row g-3">
+                                    <div class="col-md-4">
+                                        <div class="doc-card d-flex align-items-center gap-3">
+                                            <div class="doc-icon" style="background:#fef2f2;color:#ef4444;">
+                                                <i class="bi bi-file-pdf"></i>
+                                            </div>
+                                            <div class="flex-grow-1" style="min-width:0;">
+                                                <strong style="font-size:0.78rem;">National ID Card</strong>
+                                                <br><small class="text-muted">Uploaded: Jan 2022</small>
+                                                <br><small class="text-success">Verified ✓</small>
+                                            </div>
+                                            <i class="bi bi-download text-muted"></i>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="doc-card d-flex align-items-center gap-3">
+                                            <div class="doc-icon" style="background:#ecfdf5;color:#059669;">
+                                                <i class="bi bi-file-pdf"></i>
+                                            </div>
+                                            <div class="flex-grow-1" style="min-width:0;">
+                                                <strong style="font-size:0.78rem;">Land Title Deed</strong>
+                                                <br><small class="text-muted">Uploaded: Jan 2022</small>
+                                                <br><small class="text-success">Verified ✓</small>
+                                            </div>
+                                            <i class="bi bi-download text-muted"></i>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="doc-card d-flex align-items-center gap-3">
+                                            <div class="doc-icon" style="background:#eff6ff;color:#3b82f6;">
+                                                <i class="bi bi-file-pdf"></i>
+                                            </div>
+                                            <div class="flex-grow-1" style="min-width:0;">
+                                                <strong style="font-size:0.78rem;">Organic Certificate</strong>
+                                                <br><small class="text-muted">Uploaded: Mar 2023</small>
+                                                <br><small class="text-warning">Expires Dec 2025</small>
+                                            </div>
+                                            <i class="bi bi-download text-muted"></i>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="doc-card d-flex align-items-center gap-3">
+                                            <div class="doc-icon" style="background:#f5f3ff;color:#8b5cf6;">
+                                                <i class="bi bi-file-pdf"></i>
+                                            </div>
+                                            <div class="flex-grow-1" style="min-width:0;">
+                                                <strong style="font-size:0.78rem;">Bank Verification</strong>
+                                                <br><small class="text-muted">Uploaded: Feb 2022</small>
+                                                <br><small class="text-success">Verified ✓</small>
+                                            </div>
+                                            <i class="bi bi-download text-muted"></i>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="doc-card d-flex align-items-center gap-3">
+                                            <div class="doc-icon" style="background:#fffbeb;color:#d97706;">
+                                                <i class="bi bi-file-pdf"></i>
+                                            </div>
+                                            <div class="flex-grow-1" style="min-width:0;">
+                                                <strong style="font-size:0.78rem;">Coop Membership</strong>
+                                                <br><small class="text-muted">Uploaded: Jan 2022</small>
+                                                <br><small class="text-success">Active ✓</small>
+                                            </div>
+                                            <i class="bi bi-download text-muted"></i>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="doc-card d-flex align-items-center gap-3" style="border-style:dashed;justify-content:center;min-height:80px;color:var(--text-muted);">
+                                            <i class="bi bi-plus-circle" style="font-size:1.5rem;"></i>
+                                            <span style="font-size:0.78rem;">Upload Document</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- HISTORY TAB -->
+            <div class="tab-pane fade" id="history">
+                <div class="row g-3">
+                    <div class="col-12 col-lg-8">
+                        <div class="profile-card">
+                            <div class="card-header">
+                                <span><i class="bi bi-clock-history me-2" style="color:var(--purple);"></i>Activity Timeline</span>
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="timeline-item">
+                                    <div class="timeline-date">May 2024</div>
+                                    <div class="timeline-title">Sold 450kg Sesame to OLAM</div>
+                                    <small class="text-muted">₦189,000 · Quality Grade: Premium</small>
+                                </div>
+                                <div class="timeline-item">
+                                    <div class="timeline-date">April 2024</div>
+                                    <div class="timeline-title">Received Input Loan - ₦150,000</div>
+                                    <small class="text-muted">6-month term · 12% APR · For fertilizer & seeds</small>
+                                </div>
+                                <div class="timeline-item">
+                                    <div class="timeline-date">March 2024</div>
+                                    <div class="timeline-title">Planted Sesame Crop - 2.0 Ha</div>
+                                    <small class="text-muted">Premium variety · Expected harvest: June 2024</small>
+                                </div>
+                                <div class="timeline-item">
+                                    <div class="timeline-date">February 2024</div>
+                                    <div class="timeline-title">Planted Ginger - 1.0 Ha</div>
+                                    <small class="text-muted">Export quality · Expected harvest: July 2024</small>
+                                </div>
+                                <div class="timeline-item">
+                                    <div class="timeline-date">January 2024</div>
+                                    <div class="timeline-title">EU Export Compliance Audit Passed</div>
+                                    <small class="text-muted">Renewed certification for 2024 season</small>
+                                </div>
+                                <div class="timeline-item">
+                                    <div class="timeline-date">November 2023</div>
+                                    <div class="timeline-title">Harvested Maize - 1.5 Ha</div>
+                                    <small class="text-muted">Yield: 1.5 Tons · Sold to Nestlé Nigeria</small>
+                                </div>
+                                <div class="timeline-item">
+                                    <div class="timeline-date">June 2023</div>
+                                    <div class="timeline-title">Completed Organic Certification</div>
+                                    <small class="text-muted">Valid for 2 years</small>
+                                </div>
+                                <div class="timeline-item">
+                                    <div class="timeline-date">January 2022</div>
+                                    <div class="timeline-title">Joined SmartCoop Platform</div>
+                                    <small class="text-muted">Farmer ID: FARM-2847 assigned</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg-4">
+                        <!-- Performance Summary -->
+                        <div class="profile-card mb-3">
+                            <div class="card-header">
+                                <span><i class="bi bi-graph-up-arrow me-2" style="color:var(--success);"></i>Performance</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <small class="text-muted">Total Produce Sold (2024)</small>
+                                    <h5 class="mb-0 fw-bold">2.8 Tons</h5>
+                                </div>
+                                <div class="mb-3">
+                                    <small class="text-muted">Total Revenue (2024)</small>
+                                    <h5 class="mb-0 fw-bold">₦1,245,000</h5>
+                                </div>
+                                <div class="mb-3">
+                                    <small class="text-muted">Loans Repaid</small>
+                                    <h5 class="mb-0 fw-bold text-success">100% On-time</h5>
+                                </div>
+                                <div>
+                                    <small class="text-muted">Buyer Satisfaction</small>
+                                    <h5 class="mb-0 fw-bold">4.8 / 5.0 ⭐</h5>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Badges -->
+                        <div class="profile-card">
+                            <div class="card-header">
+                                <span><i class="bi bi-trophy me-2" style="color:var(--accent);"></i>Achievements</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="d-flex flex-wrap gap-2">
+                                    <span class="skill-tag"><i class="bi bi-star-fill" style="color:#f59e0b;"></i> Top Supplier 2023</span>
+                                    <span class="skill-tag"><i class="bi bi-shield-check"></i> 3yr Member</span>
+                                    <span class="skill-tag"><i class="bi bi-graph-up-arrow"></i> Consistent Quality</span>
+                                    <span class="skill-tag"><i class="bi bi-heart"></i> Community Leader</span>
+                                    <span class="skill-tag"><i class="bi bi-droplet"></i> Water Steward</span>
+                                    <span class="skill-tag"><i class="bi bi-tree"></i> Climate Smart</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- QR & TRACEABILITY TAB -->
+            <div class="tab-pane fade" id="traceability">
+                <div class="row g-3">
+                    <div class="col-12 col-lg-5 text-center">
+                        <div class="profile-card">
+                            <div class="card-header">
+                                <span><i class="bi bi-qr-code me-2" style="color:var(--primary);"></i>Your Traceability QR</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="qr-display mb-3"></div>
+                                <h6 class="fw-bold">FARM-2847</h6>
+                                <p class="text-muted" style="font-size:0.78rem;">Abubakar Ibrahim · Kaduna State, Nigeria</p>
+                                <div class="d-flex justify-content-center gap-2">
+                                    <button class="btn-teal btn-sm-pill" onclick="showToast('QR Code downloaded!', 'success')">
+                                        <i class="bi bi-download me-1"></i> Download
+                                    </button>
+                                    <button class="btn-outline-teal btn-sm-pill" onclick="showToast('Link copied!', 'success')">
+                                        <i class="bi bi-share me-1"></i> Share
+                                    </button>
+                                    <button class="btn-outline-teal btn-sm-pill" onclick="window.print()">
+                                        <i class="bi bi-printer me-1"></i> Print
+                                    </button>
+                                </div>
+                                <small class="text-muted d-block mt-3" style="font-size:0.7rem;">
+                                    Scan for: Traceability · Compliance · Farm History · Certifications
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg-7">
+                        <div class="profile-card">
+                            <div class="card-header">
+                                <span><i class="bi bi-info-circle me-2" style="color:var(--info);"></i>What Buyers See</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-sm" style="font-size:0.82rem;">
+                                        <tbody>
+                                            <tr><td class="text-muted" style="width:40%;">Farmer ID</td><td><strong>FARM-2847</strong></td></tr>
+                                            <tr><td class="text-muted">Name</td><td>Abubakar Ibrahim</td></tr>
+                                            <tr><td class="text-muted">Location</td><td>Kaduna State, Nigeria</td></tr>
+                                            <tr><td class="text-muted">Farm Size</td><td>4.5 Hectares</td></tr>
+                                            <tr><td class="text-muted">Reputation Score</td><td><span class="text-success fw-bold">785/1000</span></td></tr>
+                                            <tr><td class="text-muted">Certifications</td><td>Organic · EU Compliant</td></tr>
+                                            <tr><td class="text-muted">Crops</td><td>Sesame, Maize, Ginger</td></tr>
+                                            <tr><td class="text-muted">Delivery Rate</td><td><span class="text-success">94%</span></td></tr>
+                                            <tr><td class="text-muted">Member Since</td><td>January 2022</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="alert border-0 rounded-3 mt-3" style="background:var(--primary-bg);font-size:0.78rem;">
+                                    <i class="bi bi-lightbulb-fill me-2" style="color:var(--accent);"></i>
+                                    <strong>Tip:</strong> Share this QR with buyers to build trust and enable instant traceability verification.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Toast -->
+<div class="toast-custom success" id="toast">
+    <i class="bi bi-check-circle-fill"></i>
+    <span id="toastMessage">Profile updated successfully!</span>
+</div>
+
+<!-- ==================== SCRIPTS ==================== -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Sidebar Toggle
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    const sidebar = document.getElementById('sidebar');
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+    function openSidebar() { sidebar.classList.add('show'); sidebarOverlay.classList.add('show'); document.body.style.overflow = 'hidden'; }
+    function closeSidebar() { sidebar.classList.remove('show'); sidebarOverlay.classList.remove('show'); document.body.style.overflow = ''; }
+    sidebarToggle.addEventListener('click', openSidebar);
+    sidebarOverlay.addEventListener('click', closeSidebar);
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeSidebar(); });
+
+    // Toast
+    function showToast(message, type = 'success') {
+        const toast = document.getElementById('toast');
+        document.getElementById('toastMessage').textContent = message;
+        toast.className = 'toast-custom ' + type;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+
+    // Tab persistence
+    const triggerTabList = [].slice.call(document.querySelectorAll('#profileTabs button'));
+    triggerTabList.forEach(function (triggerEl) {
+        const tabTrigger = new bootstrap.Tab(triggerEl);
+        triggerEl.addEventListener('click', function (event) {
+            event.preventDefault();
+            tabTrigger.show();
+            localStorage.setItem('activeProfileTab', triggerEl.getAttribute('data-bs-target'));
+        });
+    });
+
+    // Restore active tab
+    const activeTab = localStorage.getItem('activeProfileTab');
+    if (activeTab) {
+        const tab = document.querySelector(`[data-bs-target="${activeTab}"]`);
+        if (tab) new bootstrap.Tab(tab).show();
+    }
+
+    // Edit Mode Toggle
+    function toggleEditSection(sectionId) {
+        const section = document.getElementById(sectionId);
+        const saveBtns = document.getElementById(sectionId + 'SaveBtns');
+        const editableElements = section.querySelectorAll('[data-editable="true"]');
+
+        editableElements.forEach(el => {
+            const currentValue = el.textContent.trim();
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.className = 'form-control form-control-sm';
+            input.value = currentValue;
+            input.style.fontSize = '0.84rem';
+            el.replaceWith(input);
+            input.setAttribute('data-original', currentValue);
+        });
+
+        if (saveBtns) saveBtns.classList.remove('d-none');
+    }
+
+    function cancelEdit(sectionId) {
+        const section = document.getElementById(sectionId);
+        const saveBtns = document.getElementById(sectionId + 'SaveBtns');
+        const inputs = section.querySelectorAll('input[data-original]');
+
+        inputs.forEach(input => {
+            const p = document.createElement('p');
+            p.className = 'form-control-plaintext';
+            p.setAttribute('data-editable', 'true');
+            p.textContent = input.getAttribute('data-original');
+            input.replaceWith(p);
+        });
+
+        if (saveBtns) saveBtns.classList.add('d-none');
+    }
+
+    function saveSection(sectionId) {
+        const section = document.getElementById(sectionId);
+        const saveBtns = document.getElementById(sectionId + 'SaveBtns');
+        const inputs = section.querySelectorAll('input[data-original]');
+
+        inputs.forEach(input => {
+            const p = document.createElement('p');
+            p.className = 'form-control-plaintext';
+            p.setAttribute('data-editable', 'true');
+            p.textContent = input.value;
+            input.replaceWith(p);
+            input.setAttribute('data-original', input.value);
+        });
+
+        if (saveBtns) saveBtns.classList.add('d-none');
+        showToast('Changes saved successfully!', 'success');
+    }
+
+    function enableEditMode() {
+        showToast('Click "Edit" on any section to modify your details.', 'warning');
+    }
+</script>
+
+</body>
+</html>
